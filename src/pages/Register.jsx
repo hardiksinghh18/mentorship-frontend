@@ -34,6 +34,7 @@ const navigate=useNavigate()
             if (response.data.loggedIn) {
                 toast.success(response.data.message)
                 dispatch(setLoggedIn()); // Update Redux state if tokens are valid
+               
                 setTimeout(()=>{
                     navigate('/discover')
                   },500)
