@@ -1,19 +1,29 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { setLoggedIn } from "../redux/actions/authActions";
 
 const ProfileSetup = () => {
   const { isLoggedIn, user } = useSelector((state) => state.auth);
+
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [formData, setFormData] = useState({
-    name: user?.name || "",
+    fullName: user?.fullName || "",
     role: user?.role || "",
     skills: user?.skills || "",
     interests: user?.interests || "",
     bio: user?.bio || "",
   });
+
+  useEffect(() => {
+    // If the user is not logged in, redirect to the login page
+    if (!isLoggedIn) {
+      navigate("/login");
+    }
+  }, [isLoggedIn, navigate]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -23,28 +33,23 @@ const ProfileSetup = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const token = localStorage.getItem("authToken");
-      const response = await axios.post(
-        "http://localhost:5000/api/profile/setup",
+      console.log(formData);
+      const response = await axios.put(
+        `${process.env.REACT_APP_BACKEND_BASE_URL}/api/profile/update/${user.email}`,
         formData,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
+        { withCredentials: true }
       );
-      toast.success("Profile updated successfully!");
+      if (response.data.loggedIn) {
+        toast.success(response.data.message);
+        dispatch(setLoggedIn()); // Update Redux state if tokens are valid
+        setTimeout(() => {
+          navigate(`/profile/${user.username}`);
+        }, 2000);
+      }
     } catch (error) {
       toast.error(error.response?.data?.error || "Failed to update profile.");
     }
   };
-
-  useEffect(() => {
-    // If the user is not logged in, redirect to the login page
-    if (!isLoggedIn) {
-      navigate("/login");
-    }
-  }, [isLoggedIn, navigate]);
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#000104] to-slate-800 p-6">
@@ -58,19 +63,16 @@ const ProfileSetup = () => {
         <form onSubmit={handleSubmit}>
           {/* Name */}
           <div className="mb-6">
-            <label
-              className="block text-lg font-medium text-gray-300 mb-2"
-              htmlFor="name"
-            >
+            <label className="block text-lg font-medium text-gray-300 mb-2" htmlFor="name">
               Full Name
             </label>
             <input
               type="text"
-              name="name"
-              id="name"
+              name="fullName"
+              id="fullName"
               placeholder="Enter your full name"
               className="w-full px-4 py-3 rounded-md bg-slate-900 text-white focus:ring-2 focus:ring-blue-500"
-              value={formData.name}
+              value={formData.fullName}
               onChange={handleChange}
               required
             />
@@ -78,10 +80,7 @@ const ProfileSetup = () => {
 
           {/* Role */}
           <div className="mb-6">
-            <label
-              className="block text-lg font-medium text-gray-300 mb-2"
-              htmlFor="role"
-            >
+            <label className="block text-lg font-medium text-gray-300 mb-2" htmlFor="role">
               Role
             </label>
             <select
@@ -100,10 +99,7 @@ const ProfileSetup = () => {
 
           {/* Skills */}
           <div className="mb-6">
-            <label
-              className="block text-lg font-medium text-gray-300 mb-2"
-              htmlFor="skills"
-            >
+            <label className="block text-lg font-medium text-gray-300 mb-2" htmlFor="skills">
               Skills
             </label>
             <input
@@ -120,10 +116,7 @@ const ProfileSetup = () => {
 
           {/* Interests */}
           <div className="mb-6">
-            <label
-              className="block text-lg font-medium text-gray-300 mb-2"
-              htmlFor="interests"
-            >
+            <label className="block text-lg font-medium text-gray-300 mb-2" htmlFor="interests">
               Interests
             </label>
             <input
@@ -140,10 +133,7 @@ const ProfileSetup = () => {
 
           {/* Bio */}
           <div className="mb-6">
-            <label
-              className="block text-lg font-medium text-gray-300 mb-2"
-              htmlFor="bio"
-            >
+            <label className="block text-lg font-medium text-gray-300 mb-2" htmlFor="bio">
               Bio
             </label>
             <textarea

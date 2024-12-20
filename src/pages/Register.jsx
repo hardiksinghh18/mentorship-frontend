@@ -23,20 +23,20 @@ const navigate=useNavigate()
         }
 
         try {
-            console.log(process.env.REACT_APP_BACKEND_BASE_URL)
+           
             const response = await axios.post(`${process.env.REACT_APP_BACKEND_BASE_URL}/api/auth/register`, {
                 email: formData.email,
                 username: formData.username,
                 password: formData.password,
             }, { withCredentials: true });
 
-            console.log('Response for verify tokens:', response)
+           
             if (response.data.loggedIn) {
                 toast.success(response.data.message)
                 dispatch(setLoggedIn()); // Update Redux state if tokens are valid
                 setTimeout(()=>{
                     navigate('/discover')
-                  },2000)
+                  },10)
             } else {
                 dispatch(setLoggedOut()); // Update Redux state if tokens are invalid
               

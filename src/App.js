@@ -1,7 +1,7 @@
 import './App.css';
 import Navbar from './components/sections/Navbar';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { setLoggedIn, setLoggedOut } from './redux/actions/authActions'; // Redux actions
 import axios from 'axios'; // Axios for API calls
@@ -24,29 +24,37 @@ import 'react-toastify/dist/ReactToastify.css';
 function App() {
   const dispatch = useDispatch();
   const { isLoggedIn, user } = useSelector((state) => state.auth);
+// Inside App component
+const [loading, setLoading] = useState(true);
 
-  // Function to verify tokens on app load
+
   const verifyTokens = async () => {
     try {
-      const response = await axios.get(`${process.env.REACT_APP_BACKEND_BASE_URL}/auth/verify-tokens`, { withCredentials: true }); // API to verify tokens
-      
+      const response = await axios.get(`${process.env.REACT_APP_BACKEND_BASE_URL}/auth/verify-tokens`, { withCredentials: true });
       if (response.data.loggedIn) {
-        dispatch(setLoggedIn()); // Update Redux state if tokens are valid
+       
+        dispatch(setLoggedIn());
+      
       } else {
-        dispatch(setLoggedOut()); // Update Redux state if tokens are invalid
+        dispatch(setLoggedOut());
       }
     } catch (error) {
       console.error('Error verifying tokens:', error);
-      dispatch(setLoggedOut()); // Update Redux state on error
+      dispatch(setLoggedOut());
+    } finally {
+      setLoading(false); // Token verification is complete
     }
   };
-
-  // Check authentication status when app loads
+  
   useEffect(() => {
-    // if(!isLoggedIn) return;
+   
     verifyTokens();
-  }, []);
+  }, [dispatch,isLoggedIn]);
 
+
+  // if (loading) {
+  //   return <div>Loading...</div>; // Replace with a spinner or styled loading component
+  // }
   return (
     <>
       {/* Toast Notifications */}
@@ -72,11 +80,11 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/discover" element={<Discover />} />
         <Route path="/matchmaking" element={<Matchmaking />} />
-        <Route path="/profile/" element={<Profile />} />
+        <Route path="/profile/:username" element={<Profile />} />
         <Route path="/mentorship/:id" element={<MentorDetails />} />
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
-        <Route path="/profilesetup" element={<ProfileSetup />} />
+        <Route path="/profile/setup" element={<ProfileSetup />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </>

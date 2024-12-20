@@ -1,95 +1,113 @@
-import React, { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
-import { Link, useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from 'react';
+import { FiMenu, FiX } from 'react-icons/fi';
+import { useDispatch, useSelector } from 'react-redux';
+import { Link, useNavigate } from 'react-router-dom';
+import { setLoggedOut } from '../../redux/actions/authActions';
+import { FaRegUser } from "react-icons/fa";
+import { IoIosLogOut } from "react-icons/io";
 
-const Profile = () => {
-    const { isLoggedIn, user } = useSelector((state) => state.auth);
+const Navbar = () => {
+    const [showNavbar, setShowNavbar] = useState(true);
+    const [lastScrollY, setLastScrollY] = useState(0);
+    const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const dispatch = useDispatch();
     const navigate = useNavigate();
+    const { isLoggedIn, user } = useSelector((state) => state.auth);
+    const menuClass = "text-xs md:text-sm lg:text-sm font-semibold text-center relative bg-clip-text text-transparent bg-gradient-to-b from-neutral-800 via-white to-white hover:scale-105 transition-all duration-500";
 
-    // Dummy profile data
-    const [profile, setProfile] = useState({
-        name: "John Doe",
-        role: "Mentor",
-        bio: "Passionate full-stack developer and mentor with 5+ years of experience.",
-        skills: ["React", "Node.js", "JavaScript", "Tailwind CSS"],
-        profileImage: "https://via.placeholder.com/150", // Replace with actual image URL
-        connections: [
-            { id: 1, name: "Emily Davis", role: "Mentee" },
-            { id: 2, name: "Michael Johnson", role: "Mentee" },
-        ],
-    });
+    const handleLogout = () => {
+        dispatch(setLoggedOut());
+        navigate('/login');
+    };
 
+    const handleScroll = () => {
+        if (window.scrollY <= 0) {
+            setShowNavbar(true); // Always show navbar at the top
+        } else if (window.scrollY > lastScrollY) {
+            setShowNavbar(false); // Hide navbar when scrolling down
+        } else {
+            setShowNavbar(true); // Show navbar when scrolling up
+        }
+        setLastScrollY(window.scrollY);
+    };
 
+    const toggleMenu = () => {
+        setIsMenuOpen(!isMenuOpen);
+    };
+
+    useEffect(() => {
+        window.addEventListener('scroll', handleScroll);
+        return () => {
+            window.removeEventListener('scroll', handleScroll);
+        };
+    }, [lastScrollY]);
 
     return (
-        <div className="min-h-screen bg-gradient-to-t from-[#000104] to-slate-800 text-white p-6 md:p-12">
-            <div className="max-w-6xl mx-auto bg-[#1c1e29] p-8 rounded-lg shadow-lg grid grid-cols-1 md:grid-cols-3 gap-8">
-                {/* Left Side - Connections */}
-                <div className="col-span-1 bg-[#2a2c3a] p-6 rounded-md shadow-md">
-                    <h2 className="text-2xl font-semibold mb-4">Connections</h2>
-                    <div className="flex flex-col gap-4">
-                        {profile.connections.length > 0 ? (
-                            profile.connections.map((connection) => (
-                                <div
-                                    key={connection.id}
-                                    className="flex items-center justify-between bg-[#1c1e29] p-4 rounded-md shadow-sm"
-                                >
-                                    <div>
-                                        <h3 className="text-lg font-semibold">{connection.name}</h3>
-                                        <p className="text-slate-400 text-sm">{connection.role}</p>
-                                    </div>
-                                    <button className="text-red-400 hover:underline text-sm">
-                                        Remove
-                                    </button>
-                                </div>
-                            ))
-                        ) : (
-                            <p className="text-slate-400">No connections yet.</p>
-                        )}
-                    </div>
+        <div className={`fixed text-white top-0 z-50 mb-4  w-screen transition-transform duration-500 ${showNavbar ? 'translate-y-0' : '-translate-y-full'}`}>
+            <div className={`max-w-7xl flex items-center justify-between transition-all duration-500 py-4 px-4 md:px-8  shadow-sm bg-gradient-to-t from-[#000104] to-slate-800 mx-auto`}>
+                <Link to="/">
+                    <img
+                        src="https://via.placeholder.com/100x50.png?text=Mentorship+Platform"
+                        alt="Mentorship Platform"
+                        className="md:w-16 w-14"
+                    />
+                </Link>
+
+                {/* Hamburger Icon for mobile */}
+                <div className="md:hidden z-40" onClick={toggleMenu}>
+                    {isMenuOpen ? <FiX size={24} /> : <FiMenu size={24} />}
                 </div>
 
-                {/* Right Side - Profile */}
-                <div className="col-span-2 bg-[#2a2c3a] p-6 rounded-md shadow-md">
-                    {/* Profile Header */}
-                    <div className="flex flex-col md:flex-row items-center gap-6 mb-6">
-                        <img
-                            src={profile.profileImage}
-                            alt="Profile"
-                            className="w-32 h-32 rounded-full border-4 border-gray-700"
-                        />
-                        <div>
-                            <h1 className="text-3xl font-bold mb-2">{profile.name}</h1>
-                            <p className="text-slate-400 mb-4">{profile.role}</p>
-                            <p className="text-slate-300">{profile.bio}</p>
-                        </div>
-                        {/* Redirect to profile setup page */}
-                        <Link
-                            to="/profile/setup"
-                            className="bg-blue-500 hover:bg-blue-600 px-6 py-2 text-sm rounded-md text-white mt-4 md:mt-0"
-                        >
-                            Edit Profile
-                        </Link>
-                    </div>
+                {/* Menu for larger screens */}
+                <div className="hidden md:flex items-center gap-5">
+                    <Link to="/" className={menuClass}>Home</Link>
+                    <Link to="/discover" className={menuClass}>Discover</Link>
+                    <Link to="/matchmaking" className={menuClass}>Matchmaking</Link>
 
-                    {/* Skills Section */}
-                    <div className="mt-8">
-                        <h2 className="text-xl font-semibold mb-4">Skills</h2>
-                        <div className="flex flex-wrap gap-3">
-                            {profile.skills.map((skill, index) => (
-                                <span
-                                    key={index}
-                                    className="bg-blue-500 text-white text-sm px-3 py-1 rounded-full"
-                                >
-                                    {skill}
-                                </span>
-                            ))}
-                        </div>
-                    </div>
+                    {isLoggedIn ? (
+                        <>
+                            <Link
+                                to={`/profile/${user.username}`}
+                                title="View Profile" // Tooltip
+                            >
+                                <FaRegUser className='text-white hover:text-blue-600 font-bold' />
+                            </Link>
+                            <button
+                                className='bg-red-600 text-white text-xs py-1 px-3 rounded-md hover:bg-red-700 transition duration-300'
+                                onClick={handleLogout}
+                            >
+                                Logout
+                            </button>
+                        </>
+                    ) : (
+                        <Link
+                            to="/login"
+                            className='bg-blue-500 text-white text-xs py-1 px-3 rounded-md hover:bg-blue-700 transition duration-300'
+                        >
+                            Login
+                        </Link>
+                    )}
+
+                </div>
+
+                {/* Dropdown Menu for mobile */}
+                <div className={`md:hidden fixed top-0 left-0 h-screen w-full bg-opacity-90 bg-black z-10 flex flex-col items-center justify-center gap-8 transition-transform ${isMenuOpen ? 'translate-x-0' : 'translate-x-full'}`}>
+                    <Link to="/" className="text-xl font-semibold text-white" onClick={toggleMenu}>Home</Link>
+                    <Link to="/discover" className="text-xl font-semibold text-white" onClick={toggleMenu}>Discover</Link>
+                    <Link to="/matchmaking" className="text-xl font-semibold text-white" onClick={toggleMenu}>Matchmaking</Link>
+
+                    {isLoggedIn ? (
+                        <>
+                            <Link to={`/profile/${user.username}`} className="text-xl font-semibold text-white" onClick={toggleMenu}>Profile</Link>
+                            <button className="text-xl font-semibold text-white" onClick={() => { handleLogout(); toggleMenu(); }}>Logout</button>
+                        </>
+                    ) : (
+                        <Link to="/login" className="text-xl font-semibold text-white" onClick={toggleMenu}>Login</Link>
+                    )}
                 </div>
             </div>
         </div>
     );
 };
 
-export default Profile;
+export default Navbar;

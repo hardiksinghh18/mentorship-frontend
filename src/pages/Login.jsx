@@ -36,7 +36,7 @@ const Login = () => {
         dispatch(setLoggedIn()); // Update Redux state if tokens are valid
         setTimeout(()=>{
           navigate('/discover')
-        },2000)
+        },10)
       } else {
         dispatch(setLoggedOut()); // Update Redux state if tokens are invalid
 

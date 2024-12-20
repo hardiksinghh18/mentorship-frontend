@@ -1,116 +1,217 @@
 import React, { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
-import { Link, useNavigate } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import axios from "axios";
+import { toast } from "react-toastify";
+import { setLoggedIn, setLoggedOut } from "../redux/actions/authActions";
+import ProfileInfo from "../components/sections/ProfileInfo";
+import Notifications from "../components/sections/Notifications";
+import Connections from "../components/sections/Connections";
 
 const Profile = () => {
     const { isLoggedIn, user } = useSelector((state) => state.auth);
+    const { username } = useParams();
+    const dispatch = useDispatch();
     const navigate = useNavigate();
 
-    // Dummy profile data
-    const [profile, setProfile] = useState({
-        name: "John Doe",
-        role: "Mentor",
-        bio: "Passionate full-stack developer and mentor with 5+ years of experience.",
-        skills: ["React", "Node.js", "JavaScript", "Tailwind CSS"],
-        profileImage: "https://via.placeholder.com/150", // Replace with actual image URL
-        connections: [
-            { id: 1, name: "Emily Davis", role: "Mentee" },
-            { id: 2, name: "Michael Johnson", role: "Mentee" },
-        ],
-    });
+    const [authLoading, setAuthLoading] = useState(true);
+    const [profile, setProfile] = useState(null);
+    const [loadingProfile, setLoadingProfile] = useState(false);
+    const [error, setError] = useState(null);
+    const [requests, setRequests] = useState(null);
 
-    const [isEditing, setIsEditing] = useState(false);
-    const [formData, setFormData] = useState({ ...profile });
+    // Verify Authentication API Request
+    const verifyAuth = async () => {
+        try {
+            const response = await axios.get(
+                `${process.env.REACT_APP_BACKEND_BASE_URL}/auth/verify-tokens`,
+                { withCredentials: true }
+            );
 
-    // Handle profile edits
-    const handleEditToggle = () => {
-        setIsEditing(!isEditing);
-        setFormData({ ...profile }); // Reset form data
+            if (response.data.loggedIn) {
+                dispatch(setLoggedIn());
+            } else {
+                dispatch(setLoggedOut());
+                navigate("/login"); // Redirect to login page if not logged in
+            }
+        } catch (error) {
+            console.error("Error verifying authentication:", error);
+            dispatch(setLoggedOut());
+            navigate("/login"); // Redirect to login page on error
+        } finally {
+            setAuthLoading(false);
+        }
     };
 
-    const handleInputChange = (e) => {
-        const { name, value } = e.target;
-        setFormData({ ...formData, [name]: value });
-    };
+    // Fetch User Profile by Username
+    const fetchUserProfile = async () => {
+        try {
+            setLoadingProfile(true);
 
-    const handleSaveChanges = () => {
-        setProfile({ ...formData });
-        setIsEditing(false);
+            const response = await axios.get(
+                `${process.env.REACT_APP_BACKEND_BASE_URL}/users/${username}`,
+                { withCredentials: true }
+            );
+
+            if (response.data) {
+                setProfile({
+                    id: response?.data.user.id,
+                    fullName: response?.data.user.fullName || response?.data.user.username || "Guest",
+                    username: response?.data.user.username || "Not provided",
+                    role: response?.data.user.role || "Not specified",
+                    bio: response?.data.user.bio || "No bio available.",
+                    skills: response?.data.user.skills
+                        ? response?.data.user.skills.split(",").map((skill) => skill.trim())
+                        : [],
+                    interests: response?.data.user.interests
+                        ? response?.data.user.interests.split(",").map((interest) => interest.trim())
+                        : [],
+                    email: response?.data.user.email || "Not provided",
+                    receivedRequests: response?.data.user.receivedRequests,
+                    sentRequests: response?.data.user.sentRequests,
+                });
+            } else {
+                setError("User not found.");
+            }
+        } catch (error) {
+            console.error("Error fetching profile:", error);
+            setError("Failed to load profile. Please try again later.");
+        } finally {
+            setLoadingProfile(false);
+        }
     };
 
     useEffect(() => {
-        // If the user is not logged in, redirect to the login page
-        if (!isLoggedIn) {
-            navigate('/login');
+        verifyAuth();
+    }, [dispatch, navigate]);
+
+    useEffect(() => {
+        if (isLoggedIn && username) {
+            fetchUserProfile();
         }
-    }, [isLoggedIn, navigate]);
+    }, [isLoggedIn, username]);
+
+    const fetchRequests = async () => {
+        try {
+            const response = await axios.get(`${process.env.REACT_APP_BACKEND_BASE_URL}/api/connections/requests/${username}`);
+            setRequests(response?.data.requests);
+        } catch (error) {
+            console.error('Error fetching requests', error);
+        }
+    };
+
+    useEffect(() => {
+        fetchRequests();
+    }, [user]);
+
+    const handleRequest = async (receiverId, senderId, status) => {
+        try {
+            const response = await axios.put(
+                `${process.env.REACT_APP_BACKEND_BASE_URL}/api/connections/requests/handleRequest`,
+                { receiverId, senderId, status },
+                { withCredentials: true }
+            );
+            if (response.data.success) {
+                // Update the requests state to reflect the change
+                setRequests((prevRequests) =>
+                    prevRequests.filter((request) => request.id !== senderId)
+                );
+                fetchRequests();
+                toast.success(`Request ${status}`);
+            }
+        } catch (error) {
+            console.error('Error accepting request:', error);
+            alert('Failed to accept request. Please try again.');
+        }
+    };
+
+    const handleSendRequest = async (receiverId, senderId) => {
+        try {
+            const response = await axios.post(`${process.env.REACT_APP_BACKEND_BASE_URL}/api/connections/send`, { receiverId, senderId });
+            toast.success(response?.data.message);
+        } catch (error) {
+            toast.error(error.response?.data?.message || "Error sending request");
+            console.error(error.response?.data?.message);
+        }
+    };
+
+    const handleRemoveConnection = async (connection) => {
+        try {
+            const response = await axios.delete(`${process.env.REACT_APP_BACKEND_BASE_URL}/api/connections/remove`, {
+                data: {
+                    senderId: connection.sender.id,
+                    receiverId: connection.receiverId,
+                },
+                withCredentials: true,
+            });
+
+            if (response.data.success) {
+                setProfile((prevProfile) => ({
+                    ...prevProfile,
+                    connections: prevProfile.connections.filter((conn) => conn.id !== connection.id),
+                }));
+
+                fetchRequests();
+                toast.success('Connection removed successfully.');
+            } else {
+                toast.error(response.data.error || 'Failed to remove connection.');
+            }
+        } catch (error) {
+            console.error('Error removing connection:', error);
+            toast.error('An error occurred while removing the connection.');
+        }
+    };
+
+    const isOwnProfile = user?.email === profile?.email;
+
+    if (authLoading || loadingProfile) {
+        return (
+            <div className="flex items-center justify-center h-screen bg-[#000104] text-white">
+                <div className="text-center">
+                    <h2 className="text-2xl font-semibold">Loading...</h2>
+                    <p className="text-gray-400">
+                        {authLoading ? "Verifying session..." : "Loading profile..."}
+                    </p>
+                </div>
+            </div>
+        );
+    }
+
+    if (error) {
+        return (
+            <div className="flex items-center justify-center h-screen bg-[#000104] text-white">
+                <div className="text-center">
+                    <h2 className="text-2xl font-semibold">Error</h2>
+                    <p>{error}</p>
+                    <Link
+                        to="/discover"
+                        className="bg-blue-600 hover:bg-blue-700 px-6 py-2 text-sm rounded-md text-white shadow-md hover:shadow-lg mt-4 inline-block"
+                    >
+                        Go Back to Discover
+                    </Link>
+                </div>
+            </div>
+        );
+    }
+
+    const pendingRequests = requests?.filter(request => request.status === 'pending');
+    const acceptedRequests = requests?.filter(request => request.status === 'accepted');
 
     return (
         <div className="min-h-screen bg-gradient-to-t from-slate-800 to-[#000104] text-white p-6 md:p-12">
-            <div className="max-w-6xl mx-auto  p-8 rounded-lg shadow-lg grid grid-cols-1 md:grid-cols-3 gap-8">
-                {/* Left Side - Connections */}
-               
-                <div className="col-span-1 p-6 rounded-md shadow-md">
-                    <h2 className="text-2xl font-semibold mb-4">Connections and followers</h2>
-                    <div className="flex flex-col gap-4">
-                        {profile.connections.length > 0 ? (
-                            profile.connections.map((connection) => (
-                                <div
-                                    key={connection.id}
-                                    className="flex items-center justify-between bg-[#1c1e29] p-4 rounded-md shadow-sm"
-                                >
-                                    <div>
-                                        <h3 className="text-lg font-semibold">{connection.name}</h3>
-                                        <p className="text-slate-400 text-sm">{connection.role}</p>
-                                    </div>
-                                    <button className="text-red-400 hover:underline text-sm">
-                                        Remove
-                                    </button>
-                                </div>
-                            ))
-                        ) : (
-                            <p className="text-slate-400">No connections yet.</p>
-                        )}
-                    </div>
-                </div>
+            <div className="max-w-6xl mx-auto px-2 py-6 md:px-8 md:py-8 rounded-lg grid grid-cols-1 md:grid-cols-3 gap-8">
+                {profile && <div className="md:col-span-2">
+                    <ProfileInfo profile={profile} isOwnProfile={isOwnProfile} currentUserId={user?.id} onSendRequest={handleSendRequest} />
+                </div>}
 
-                {/* Right Side - Profile */}
-                <div className="col-span-2 bg-[#2a2c3a] p-6 rounded-md shadow-md">
-                    {/* Profile Header */}
-                    <div className="flex flex-col md:flex-row items-center gap-6 mb-6">
-                        <img
-                            src={profile.profileImage}
-                            alt="Profile"
-                            className="w-32 h-32 rounded-full border-4 border-gray-700"
-                        />
-                        <div>
-                            <h1 className="text-3xl font-bold mb-2">{profile.name}</h1>
-                            <p className="text-slate-400 mb-4">{profile.role}</p>
-                            <p className="text-slate-300">{profile.bio}</p>
-                        </div>
-                        <Link
-                            to={'/profile/setup'}
-                            className="bg-blue-500 hover:bg-blue-600 px-6 py-2 text-sm rounded-md text-white mt-4 md:mt-0"
-                        >
-                            Edit Profile
-                        </Link>
-                    </div>
+                <div className="md:col-span-1 flex flex-col gap-8">
+                    {isOwnProfile && pendingRequests && (
+                        <Notifications pendingRequests={pendingRequests} handleRequest={handleRequest} />
+                    )}
 
-              
-                    {/* Skills Section */}
-                    <div className="mt-8">
-                        <h2 className="text-xl font-semibold mb-4">Skills</h2>
-                        <div className="flex flex-wrap gap-3">
-                            {profile.skills.map((skill, index) => (
-                                <span
-                                    key={index}
-                                    className="bg-blue-500 text-white text-sm px-3 py-1 rounded-full"
-                                >
-                                    {skill}
-                                </span>
-                            ))}
-                        </div>
-                    </div>
+                    {acceptedRequests && (
+                        <Connections acceptedRequests={acceptedRequests} isOwnProfile={isOwnProfile} handleRemoveConnection={handleRemoveConnection} />
+                    )}
                 </div>
             </div>
         </div>

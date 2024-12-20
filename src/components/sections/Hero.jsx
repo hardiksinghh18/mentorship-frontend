@@ -17,17 +17,17 @@ const HeroSection = () => {
                     </p>
                     <div className="flex flex-col md:flex-row gap-4 justify-center lg:justify-start">
                         <Link 
-                            to={"/register"}
+                            to={"/discover"}
                             className="px-6 py-3 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-300"
                         >
                             Get Started
                         </Link>
-                        <Link 
+                        {/* <Link 
                             to={"/about"}
                             className="px-6 py-3 rounded-lg border border-gray-500 text-gray-300 hover:text-white hover:border-white font-semibold transition-all duration-300"
                         >
                             Learn More
-                        </Link>
+                        </Link> */}
                     </div>
                 </div>
 
