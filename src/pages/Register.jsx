@@ -36,7 +36,7 @@ const navigate=useNavigate()
                 dispatch(setLoggedIn()); // Update Redux state if tokens are valid
                 setTimeout(()=>{
                     navigate('/discover')
-                  },10)
+                  },500)
             } else {
                 dispatch(setLoggedOut()); // Update Redux state if tokens are invalid
               

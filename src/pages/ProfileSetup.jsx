@@ -33,7 +33,7 @@ const ProfileSetup = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      console.log(formData);
+      
       const response = await axios.put(
         `${process.env.REACT_APP_BACKEND_BASE_URL}/api/profile/update/${user.email}`,
         formData,
