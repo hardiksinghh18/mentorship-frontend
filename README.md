@@ -33,7 +33,7 @@ A full-stack mentorship platform that allows users to connect as mentors and men
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/your-repo/mentorship-platform.git
+   git clone https://github.com/hardiksinghh18/mentorship-platform.git
    cd mentorship-platform
    ```
 
