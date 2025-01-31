@@ -77,9 +77,9 @@ const Matchmaking = () => {
 
         {/* Display Best Matches */}
         <div className="mt-12 w-full">
-          <h2 className="text-3xl font-semibold mb-4 text-center">Your Best Matches</h2>
           {bestMatches.length > 0 ? (
             <div className="space-y-4">
+              <h2 className="text-3xl font-semibold mb-4 text-center">Your Best Matches</h2>
             {bestMatches.map((item) => (
               item.matchScore > 0 ? (
                 <ProfileCard
@@ -89,7 +89,9 @@ const Matchmaking = () => {
                   matchScore={item.matchScore}
                   // onSendRequest={handleSendRequest}
                 />
-              ) : null
+              ) : (
+                <div className='w-full h-full flex justify-center items-center'>Sorry! No matches can be found for now.</div>
+              )
             ))}
           </div>
           
