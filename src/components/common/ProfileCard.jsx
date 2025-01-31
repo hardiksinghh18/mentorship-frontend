@@ -65,7 +65,7 @@ const ProfileCard = ({ profile, currentUserId, onSendRequest,matchScore }) => {
             {/* Middle Section: Profile Details */}
             <div className="flex-grow flex flex-col gap-2">
                 <div className="flex items-center gap-4 relative">
-                    <Link to={`/profile/${username}`} className="text-lg font-bold text-white hover:text-blue-500">{name}</Link>
+                    <Link to={`/profile/${username}`} className="text-lg font-bold text-white hover:text-blue-500">{username}</Link>
                     {role && (
                         <span className="bg-gradient-to-r  from-blue-700 to-purple-700 relative bottom-2 right-2 text-white text-[.6rem] font-bold px-2 py-1 rounded-lg shadow-md">
                             {role}

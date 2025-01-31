@@ -3,6 +3,7 @@ import heropng from '../../assets/heropng.webp'
 import { Link } from 'react-router-dom';
 
 const HeroSection = () => {
+    const email='johndoe@gmail.comjohndoe@gmail.comjohndoe@gmail.com'
     return (
         <section className="bg-gradient-to-b from-[#000104] to-slate-800 text-white min-h-screen flex items-center">
             <div className="container mx-auto mt-12 px-6 md:px-12 lg:px-20 flex flex-col-reverse lg:flex-row items-center gap-10">

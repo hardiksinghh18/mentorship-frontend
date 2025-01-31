@@ -56,7 +56,7 @@ const ProfileInfo = ({ profile, isOwnProfile, currentUserId, onSendRequest }) =>
         : 'bg-gradient-to-r from-blue-700 to-purple-700 hover:opacity-90'; // Default connect color
 
     return (
-        <div className="bg-[#0d0d0d] p-8 rounded-lg shadow-2xl max-w-4xl mx-auto">
+        <div className="bg-[#0d0d0d] p-8 rounded-lg shadow-2xl overflow-hidden max-w-4xl mx-auto">
         {/* Profile Header */}
         <div className="flex flex-col gap-4 md:flex-row md:gap-8 items-center">
           <div className="text-center md:text-left">
