@@ -21,6 +21,7 @@ import Matchmaking from './pages/Matchmaking';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
+
 function App() {
   const dispatch = useDispatch();
   const { isLoggedIn, user } = useSelector((state) => state.auth);
@@ -31,6 +32,7 @@ const [loading, setLoading] = useState(true);
   const verifyTokens = async () => {
     try {
       const response = await axios.get(`${process.env.REACT_APP_BACKEND_BASE_URL}/auth/verify-tokens`, { withCredentials: true });
+     
       if (response.data.loggedIn) {
        
         dispatch(setLoggedIn());
@@ -52,9 +54,9 @@ const [loading, setLoading] = useState(true);
   }, [dispatch,isLoggedIn]);
 
 
-  // if (loading) {
-  //   return <div>Loading...</div>; // Replace with a spinner or styled loading component
-  // }
+  if (loading) {
+    return <div>Loading...</div>; // Replace with a spinner or styled loading component
+  }
   return (
     <>
       {/* Toast Notifications */}

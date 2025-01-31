@@ -197,6 +197,11 @@ const Profile = () => {
     const pendingRequests = requests?.filter(request => request.status === 'pending');
     const acceptedRequests = requests?.filter(request => request.status === 'accepted');
 
+
+    if(!isLoggedIn){
+        navigate("/login"); // Redirect to login if user is not logged in
+      
+      }
     return (
         <div className="min-h-screen bg-gradient-to-t from-slate-800 to-[#000104] text-white p-6 md:p-12">
             <div className="max-w-6xl mx-auto px-2 py-6 md:px-8 md:py-8 rounded-lg grid grid-cols-1 md:grid-cols-3 gap-8">

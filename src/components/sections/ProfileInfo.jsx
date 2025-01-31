@@ -53,7 +53,7 @@ const ProfileInfo = ({ profile, isOwnProfile, currentUserId, onSendRequest }) =>
         ? 'bg-green-500 hover:bg-green-600' // Green for pending
         : buttonStatus === 'accepted'
         ? 'bg-gray-500 cursor-not-allowed' // Gray for connected
-        : 'bg-gradient-to-r from-blue-500 to-indigo-500 hover:opacity-90'; // Default connect color
+        : 'bg-gradient-to-r from-blue-700 to-purple-700 hover:opacity-90'; // Default connect color
 
     return (
         <div className="bg-[#0d0d0d] p-8 rounded-lg shadow-2xl max-w-4xl mx-auto">
@@ -80,11 +80,14 @@ const ProfileInfo = ({ profile, isOwnProfile, currentUserId, onSendRequest }) =>
             <div className="flex flex-wrap gap-3">
               {profile.skills.map((skill, index) => (
                 <span
-                  key={index}
-                  className="bg-blue-600 text-white text-sm px-4 py-2 rounded-full shadow-md hover:shadow-lg transition-all"
-                >
-                  {skill}
-                </span>
+                key={index}
+                className="text-white text-sm font-semibold px-3 py-1 rounded-full border border-gray-600 shadow-sm hover:shadow-md transition-all duration-300 relative overflow-hidden"
+                style={{
+                    background: "linear-gradient(to right, rgba(29, 78, 216, 0.15), rgba(126, 34, 206, 0.15)), #1f2937",
+                }}
+            >
+                {skill}
+            </span>
               ))}
             </div>
           ) : (
@@ -98,12 +101,15 @@ const ProfileInfo = ({ profile, isOwnProfile, currentUserId, onSendRequest }) =>
           {profile?.interests?.length ? (
             <div className="flex flex-wrap gap-3">
               {profile.interests.map((interest, index) => (
-                <span
-                  key={index}
-                  className="bg-green-600 text-white text-sm px-4 py-2 rounded-full shadow-md hover:shadow-lg transition-all"
-                >
-                  {interest}
-                </span>
+                 <span
+                 key={index}
+                 className="text-white text-sm font-semibold px-3 py-1 rounded-full border border-gray-600 shadow-sm hover:shadow-md transition-all duration-300 relative overflow-hidden"
+                 style={{
+                     background: "linear-gradient(to right, rgba(29, 78, 216, 0.15), rgba(126, 34, 206, 0.15)), #1f2937",
+                 }}
+             >
+                 {interest}
+             </span>
               ))}
             </div>
           ) : (
@@ -116,7 +122,7 @@ const ProfileInfo = ({ profile, isOwnProfile, currentUserId, onSendRequest }) =>
           <div className="mt-8 flex justify-center">
             <button
               onClick={handleButtonClick}
-              className={`${buttonStyle} text-white px-8 py-3 w-full md:w-auto rounded-md text-lg font-semibold transition-opacity`}
+              className={`${buttonStyle} text-white px-8 py-2 w-full md:w-auto rounded-md text-md  font-semibold transition-opacity`}
               disabled={buttonStatus === 'pending' || buttonStatus === 'accepted'} // Disable button when pending or connected
             >
               {buttonText}
@@ -129,7 +135,7 @@ const ProfileInfo = ({ profile, isOwnProfile, currentUserId, onSendRequest }) =>
           <div className="mt-8">
             <Link
               to="/profile/setup"
-              className="block bg-blue-600 w-full text-center hover:bg-blue-700 px-8 py-3 rounded-md text-white shadow-md hover:shadow-lg transition-all"
+              className="block bg-gradient-to-r from-blue-700 to-purple-700 w-full text-center hover:bg-blue-700 px-8 py-3 rounded-md text-white shadow-md hover:shadow-lg transition-all"
             >
               Edit Profile
             </Link>
