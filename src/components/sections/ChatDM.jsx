@@ -19,10 +19,20 @@ const ChatDM = () => {
   useEffect(() => {
     // Establish WebSocket connection
     const socketConnection = io(process.env.REACT_APP_BACKEND_BASE_URL, {
-      transports: ["websocket", "polling"], // Ensure both WebSocket and polling
+      transports: ['websocket', 'polling'], // Ensure both WebSocket and polling
       withCredentials: true,
     });
+
     setSocket(socketConnection);
+
+    // Debugging WebSocket connection
+    socketConnection.on('connect', () => {
+      console.log('Socket connected:', socketConnection.id);
+    });
+
+    socketConnection.on('connect_error', (error) => {
+      console.error('Socket connection error:', error);
+    });
 
     // Set up listener for incoming messages
     socketConnection.on('receiveMessage', (newMessage) => {
@@ -40,12 +50,18 @@ const ChatDM = () => {
     if (message.trim()) {
       try {
         const chatMessage = { senderId: user?.id, receiverId: id, createdAt: new Date().toISOString(), message };
-       
-        socket.emit('sendMessage', chatMessage);
+
+        if (socket) {
+          console.log('Sending message:', chatMessage);
+          socket.emit('sendMessage', chatMessage);
+        } else {
+          console.error('Socket not connected');
+        }
+
         await axios.post(`${process.env.REACT_APP_BACKEND_BASE_URL}/api/chat/send`, chatMessage);
         setMessage('');
       } catch (error) {
-        console.log(error);
+        console.log('Error sending message:', error);
       }
     }
   };
@@ -55,7 +71,7 @@ const ChatDM = () => {
       const response = await axios.get(`${process.env.REACT_APP_BACKEND_BASE_URL}/api/chat/${user?.id}/${id}`);
       setMessages(response?.data);
     } catch (error) {
-      console.log(error);
+      console.log('Error fetching messages:', error);
     }
   };
 
@@ -68,9 +84,10 @@ const ChatDM = () => {
       const response = await axios.get(`${process.env.REACT_APP_BACKEND_BASE_URL}/user/${id}`);
       setReceiver(response?.data.user);
     } catch (error) {
-      console.log(error);
+      console.log('Error fetching user details:', error);
     }
   };
+
   useEffect(() => {
     fetchUserDetails();
   }, []);
@@ -88,7 +105,7 @@ const ChatDM = () => {
           <Link to={'/messages'} className="text-gray-400 mr-4 hover:text-blue-500 transition-all text-3xl">
             <IoArrowBack />
           </Link>
-          <Link to={`/profile/${receiver?.id}`} className="flex items-center">
+          <Link to={`/profile/${receiver?.username}`} className="flex items-center">
             <div className="w-12 h-12 flex items-center justify-center bg-gray-800 rounded-full text-xl font-bold text-white">
               {receiver?.username?.charAt(0).toUpperCase()}
             </div>
@@ -99,24 +116,16 @@ const ChatDM = () => {
         {/* Messages Section */}
         <div className="h-96 overflow-y-auto p-4 space-y-4">
           {messages?.length > 0 ? messages?.map((msg, index) => (
-            <div
-              key={index}
-              className={`flex ${msg.senderId === user?.id ? 'justify-end' : 'justify-start'} gap-2 items-end`}
-            >
-              <div
-                className={` text-[.6rem] text-gray-400 ${msg.senderId === user?.id ? 'right-2' : 'left-2'}`}
-              >
+            <div key={index} className={`flex ${msg.senderId === user?.id ? 'justify-end' : 'justify-start'} gap-2 items-end`}>
+              <div className={`text-[.6rem] text-gray-400 ${msg.senderId === user?.id ? 'right-2' : 'left-2'}`}>
                 {formatTime(msg.createdAt)}
               </div>
-              <div
-                className={`relative max-w-xs px-4 py-1 rounded-2xl text-white ${msg.senderId === user?.id ? 'bg-blue-600' : 'bg-gray-700'
-                  }`}
-              >
+              <div className={`relative max-w-xs px-4 py-1 rounded-2xl text-white ${msg.senderId === user?.id ? 'bg-blue-600' : 'bg-gray-700'}`}>
                 <p>{msg.message}</p>
               </div>
             </div>
           )) : (
-            <div className='w-full h-full text-gray-600 flex justify-center items-center'>
+            <div className="w-full h-full text-gray-600 flex justify-center items-center">
               Start a new conversation
             </div>
           )}
