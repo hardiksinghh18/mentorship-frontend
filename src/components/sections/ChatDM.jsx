@@ -19,7 +19,7 @@ const ChatDM = () => {
   useEffect(() => {
     // Establish WebSocket connection
     const socketConnection = io(process.env.REACT_APP_BACKEND_BASE_URL, {
-      transports: ['websocket', 'polling'], // Ensure both WebSocket and polling
+      transports: ['websocket'], // Ensure both WebSocket and polling
       withCredentials: true,
     });
 
