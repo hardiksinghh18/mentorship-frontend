@@ -6,31 +6,41 @@ import { Link, useParams } from 'react-router-dom';
 import axios from 'axios';
 import { IoArrowBack } from 'react-icons/io5';
 
-const socket = io(process.env.REACT_APP_BACKEND_BASE_URL, {
-  transports: ["websocket", "polling"], // Ensure both WebSocket and polling
-  withCredentials: true,
-});
-
 const ChatDM = () => {
   const { user } = useSelector((state) => state.auth);
   const [message, setMessage] = useState('');
   const [messages, setMessages] = useState([]);
   const [receiver, setReceiver] = useState([]);
   const { id } = useParams();
+  
+  // Declare socket here, so it can be initialized inside useEffect
+  const [socket, setSocket] = useState(null);
 
   useEffect(() => {
-    socket.on('receiveMessage', (newMessage) => {
+    // Establish WebSocket connection
+    const socketConnection = io(process.env.REACT_APP_BACKEND_BASE_URL, {
+      transports: ["websocket", "polling"], // Ensure both WebSocket and polling
+      withCredentials: true,
+    });
+    setSocket(socketConnection);
+
+    // Set up listener for incoming messages
+    socketConnection.on('receiveMessage', (newMessage) => {
       setMessages((prev) => [...prev, newMessage]);
     });
 
-    return () => socket.off('receiveMessage');
+    // Clean up socket connection on unmount
+    return () => {
+      socketConnection.off('receiveMessage');
+      socketConnection.disconnect();
+    };
   }, []);
 
   const sendMessage = async () => {
     if (message.trim()) {
       try {
         const chatMessage = { senderId: user?.id, receiverId: id, createdAt: new Date().toISOString(), message };
-        console.log(chatMessage);
+       
         socket.emit('sendMessage', chatMessage);
         await axios.post(`${process.env.REACT_APP_BACKEND_BASE_URL}/api/chat/send`, chatMessage);
         setMessage('');
@@ -52,6 +62,7 @@ const ChatDM = () => {
   useEffect(() => {
     fetchMessages();
   }, []);
+
   const fetchUserDetails = async () => {
     try {
       const response = await axios.get(`${process.env.REACT_APP_BACKEND_BASE_URL}/user/${id}`);
@@ -73,20 +84,17 @@ const ChatDM = () => {
     <div className="flex justify-center items-center p-6">
       <div className="w-full my-10 max-w-2xl bg-[#0e0e0e] rounded-xl shadow-xl overflow-hidden">
         {/* Header with Receiver's name and profile */}
-        <Link to={`/profile/${receiver?.id}`} className="flex items-center p-4 bg-gray-900">
-          {/* <img 
-            src="https://placeimg.com/50/50/people" 
-            alt="Receiver" 
-            className="w-12 h-12 rounded-full object-cover"
-          /> */}
-            <Link to={'/messages'} className="text-gray-400 mr-4 hover:text-blue-500 transition-all text-3xl">
-                              <IoArrowBack />
-                          </Link>
-          <div className="w-12 h-12 flex items-center justify-center bg-gray-800 rounded-full text-xl font-bold text-white">
-            {receiver?.username?.charAt(0).toUpperCase()}
-          </div>
-          <h2 className="ml-4 text-xl font-bold text-white">{receiver?.username || receiver?.fullName}</h2>
-        </Link>
+        <div className="flex items-center p-4 bg-gray-900">
+          <Link to={'/messages'} className="text-gray-400 mr-4 hover:text-blue-500 transition-all text-3xl">
+            <IoArrowBack />
+          </Link>
+          <Link to={`/profile/${receiver?.id}`} className="flex items-center">
+            <div className="w-12 h-12 flex items-center justify-center bg-gray-800 rounded-full text-xl font-bold text-white">
+              {receiver?.username?.charAt(0).toUpperCase()}
+            </div>
+            <h2 className="ml-4 text-xl font-bold text-white">{receiver?.username || receiver?.fullName}</h2>
+          </Link>
+        </div>
 
         {/* Messages Section */}
         <div className="h-96 overflow-y-auto p-4 space-y-4">
@@ -105,9 +113,7 @@ const ChatDM = () => {
                   }`}
               >
                 <p>{msg.message}</p>
-
               </div>
-
             </div>
           )) : (
             <div className='w-full h-full text-gray-600 flex justify-center items-center'>
