@@ -6,7 +6,10 @@ import { Link, useParams } from 'react-router-dom';
 import axios from 'axios';
 import { IoArrowBack } from 'react-icons/io5';
 
-const socket = io(process.env.REACT_APP_BACKEND_BASE_URL);
+const socket = io(process.env.REACT_APP_BACKEND_BASE_URL, {
+  transports: ["websocket", "polling"], // Ensure both WebSocket and polling
+  withCredentials: true,
+});
 
 const ChatDM = () => {
   const { user } = useSelector((state) => state.auth);
