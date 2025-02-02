@@ -10,7 +10,7 @@ const Discover = () => {
   const [filteredUsers, setFilteredUsers] = useState([]);
   const [loadingProfiles, setLoadingProfiles] = useState(false);
   const [error, setError] = useState(null);
-  const [filters, setFilters] = useState({ role: "", skills: "", interests: "" }); // Add state for filters
+  const [filters, setFilters] = useState({ role: "", skills: "", interests: "",name:'' }); // Add state for filters
   const { user, isLoggedIn } = useSelector((state) => state.auth);
   const navigate = useNavigate(); // Initialize the navigate hook
   const fetchUsers = async () => {
@@ -57,15 +57,18 @@ const Discover = () => {
   };
 
   const applyFilters = () => {
-    const { role, skills, interests } = filters;
+    const { role, skills, interests,name } = filters;
 
     // Split skills and interests by comma and trim extra spaces
     const skillsArray = skills ? skills.split(',').map((skill) => skill.trim().toLowerCase()) : [];
     const interestsArray = interests ? interests.split(',').map((interest) => interest.trim().toLowerCase()) : [];
 
     const filtered = users.filter((user) => {
+   
       const matchesRole = role ? user.role?.toLowerCase().includes(role.toLowerCase()) : true;
-
+      const matchesName= name? user?.name?.toLowerCase().includes(name.toLowerCase()):true
+      const matchesUserName= name? user?.username?.toLowerCase().includes(name.toLowerCase()):true
+      
       const matchesSkills = skillsArray.length
         ? skillsArray.some((skill) => user.skills.some((userSkill) => userSkill.toLowerCase().includes(skill)))
         : true;
@@ -74,7 +77,7 @@ const Discover = () => {
         ? interestsArray.some((interest) => user.interests.some((userInterest) => userInterest.toLowerCase().includes(interest)))
         : true;
 
-      return matchesRole && matchesSkills && matchesInterests;
+      return matchesRole && matchesSkills && matchesInterests && matchesUserName;
     });
 
     setFilteredUsers(filtered);
@@ -135,13 +138,13 @@ const Discover = () => {
 
       <div className=" flex justify-start items-start gap-12 ">
         {/* Filter Section */}
-        <div className="mb-12  rounded-lg shadow-md flex flex-col gap-4 justify-center  sm:gap-3 md:gap-4 lg:gap-6">
+        <div className="mb-12  rounded-lg shadow-md flex flex-col gap-2 justify-center  sm:gap-2 md:gap-2 lg:gap-4">
           <div className="w-full  relative">
             <select
               name="role"
               value={filters.role}
               onChange={handleFilterChange}
-              className="bg-gray-900 text-white px-4 py-2 rounded-md border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 w-full cursor-pointer appearance-none"
+              className="bg-gray-900 text-white text-sm px-4 py-2 rounded-md border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 w-full cursor-pointer appearance-none"
             >
               <option value="" disabled className="text-gray-400">
                 Select Role
@@ -168,7 +171,16 @@ const Discover = () => {
             </div>
           </div>
 
-
+          <div className="w-full ">
+            <input
+              type="text"
+              name="name"
+              placeholder="Search by Name"
+              value={filters.name}
+              onChange={handleFilterChange}
+              className="bg-gray-900 text-white text-sm px-4 py-2 rounded-md border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-gray-400 w-full"
+            />
+          </div>
           <div className="w-full ">
             <input
               type="text"
@@ -176,7 +188,7 @@ const Discover = () => {
               placeholder="Filter by Skills"
               value={filters.skills}
               onChange={handleFilterChange}
-              className="bg-gray-900 text-white px-4 py-2 rounded-md border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-gray-400 w-full"
+              className="bg-gray-900 text-white text-sm px-4 py-2 rounded-md border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-gray-400 w-full"
             />
           </div>
           <div className="w-full ">
@@ -186,7 +198,7 @@ const Discover = () => {
               placeholder="Filter by Interests"
               value={filters.interests}
               onChange={handleFilterChange}
-              className="bg-gray-900 text-white px-4 py-2 rounded-md border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-gray-400 w-full"
+              className="bg-gray-900 text-white text-sm px-4 py-2 rounded-md border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-gray-400 w-full"
             />
           </div>
         </div>

@@ -23,10 +23,15 @@ const Matchmaking = () => {
         username: user?.username,
         name: user?.fullName || user?.username || "Anonymous",
         role: user?.role,
-        skills: user?.skills ? user?.skills.split(",").map((skill) => skill.trim()).slice(0, 6) : [],
-        interests: user?.interests ? user?.interests.split(",").map((interest) => interest.trim()).slice(0, 6) : [],
+        skills: user?.skills
+          ? user?.skills.split(",").map((skill) => skill.trim()).slice(0, 6)
+          : [],
+        interests: user?.interests
+          ? user?.interests.split(",").map((interest) => interest.trim()).slice(0, 6)
+          : [],
+        receivedRequests: user?.receivedRequests,
+        sentRequests: user?.sentRequests,
       }));
-
       setUsers(normalizedUsers);
     } catch (error) {
       console.error("Error fetching user profiles:", error);
@@ -67,19 +72,28 @@ const Matchmaking = () => {
   if (!isLoggedIn) {
     navigate("/login");
   }
-
+ 
+  if (loadingProfiles) {
+    return (
+      <div className="flex items-center justify-center h-screen bg-[#000104] text-white">
+        <div className="text-center">
+          <h2 className="text-xl font-semibold">Loading profiles...</h2>
+        </div>
+      </div>
+    );
+  }
   const bestMatches = getBestMatches();
 
   return (
     <div className="min-h-screen bg-gradient-to-t flex items-center justify-center from-slate-800 to-[#000104] text-white py-12 px-6 md:px-20">
       <div className="flex items-center justify-center flex-col">
+      <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 mt-4">Your Best Matches</h2>
 
 
         {/* Display Best Matches */}
         <div className="mt-12 w-full">
           {bestMatches.length > 0 ? (
             <div className="space-y-4">
-              <h2 className="text-3xl font-semibold mb-4 text-center">Your Best Matches</h2>
               {bestMatches.map((item) => (
                 item.matchScore > 0 ? (
                   <ProfileCard
@@ -87,7 +101,7 @@ const Matchmaking = () => {
                     profile={item}
                     currentUserId={user?.id}
                     matchScore={item.matchScore}
-                  // onSendRequest={handleSendRequest}
+                  
                   />
                 ) : null
               ))}

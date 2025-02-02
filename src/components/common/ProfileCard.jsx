@@ -1,7 +1,9 @@
+import axios from "axios";
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import { toast } from "react-toastify";
 
-const ProfileCard = ({ profile, currentUserId, onSendRequest,matchScore }) => {
+const ProfileCard = ({ profile, currentUserId,matchScore }) => {
     const { id, name, role, skills, username, interests, receivedRequests, sentRequests } = profile;
 
     const [buttonStatus, setButtonStatus] = useState("connect");
@@ -22,6 +24,16 @@ const ProfileCard = ({ profile, currentUserId, onSendRequest,matchScore }) => {
         }
         return "connect";
     };
+    const onSendRequest = async (receiverId, senderId) => {
+        try {
+          const response = await axios.post(`${process.env.REACT_APP_BACKEND_BASE_URL}/api/connections/send`, { receiverId, senderId });
+          toast.success(response.data.message);
+        } catch (error) {
+          toast.error(error.response?.data?.message || "Error sending request");
+          console.error(error.response?.data?.message);
+        }
+      };
+
 
     useEffect(() => {
         setButtonStatus(determineButtonStatus());
@@ -51,13 +63,13 @@ const ProfileCard = ({ profile, currentUserId, onSendRequest,matchScore }) => {
     return (
         <div className="bg-[#0d0d0d] w-[45rem] relative px-4 py-6 rounded-2xl shadow-xl flex flex-col md:flex-row items-center gap-8">
            
-           {matchScore&&  <span className="bg-gradient-to-r absolute top-4 right-4 from-blue-700 to-purple-700 text-white text-xs font-bold px-3 py-1 rounded-lg shadow-md">
+           {matchScore&&  <span className="bg-gradient-to-r  from-blue-700 to-purple-700 absolute top-4 right-4 text-white text-xs font-bold px-3 py-1 rounded-lg shadow-md">
                     Match-score :  {matchScore}
                         </span>}
             {/* Left Section: Name and Role */}
             <div>
                 <Link to={`/profile/${username}`} className="flex-shrink-0 w-20 h-20 bg-gray-700 rounded-full flex items-center justify-center text-white font-bold text-xl">
-                    {name[0]}
+                    {name[0].toUpperCase()}
                 </Link>
             </div>
 

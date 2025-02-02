@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 
 const Notifications = ({ pendingRequests, handleRequest }) => {
     return (
-        <div className="bg-[#0d0d0d] p-6 flex flex-col gap-2 rounded-md shadow-xl">
+        <div className="bg-[#0d0d0d]  p-6 flex flex-col gap-2 rounded-md shadow-xl">
             <h2 className="text-xl font-semibold mb-4">Requests </h2>
             {pendingRequests.length > 0 ? (
                 pendingRequests.map((request) => (

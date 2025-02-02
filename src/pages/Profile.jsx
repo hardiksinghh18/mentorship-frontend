@@ -113,6 +113,7 @@ const Profile = () => {
             );
             if (response.data.success) {
                 // Update the requests state to reflect the change
+                
                 setRequests((prevRequests) =>
                     prevRequests.filter((request) => request.id !== senderId)
                 );

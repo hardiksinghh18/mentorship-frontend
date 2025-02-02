@@ -5,7 +5,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { setLoggedOut } from '../../redux/actions/authActions';
 import { FaRegUser } from "react-icons/fa";
 import { IoIosLogOut } from "react-icons/io";
-
+import { RiChatSmile3Line } from "react-icons/ri";
 const Navbar = () => {
     const [showNavbar, setShowNavbar] = useState(true);
     const [lastScrollY, setLastScrollY] = useState(0);
@@ -43,7 +43,7 @@ const Navbar = () => {
     }, [lastScrollY]);
 
     return (
-        <div className={`fixed text-white top-0 z-50 mb-4  w-screen transition-transform duration-500 ${showNavbar ? 'translate-y-0' : '-translate-y-full'}`}>
+        <div className={`fixed text-white top-0  mb-16  w-screen transition-transform duration-500 ${showNavbar ? 'translate-y-0' : '-translate-y-full'}`}>
             <div className={`max-w-7xl flex items-center justify-between transition-all duration-500 py-4 px-4 md:px-8  shadow-sm bg-gradient-to-t from-[#000104] to-slate-800 mx-auto`}>
                 <Link to="/">
                     <img
@@ -62,22 +62,25 @@ const Navbar = () => {
                 <div className="hidden md:flex items-center gap-5">
                     <Link to="/" className={menuClass}>Home</Link>
                     <Link to="/discover" className={menuClass}>Discover</Link>
-                    <Link to="/matchmaking" className={menuClass}>Matchmaking</Link>
+                    
+                   
 
                     {isLoggedIn ? (
                         <>
+                        <Link to="/matchmaking" className={menuClass}>Matchmaking</Link>
+                         <Link to="/messages" className='text-xl' ><RiChatSmile3Line /></Link>
                             <Link
                                 to={`/profile/${user.username}`}
                                 title="View Profile" // Tooltip
                             >
                                 <FaRegUser className='text-white hover:text-blue-600 font-bold' />
                             </Link>
-                            <button
+                            {/* <button
                                 className='bg-red-600 text-white text-xs py-1 px-3 rounded-md hover:bg-red-700 transition duration-300'
                                 onClick={handleLogout}
                             >
                                 Logout
-                            </button>
+                            </button> */}
                         </>
                     ) : (
                         <Link

@@ -20,6 +20,8 @@ import Matchmaking from './pages/Matchmaking';
 // Toast Notifications
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import ChatSection from './pages/ChatSection';
+import ChatDM from './components/sections/ChatDM';
 
 
 function App() {
@@ -55,7 +57,11 @@ const [loading, setLoading] = useState(true);
 
 
   if (loading) {
-    return <div>Loading...</div>; // Replace with a spinner or styled loading component
+   return <div className="flex items-center justify-center h-screen bg-[#000104] text-white">
+        <div className="text-center">
+          <h2 className="text-xl font-semibold">Loading...</h2>
+        </div>
+      </div>// Replace with a spinner or styled loading component
   }
   return (
     <>
@@ -82,6 +88,8 @@ const [loading, setLoading] = useState(true);
         <Route path="/" element={<Home />} />
         <Route path="/discover" element={<Discover />} />
         <Route path="/matchmaking" element={<Matchmaking />} />
+        <Route path="/messages" element={<ChatSection />} />
+        <Route path="/messages/:id" element={<ChatDM />} />
         <Route path="/profile/:username" element={<Profile />} />
         <Route path="/mentorship/:id" element={<MentorDetails />} />
         <Route path="/register" element={<Register />} />
