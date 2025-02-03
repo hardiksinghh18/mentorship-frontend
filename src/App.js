@@ -84,7 +84,7 @@ const [loading, setLoading] = useState(true);
       <Navbar isLoggedIn={isLoggedIn} />
 
       {/* Routes */}
-      <Routes>
+      <Routes >
         <Route path="/" element={<Home />} />
         <Route path="/discover" element={<Discover />} />
         <Route path="/matchmaking" element={<Matchmaking />} />

@@ -6,6 +6,7 @@ import { setLoggedOut } from '../../redux/actions/authActions';
 import { FaRegUser } from "react-icons/fa";
 import { IoIosLogOut } from "react-icons/io";
 import { RiChatSmile3Line } from "react-icons/ri";
+
 const Navbar = () => {
     const [showNavbar, setShowNavbar] = useState(true);
     const [lastScrollY, setLastScrollY] = useState(0);
@@ -13,6 +14,7 @@ const Navbar = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const { isLoggedIn, user } = useSelector((state) => state.auth);
+
     const menuClass = "text-xs md:text-sm lg:text-sm font-semibold text-center relative bg-clip-text text-transparent bg-gradient-to-b from-neutral-800 via-white to-white hover:scale-105 transition-all duration-500";
 
     const handleLogout = () => {
@@ -43,8 +45,9 @@ const Navbar = () => {
     }, [lastScrollY]);
 
     return (
-        <div className={`fixed text-white top-0  mb-16  w-screen transition-transform duration-500 ${showNavbar ? 'translate-y-0' : '-translate-y-full'}`}>
-            <div className={`max-w-7xl flex items-center justify-between transition-all duration-500 py-4 px-4 md:px-8  shadow-sm bg-gradient-to-t from-[#000104] to-slate-800 mx-auto`}>
+        <div className={` text-white  w-full transition-transform duration-500 z-50 ${showNavbar ? 'translate-y-0' : '-translate-y-full'}`}>
+            <div className="max-w-7xl flex items-center justify-between transition-all duration-500 py-4 px-4 md:px-8 shadow-sm bg-gradient-to-t from-[#000104] to-slate-800 mx-auto">
+                {/* Logo */}
                 <Link to="/">
                     <img
                         src="https://via.placeholder.com/100x50.png?text=Mentorship+Platform"
@@ -54,34 +57,26 @@ const Navbar = () => {
                 </Link>
 
                 {/* Hamburger Icon for mobile */}
-                <div className="md:hidden z-40" onClick={toggleMenu}>
-                    {isMenuOpen ? <FiX size={24} /> : <FiMenu size={24} />}
-                </div>
+                <button className="md:hidden z-40 focus:outline-none" onClick={toggleMenu}>
+                    {isMenuOpen ? <FiX size={28} /> : <FiMenu size={28} />}
+                </button>
 
                 {/* Menu for larger screens */}
                 <div className="hidden md:flex items-center gap-5">
                     <Link to="/" className={menuClass}>Home</Link>
                     <Link to="/discover" className={menuClass}>Discover</Link>
-                    
-                   
+                    {isLoggedIn && <Link to="/matchmaking" className={menuClass}>Matchmaking</Link>}
+                    {isLoggedIn && <Link to="/messages" className={menuClass}>Chats</Link>}
 
                     {isLoggedIn ? (
-                        <>
-                        <Link to="/matchmaking" className={menuClass}>Matchmaking</Link>
-                         <Link to="/messages" className='text-xl' ><RiChatSmile3Line /></Link>
-                            <Link
-                                to={`/profile/${user.username}`}
-                                title="View Profile" // Tooltip
-                            >
+                        <div className="flex items-center gap-4">
+                            <Link to={`/profile/${user.username}`} title="View Profile">
                                 <FaRegUser className='text-white hover:text-blue-600 font-bold' />
                             </Link>
-                            {/* <button
-                                className='bg-red-600 text-white text-xs py-1 px-3 rounded-md hover:bg-red-700 transition duration-300'
-                                onClick={handleLogout}
-                            >
-                                Logout
-                            </button> */}
-                        </>
+                            <button className="text-red-500 hover:text-red-700 transition" onClick={handleLogout}>
+                                <IoIosLogOut size={20} />
+                            </button>
+                        </div>
                     ) : (
                         <Link
                             to="/login"
@@ -90,23 +85,25 @@ const Navbar = () => {
                             Login
                         </Link>
                     )}
-
                 </div>
 
-                {/* Dropdown Menu for mobile */}
-                <div className={`md:hidden fixed top-0 left-0 h-screen w-full bg-opacity-90 bg-black z-10 flex flex-col items-center justify-center gap-8 transition-transform ${isMenuOpen ? 'translate-x-0' : 'translate-x-full'}`}>
-                    <Link to="/" className="text-xl font-semibold text-white" onClick={toggleMenu}>Home</Link>
-                    <Link to="/discover" className="text-xl font-semibold text-white" onClick={toggleMenu}>Discover</Link>
-                    <Link to="/matchmaking" className="text-xl font-semibold text-white" onClick={toggleMenu}>Matchmaking</Link>
-
-                    {isLoggedIn ? (
-                        <>
-                            <Link to={`/profile/${user.username}`} className="text-xl font-semibold text-white" onClick={toggleMenu}>Profile</Link>
-                            <button className="text-xl font-semibold text-white" onClick={() => { handleLogout(); toggleMenu(); }}>Logout</button>
-                        </>
-                    ) : (
-                        <Link to="/login" className="text-xl font-semibold text-white" onClick={toggleMenu}>Login</Link>
-                    )}
+                {/* Mobile Menu (Sliding Drawer) */}
+                <div className={`md:hidden absolute top-0 left-0 h-screen w-full bg-black bg-opacity-90 transform transition-all duration-300 ${isMenuOpen ? "opacity-100 scale-100" : "opacity-0 scale-95 pointer-events-none"}`}>
+                    <div className="flex flex-col items-center justify-center h-full gap-8">
+                        <Link to="/" className="text-xl font-semibold text-white" onClick={toggleMenu}>Home</Link>
+                        <Link to="/discover" className="text-xl font-semibold text-white" onClick={toggleMenu}>Discover</Link>
+                        {isLoggedIn && <Link to="/matchmaking" className="text-xl font-semibold text-white" onClick={toggleMenu}>Matchmaking</Link>}
+                        {isLoggedIn && <Link to="/messages" className="text-xl font-semibold text-white" onClick={toggleMenu}>Chats</Link>}
+                        
+                        {isLoggedIn ? (
+                            <>
+                                <Link to={`/profile/${user.username}`} className="text-xl font-semibold text-white" onClick={toggleMenu}>Profile</Link>
+                                <button className="text-xl font-semibold text-red-500" onClick={() => { handleLogout(); toggleMenu(); }}>Logout</button>
+                            </>
+                        ) : (
+                            <Link to="/login" className="text-xl font-semibold text-white" onClick={toggleMenu}>Login</Link>
+                        )}
+                    </div>
                 </div>
             </div>
         </div>

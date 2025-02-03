@@ -1,146 +1,465 @@
-import React, { useEffect, useState } from "react";
+
+
+import React, { useEffect, useRef, useState } from "react";
+import io from "socket.io-client";
+import axios from "axios";
 import { useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
+import { FaPaperPlane, FaRegSmile } from "react-icons/fa";
 import { IoArrowBack } from "react-icons/io5";
-import { FaUserCircle } from "react-icons/fa";
-import axios from "axios";
+import { BiSearch } from "react-icons/bi";
 
 const ChatSection = () => {
-    const { isLoggedIn, user } = useSelector((state) => state.auth);
-    const [name, setName] = useState('');
-    const [allChats, setAllChats] = useState(null);
-    const [filteredChats, setFilteredChats] = useState(null);
-    const [loading, setLoading] = useState(true);
-    const navigate = useNavigate();
+  const { user, isLoggedIn } = useSelector((state) => state.auth);
+  const [message, setMessage] = useState("");
+  const [messages, setMessages] = useState([]);
+  const [allChats, setAllChats] = useState(null);
+  const [filteredChats, setFilteredChats] = useState(null);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [receiver, setReceiver] = useState(null);
+  const [currentId, setCurrentId] = useState('');
+  const [isChatOpen, setIsChatOpen] = useState(false);
+  const navigate = useNavigate();
+  const messagesEndRef = useRef(null); // Ref to track chat end
+  const [socket, setSocket] = useState(null);
 
-    const handleFilterChange = (e) => {
-        setName(e.target.value);
+ 
+
+  // Initialize Socket Connection
+  useEffect(() => {
+    const socketConnection = io(process.env.REACT_APP_BACKEND_BASE_URL, {
+      transports: ["websocket"],
+    });
+    setSocket(socketConnection);
+
+    socketConnection.on("receiveMessage", (newMessage) => {
+      setMessages((prev) => [...prev, newMessage]);
+    });
+
+    return () => {
+      socketConnection.disconnect();
     };
+  }, []);
 
-    const fetchRequests = async () => {
-        try {
-            const response = await axios.get(`${process.env.REACT_APP_BACKEND_BASE_URL}/api/connections/requests/${user?.username}`);
-            const connections = response?.data.requests.filter(request => request.status === 'accepted');
-            setAllChats(connections);
-            setFilteredChats(connections);
-            setLoading(false);
-        } catch (error) {
-            console.error('Error fetching requests', error);
-        }
-    };
+  // Scroll to bottom when messages change
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
 
-    const applySearchFilter = () => {
-        if (!name) {
-            setFilteredChats(allChats);
-            return;
-        }
-        
-        const matchingChats = allChats?.filter((chat) =>
-            chat.sender.username.toLowerCase().includes(name.toLowerCase())
-        );
-        setFilteredChats(matchingChats);
-        
-    };
-
-    useEffect(() => {
-        fetchRequests();
-    }, []);
-
-    useEffect(() => {
-        applySearchFilter();
-    }, [name, allChats]);
-
-    if (!isLoggedIn) {
-        navigate("/login");
+  // Fetch Messages
+  const fetchMessages = async () => {
+    try {
+      const response = await axios.get(`${process.env.REACT_APP_BACKEND_BASE_URL}/api/chat/${user?.id}/${currentId}`);
+      setMessages(response?.data);
+    } catch (error) {
+      console.log("Error fetching messages:", error);
     }
+  };
 
-    return (
-        <div className="bg-[#0d0d0d] min-h-screen md:mt-16 px-8 py-6 rounded-xl text-white max-w-2xl mx-auto shadow-2xl border border-gray-700">
-            <div className="flex items-center gap-4 mb-6">
-                <Link to={'/'} className="text-gray-600 hover:text-blue-500 transition-all text-3xl">
-                    <IoArrowBack />
-                </Link>
-                <h2 className="text-2xl font-bold text-white">{user?.username || user?.fullName}</h2>
-            </div>
-            <div className="relative w-full my-4">
-                <input
-                    type="text"
-                    name="name"
-                    placeholder="Search chats..."
-                    value={name}
-                    onChange={handleFilterChange}
-                    className="bg-gray-800 text-white text-md px-5 py-3 rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-gray-400 shadow-lg"
-                />
-            </div>
-            <h4 className="text-lg font-semibold mb-4 text-gray-300">Messages</h4>
-            {loading ? (
-                 <div className="space-y-4">
-                 {[...Array(5)].map((_, index) => (
-                     <div key={index} className="flex items-center gap-4 p-4 bg-gray-900 rounded-lg shadow-md border border-gray-900 animate-pulse">
-                         <div className="w-12 h-12 bg-gray-800 rounded-full"></div>
-                         <div className="flex-1">
-                             <div className="h-4 bg-gray-800 rounded w-3/4 mb-2"></div>
-                             <div className="h-4 bg-gray-800 rounded w-1/2"></div>
-                         </div>
-                     </div>
-                 ))}
-             </div>
-            ):(
-                <div className="space-y-3">
-                {filteredChats?.map((chat) => (
-                    <div
-                        key={chat.id}
-                        className="flex items-center gap-4 px-4 py-3  rounded-lg hover:bg-gray-900 transition-all cursor-pointer shadow-md border-b border-gray-600"
-                    >
-                        <div className="w-12 h-12 flex items-center justify-center bg-gray-800 rounded-full text-xl font-bold text-white shadow-md border border-gray-900">
-                            {chat.sender.email.charAt(0).toUpperCase()}
-                        </div>
-                        <Link to={`/messages/${chat.sender.id}`} className="flex-1 overflow-hidden">
-                            <p className="text-lg font-medium text-white truncate w-48">{chat.sender.username || chat.sender.fullName}</p>
-                        </Link>
-                    </div>
-                ))}
-            </div>
-            )}
-           
+  // Fetch User Details
+  const fetchUserDetails = async () => {
+    try {
+      const response = await axios.get(`${process.env.REACT_APP_BACKEND_BASE_URL}/user/${currentId}`);
+      setReceiver(response?.data.user);
+    } catch (error) {
+      console.log("Error fetching user details:", error);
+    }
+  };
+
+  // Fetch Recent Chats
+  const fetchChats = async () => {
+    try {
+      const response = await axios.get(`${process.env.REACT_APP_BACKEND_BASE_URL}/api/connections/requests/${user?.username}`);
+      const connections = response?.data.requests.filter(request => request.status === "accepted");
+      setAllChats(connections);
+      setCurrentId(connections[0]?.id)
+      setFilteredChats(connections);
+    } catch (error) {
+      console.error("Error fetching chats", error);
+    }
+  };
+
+  // Apply Search Filter
+  useEffect(() => {
+    if (!searchTerm) {
+      setFilteredChats(allChats);
+    } else {
+      const filtered = allChats?.filter(chat =>
+        chat.sender.username.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+      setFilteredChats(filtered);
+    }
+  }, [searchTerm, allChats]);
+
+  useEffect(() => {
+    fetchMessages();
+    fetchUserDetails();
+    fetchChats();
+  }, []);
+
+  useEffect(() => {
+    fetchMessages();
+    fetchUserDetails();
+  }, [currentId]);
+
+  
+  const sendMessage = async () => {
+    if (message.trim()) {
+      try {
+        const chatMessage = { senderId: user?.id, receiverId: currentId, createdAt: new Date().toISOString(), message };
+
+        if (socket) {
+          socket.emit("sendMessage", chatMessage);
+        }
+
+        await axios.post(`${process.env.REACT_APP_BACKEND_BASE_URL}/api/chat/send`, chatMessage);
+        setMessage("");
+
+        // Scroll to bottom after sending a message
+        setTimeout(() => {
+          messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+        }, 100);
+        
+      } catch (error) {
+        console.log("Error sending message:", error);
+      }
+    }
+  };
+  if (!isLoggedIn) {
+    navigate("/login");
+  }
+
+
+  return (
+    <div className="flex h-[calc(100vh-4rem)] bg-[#0e0e0e]">
+      
+      {/* Sidebar (Chats List) */}
+      <div className={`w-full md:w-80 bg-[#131313] p-4 flex flex-col transition-transform duration-300 ease-in-out ${isChatOpen ? "hidden md:flex" : "flex"}`}>
+        
+        <div className="flex gap-4 items-center font-bold mb-6">
+          <Link to={'/'} className="text-2xl "><IoArrowBack /></Link>
+          <h2 className="text-xl text-white">Chats</h2>
         </div>
-    );
+
+        {/* Search Box */}
+        <div className="relative w-full mb-4">
+          <input
+            type="text"
+            placeholder="Search Messages..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="w-full bg-gray-900 text-white px-4 py-2 rounded-md focus:ring-2 focus:ring-blue-500"
+          />
+          <BiSearch className="absolute right-3 top-3 text-gray-400" />
+        </div>
+
+        <h3 className="text-gray-400 mb-2">Recent</h3>
+
+        {/* Chat List */}
+        <div className="space-y-2 overflow-y-auto flex-1">
+          {filteredChats?.map((chat) => (
+            <div
+              key={chat.sender.id}
+              onClick={() => {
+                setCurrentId(chat.sender.id);
+                setIsChatOpen(true); // Open DM section
+              }}
+              className="flex items-center p-3 rounded-md border-b border-gray-700 hover:bg-gray-800 hover:cursor-pointer transition"
+            >
+              <div className="w-10 h-10 bg-gray-700 rounded-full flex items-center justify-center text-white font-bold">
+                {chat.sender.username.charAt(0).toUpperCase()}
+              </div>
+              <div className="ml-3">
+                <p className="text-white font-medium">{chat.sender.username}</p>
+                <p className="text-gray-400 text-sm truncate">{chat.message || "New Message"}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Chat Section (DM View) */}
+      <div className={`w-full md:flex-1 flex flex-col transition-transform duration-300 ease-in-out ${isChatOpen ? "flex" : "hidden md:flex"}`}>
+        
+        {/* Header */}
+        <div className="bg-gray-900 p-4 flex items-center">
+          <button className="md:hidden text-white text-2xl" onClick={() => setIsChatOpen(false)}>
+            <IoArrowBack />
+          </button>
+
+          <div className="ml-4 flex items-center">
+            <div className="w-10 h-10 bg-gray-700 rounded-full flex items-center justify-center text-white font-bold">
+              {receiver?.username?.charAt(0).toUpperCase()}
+            </div>
+            <h2 className="ml-3 text-lg font-semibold text-white">{receiver?.username}</h2>
+          </div>
+        </div>
+
+        {/* Messages */}
+        <div className="flex-1 overflow-y-auto p-4 space-y-4">
+               {messages?.map((msg, index) => (
+           <div key={index} className={`flex ${msg.senderId === user?.id ? "justify-end" : "justify-start"} gap-2`}>
+             <div className={`px-4 py-2 rounded-xl text-white ${msg.senderId === user?.id ? "bg-blue-600" : "bg-gray-700"}`}>
+              {msg.message}
+              </div>
+               </div>
+               ))}
+            <div ref={messagesEndRef}></div> {/* Auto-scroll anchor */}
+          </div>
+
+          <div className="p-4 bg-gray-800 flex items-center">
+         <FaRegSmile className="text-gray-400 text-xl cursor-pointer" />
+         <input
+           type="text"
+           className="ml-3 w-full p-2 bg-gray-700 text-white rounded-full focus:ring-2 focus:ring-blue-500"
+           placeholder="Type a message..."
+           value={message}
+           onChange={(e) => setMessage(e.target.value)}
+         />
+         <button onClick={sendMessage} className="ml-3 bg-blue-500 p-3 rounded-full text-white">
+           <FaPaperPlane />
+         </button>
+       </div>
+
+         </div>
+         
+      
+    </div>
+  );
 };
 
 export default ChatSection;
 
+// import React, { useEffect, useState } from "react";
+// import io from "socket.io-client";
+// import axios from "axios";
+// import { useSelector } from "react-redux";
+// import { Link, useNavigate, useParams } from "react-router-dom";
+// import { FaPaperPlane, FaRegSmile } from "react-icons/fa";
+// import { IoArrowBack,IoMenu  } from "react-icons/io5";
+// import { BiSearch } from "react-icons/bi";
 
-{/* <div className="bg-[#0d0d0d] min-h-screen md:mt-16 px-8 py-6 rounded-xl text-white max-w-2xl mx-auto shadow-2xl border border-gray-700">
-<div className="flex items-center gap-4 mb-6">
-    <Link to={'/'} className="text-gray-400 hover:text-blue-500 transition-all text-3xl">
-        <IoArrowBack />
-    </Link>
-    <h2 className="text-2xl font-bold text-white">{user?.username || user?.fullName}</h2>
-</div>
-<div className="relative w-full my-4">
-    <input
-        type="text"
-        name="name"
-        placeholder="Search chats..."
-        value={name}
-        onChange={handleFilterChange}
-        className="bg-gray-800 text-white text-md px-5 py-3 rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-gray-400 shadow-lg"
-    />
-</div>
-<h4 className="text-lg font-semibold mb-4 text-gray-300">Messages</h4>
-<div className="space-y-3">
-    {allChats?.map((chat) => (
-        <div
-            key={chat.id}
-            className="flex items-center gap-4 px-4 py-3  rounded-lg hover:bg-gray-900 transition-all cursor-pointer shadow-md border-b border-gray-600"
-        >
-            <div className="w-12 h-12 flex items-center justify-center bg-gray-800 rounded-full text-xl font-bold text-white shadow-md border border-gray-900">
-                {chat.sender.email.charAt(0).toUpperCase()}
-            </div>
-            <Link to={`/messages/${chat.sender.id}`} className="flex-1 overflow-hidden">
-                <p className="text-lg font-medium text-white truncate w-48">{chat.sender.username || chat.sender.fullName}</p>
-            </Link>
-        </div>
-    ))}
-</div>
-</div> */}
+
+
+// const ChatSection = () => {
+//   const { user, isLoggedIn } = useSelector((state) => state.auth);
+//   const [message, setMessage] = useState("");
+//   const [messages, setMessages] = useState([]);
+//   const [allChats, setAllChats] = useState(null);
+//   const [filteredChats, setFilteredChats] = useState(null);
+//   const [searchTerm, setSearchTerm] = useState("");
+//   const [receiver, setReceiver] = useState(null);
+//   const [currentId, setCurrentId] = useState('');
+//   const [isChatOpen, setIsChatOpen] = useState(false); // Track whether DM section is open
+
+
+// //   const { id } = useParams();
+//   const [socket, setSocket] = useState(null);
+// const navigate =useNavigate()
+
+//   useEffect(() => {
+//     if (!isLoggedIn) {
+//       navigate("/login");
+//     }
+//   }, [isLoggedIn]);
+
+//   // Initialize Socket Connection
+//   useEffect(() => {
+//     const socketConnection = io(process.env.REACT_APP_BACKEND_BASE_URL, {
+//       transports: ["websocket"],
+//     });
+//     setSocket(socketConnection);
+
+//     socketConnection.on("receiveMessage", (newMessage) => {
+//       setMessages((prev) => [...prev, newMessage]);
+//     });
+
+//     return () => {
+//       socketConnection.disconnect();
+//     };
+//   }, []);
+
+//   // Fetch Messages
+//   const fetchMessages = async () => {
+//     try {
+//       const response = await axios.get(`${process.env.REACT_APP_BACKEND_BASE_URL}/api/chat/${user?.id}/${currentId}`);
+//       setMessages(response?.data);
+//     } catch (error) {
+//       console.log("Error fetching messages:", error);
+//     }
+//   };
+
+//   // Fetch User Details
+//   const fetchUserDetails = async () => {
+//     try {
+//       const response = await axios.get(`${process.env.REACT_APP_BACKEND_BASE_URL}/user/${currentId}`);
+//       setReceiver(response?.data.user);
+//     } catch (error) {
+//       console.log("Error fetching user details:", error);
+//     }
+//   };
+
+//   // Fetch Recent Chats
+//   const fetchChats = async () => {
+//     try {
+//       const response = await axios.get(`${process.env.REACT_APP_BACKEND_BASE_URL}/api/connections/requests/${user?.username}`);
+//       const connections = response?.data.requests.filter(request => request.status === "accepted");
+//       setAllChats(connections);
+//       setCurrentId(connections[0]?.id)
+//       setFilteredChats(connections);
+//     } catch (error) {
+//       console.error("Error fetching chats", error);
+//     }
+//   };
+
+//   // Apply Search Filter
+//   useEffect(() => {
+//     if (!searchTerm) {
+//       setFilteredChats(allChats);
+//     } else {
+//       const filtered = allChats?.filter(chat =>
+//         chat.sender.username.toLowerCase().includes(searchTerm.toLowerCase())
+//       );
+//       setFilteredChats(filtered);
+//     }
+//   }, [searchTerm, allChats]);
+
+//   useEffect(() => {
+    
+//     fetchMessages();
+//     fetchUserDetails();
+//     fetchChats();
+//   }, []);
+//   useEffect(() => {
+//     fetchMessages();
+//     fetchUserDetails();
+   
+//   }, [currentId]);
+   
+//   const sendMessage = async () => {
+//     if (message.trim()) {
+//       try {
+//         const chatMessage = { senderId: user?.id, receiverId: currentId, createdAt: new Date().toISOString(), message };
+
+//         if (socket) {
+//           socket.emit("sendMessage", chatMessage);
+//         }
+
+//         await axios.post(`${process.env.REACT_APP_BACKEND_BASE_URL}/api/chat/send`, chatMessage);
+//         setMessage("");
+//       } catch (error) {
+//         console.log("Error sending message:", error);
+//       }
+//     }
+//   };
+
+//   const formatTime = (timestamp) => {
+//     const date = new Date(timestamp);
+//     return `${date.getHours().toString().padStart(2, "0")}:${date.getMinutes().toString().padStart(2, "0")}`;
+//   };
+
+//   return (
+//     <div className="flex h-[calc(100vh-4rem)] bg-[#0e0e0e]">
+      
+//     {/* Sidebar (Chats List) */}
+//     <div className={`w-full md:w-80 bg-[#131313] p-4 flex flex-col transition-transform duration-300 ease-in-out ${isChatOpen ? "hidden md:flex" : "flex"}`}>
+      
+//       <div className="flex gap-4 items-center font-bold mb-6">
+//       <Link to={'/'} className="text-2xl "><IoArrowBack /></Link>
+//       <h2 className="text-xl  text-white ">Chats</h2>
+//       </div>
+
+//       {/* Search Box */}
+//       <div className="relative w-full mb-4">
+//         <input
+//           type="text"
+//           placeholder="Search Messages..."
+//           value={searchTerm}
+//           onChange={(e) => setSearchTerm(e.target.value)}
+//           className="w-full bg-gray-900 text-white px-4 py-2 rounded-md focus:ring-2 focus:ring-blue-500"
+//         />
+//         <BiSearch className="absolute right-3 top-3 text-gray-400" />
+//       </div>
+
+//       <h3 className="text-gray-400 mb-2">Recent</h3>
+
+//       {/* Chat List */}
+//       <div className="space-y-2 overflow-y-auto flex-1">
+//         {filteredChats?.map((chat) => (
+//           <div
+//             key={chat.sender.id}
+//             onClick={() => {
+//               setCurrentId(chat.sender.id);
+//               setIsChatOpen(true); // Open DM section
+//             }}
+//             className="flex items-center p-3 rounded-md border-b border-gray-700 hover:bg-gray-800 hover:cursor-pointer transition"
+//           >
+//             <div className="w-10 h-10 bg-gray-700 rounded-full flex items-center justify-center text-white font-bold">
+//               {chat.sender.username.charAt(0).toUpperCase()}
+//             </div>
+//             <div className="ml-3">
+//               <p className="text-white font-medium">{chat.sender.username}</p>
+//               <p className="text-gray-400 text-sm truncate">{chat.message || "New Message"}</p>
+//             </div>
+//           </div>
+//         ))}
+//       </div>
+//     </div>
+
+//     {/* Chat Section (DM View) */}
+//     <div className={`w-full md:flex-1 flex flex-col transition-transform duration-300 ease-in-out ${isChatOpen ? "flex" : "hidden md:flex"}`}>
+      
+//       {/* Header */}
+//       <div className="bg-gray-900 p-4 flex items-center">
+//         {/* Back Button (Only on Mobile) */}
+//         <button className="md:hidden text-white text-2xl" onClick={() => setIsChatOpen(false)}>
+//           <IoArrowBack />
+//         </button>
+
+//         <div className="ml-4 flex items-center">
+//           <div className="w-10 h-10 bg-gray-700 rounded-full flex items-center justify-center text-white font-bold">
+//             {receiver?.username?.charAt(0).toUpperCase()}
+//           </div>
+//           <h2 className="ml-3 text-lg font-semibold text-white">{receiver?.username}</h2>
+//         </div>
+//       </div>
+
+//       {/* Messages */}
+//       <div className="flex-1 overflow-y-auto p-4 space-y-4">
+//         {messages?.map((msg, index) => (
+//           <div key={index} className={`flex ${msg.senderId === user?.id ? "justify-end" : "justify-start"} items-end gap-2`}>
+//             <div className={`text-xs text-gray-400 ${msg.senderId === user?.id ? "right-2" : "left-2"}`}>
+//               {formatTime(msg.createdAt)}
+//             </div>
+//             <div className={`px-4 py-2 rounded-xl text-white ${msg.senderId === user?.id ? "bg-blue-600" : "bg-gray-700"}`}>
+//               {msg.message}
+//             </div>
+//           </div>
+//         ))}
+//       </div>
+
+//       {/* Input Section */}
+//       <div className="p-4 bg-gray-800 flex items-center">
+//         <FaRegSmile className="text-gray-400 text-xl cursor-pointer" />
+//         <input
+//           type="text"
+//           className="ml-3 w-full p-2 bg-gray-700 text-white rounded-full focus:ring-2 focus:ring-blue-500"
+//           placeholder="Type a message..."
+//           value={message}
+//           onChange={(e) => setMessage(e.target.value)}
+//         />
+//         <button onClick={sendMessage} className="ml-3 bg-blue-500 p-3 rounded-full text-white">
+//           <FaPaperPlane />
+//         </button>
+//       </div>
+//     </div>
+//   </div>
+//   );
+// };
+
+// export default ChatSection;
+
+
+
+
+
