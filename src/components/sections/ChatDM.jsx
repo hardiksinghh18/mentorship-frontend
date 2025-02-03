@@ -20,7 +20,7 @@ const ChatDM = () => {
     // Establish WebSocket connection
     const socketConnection = io(process.env.REACT_APP_BACKEND_BASE_URL, {
       transports: ['websocket'], // Ensure both WebSocket and polling
-      withCredentials: true,
+      // withCredentials: true,
     });
 
     setSocket(socketConnection);
