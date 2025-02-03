@@ -18,13 +18,11 @@ const ChatDM = () => {
 
   useEffect(() => {
     // Establish WebSocket connection
-    console.log('starting session ...')
+
     const socketConnection = io(process.env.REACT_APP_BACKEND_BASE_URL, {
       transports: ['websocket'], // Ensure both WebSocket and polling
       // withCredentials: true,
     });
-    console.log('established connection',socketConnection)
-
     setSocket(socketConnection);
 
     // Debugging WebSocket connection
@@ -54,7 +52,7 @@ const ChatDM = () => {
         const chatMessage = { senderId: user?.id, receiverId: id, createdAt: new Date().toISOString(), message };
 
         if (socket) {
-          console.log('Sending message:', chatMessage);
+          // console.log('Sending message:', chatMessage);
           socket.emit('sendMessage', chatMessage);
         } else {
           console.error('Socket not connected');
