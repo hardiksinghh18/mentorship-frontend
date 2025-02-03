@@ -18,10 +18,12 @@ const ChatDM = () => {
 
   useEffect(() => {
     // Establish WebSocket connection
+    console.log('starting session ...')
     const socketConnection = io(process.env.REACT_APP_BACKEND_BASE_URL, {
       transports: ['websocket'], // Ensure both WebSocket and polling
       // withCredentials: true,
     });
+    console.log('established connection',socketConnection)
 
     setSocket(socketConnection);
 
