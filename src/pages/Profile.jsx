@@ -115,7 +115,7 @@ const Profile = () => {
                 // Update the requests state to reflect the change
                 
                 setRequests((prevRequests) =>
-                    prevRequests.filter((request) => request.id !== senderId)
+                    prevRequests?.filter((request) => request.id !== senderId)
                 );
                 fetchRequests();
                 toast.success(`Request ${status}`);
@@ -149,7 +149,7 @@ const Profile = () => {
             if (response.data.success) {
                 setProfile((prevProfile) => ({
                     ...prevProfile,
-                    connections: prevProfile.connections.filter((conn) => conn.id !== connection.id),
+                    connections: prevProfile.connections?.filter((conn) => conn.id !== connection.id),
                 }));
 
                 fetchRequests();
@@ -204,7 +204,7 @@ const Profile = () => {
       
       }
     return (
-        <div className="min-h-screen bg-gradient-to-t from-slate-800 to-[#000104] text-white p-6 md:p-12">
+        <div className="min-h-screen bg-[#0d0d0d] text-white  md:p-12">
             <div className="max-w-6xl mx-auto px-2 py-6 md:px-8 md:py-8 rounded-lg grid grid-cols-1 md:grid-cols-3 gap-8">
                 {profile && <div className="md:col-span-2">
                     <ProfileInfo profile={profile} isOwnProfile={isOwnProfile} currentUserId={user?.id} onSendRequest={handleSendRequest} />

@@ -42,18 +42,15 @@ const Matchmaking = () => {
 
   // Calculate the match score
   const calculateMatch = (user1, user2) => {
-
     const matchingSkills = user1?.skills ? user1?.skills.split(",").map(item => item.trim()).filter(skill => user2?.skills?.includes(skill)).length : [];
     const matchingInterests = user1?.interests ? user1?.interests.split(",").map(item => item.trim()).filter(interest => user2?.interests?.includes(interest)).length : [];
-
-
     return matchingSkills + matchingInterests; // You can tweak this based on weightage you want for skills vs interests
   };
 
   // Suggest matches based on the logged-in user
   const getBestMatches = () => {
-    console.log(users)
-    const matches = users?.filter((otherUser) => otherUser.id !== user?.id) // Exclude the logged-in user from suggestions
+    const matches = users
+      ?.filter((otherUser) => otherUser.id !== user?.id) // Exclude the logged-in user from suggestions
       .map((otherUser) => {
         const matchScore = calculateMatch(user, otherUser);
         return { ...otherUser, matchScore };
@@ -72,7 +69,7 @@ const Matchmaking = () => {
   if (!isLoggedIn) {
     navigate("/login");
   }
- 
+
   if (loadingProfiles) {
     return (
       <div className="flex items-center justify-center h-screen bg-[#000104] text-white">
@@ -82,33 +79,33 @@ const Matchmaking = () => {
       </div>
     );
   }
+
   const bestMatches = getBestMatches();
 
   return (
-    <div className="min-h-screen bg-gradient-to-t flex items-center justify-center from-slate-800 to-[#000104] text-white py-12 px-6 md:px-20">
-      <div className="flex items-center justify-center flex-col">
-      <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 mt-4">Your Best Matches</h2>
-
-
-        {/* Display Best Matches */}
-        <div className="mt-12 w-full">
+    <div className="min-h-screen bg-[#0d0d0d]">
+      {/* Main Content */}
+      <div className="flex flex-col px-4 md:px-8 gap-8 max-w-7xl mx-auto">
+        {/* Scrollable Profile Section */}
+        <div className="flex-1 overflow-y-auto h-[calc(100vh-6rem)] md:px-4 pb-10">
+          <div className="max-w-7xl mx-auto px-4 py-3 my-4">
+            <h1 className="text-lg md:text-2xl font-bold text-white text-center">Your Best Matches</h1>
+          </div>
           {bestMatches.length > 0 ? (
             <div className="space-y-4">
-              {bestMatches.map((item) => (
+              {bestMatches.map((item) =>
                 item.matchScore > 0 ? (
                   <ProfileCard
                     key={item.id}
                     profile={item}
                     currentUserId={user?.id}
                     matchScore={item.matchScore}
-                  
                   />
                 ) : null
-              ))}
+              )}
             </div>
-
           ) : (
-            <p className="text-center text-slate-400">No matches found yet. Please try again later.</p>
+            <p className="text-center text-gray-400">No matches found yet. Please try again later.</p>
           )}
         </div>
       </div>

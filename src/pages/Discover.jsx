@@ -10,12 +10,12 @@ const Discover = () => {
   const [filteredUsers, setFilteredUsers] = useState([]);
   const [loadingProfiles, setLoadingProfiles] = useState(false);
   const [error, setError] = useState(null);
-  const [filters, setFilters] = useState({ role: "", skills: "", interests: "", name: '' }); // Add state for filters
-  const [showFilters, setShowFilters] = useState(false); // State to toggle the filter section visibility
-
+  const [filters, setFilters] = useState({ role: "", skills: "", interests: "", name: '' });
+  const [showFilters, setShowFilters] = useState(false);
 
   const { user, isLoggedIn } = useSelector((state) => state.auth);
-  const navigate = useNavigate(); // Initialize the navigate hook
+  const navigate = useNavigate();
+
   const fetchUsers = async () => {
     try {
       setLoadingProfiles(true);
@@ -29,6 +29,7 @@ const Discover = () => {
         username: user?.username,
         name: user?.fullName || user?.username || "Anonymous",
         role: user?.role,
+        bio: user?.bio,
         skills: user?.skills
           ? user?.skills.split(",").map((skill) => skill.trim()).slice(0, 6)
           : [],
@@ -40,7 +41,7 @@ const Discover = () => {
       }));
 
       setUsers(normalizedUsers);
-      setFilteredUsers(normalizedUsers); // Initialize filtered users
+      setFilteredUsers(normalizedUsers);
     } catch (error) {
       console.error("Error fetching user profiles:", error);
       setError("Failed to load user profiles. Please try again later.");
@@ -62,20 +63,16 @@ const Discover = () => {
   const applyFilters = () => {
     const { role, skills, interests, name } = filters;
 
-    // Split skills and interests by comma and trim extra spaces
     const skillsArray = skills ? skills.split(',').map((skill) => skill.trim().toLowerCase()) : [];
     const interestsArray = interests ? interests.split(',').map((interest) => interest.trim().toLowerCase()) : [];
 
     const filtered = users.filter((user) => {
-
       const matchesRole = role ? user.role?.toLowerCase().includes(role.toLowerCase()) : true;
-      const matchesName = name ? user?.name?.toLowerCase().includes(name.toLowerCase()) : true
-      const matchesUserName = name ? user?.username?.toLowerCase().includes(name.toLowerCase()) : true
-
+      const matchesName = name ? user?.name?.toLowerCase().includes(name.toLowerCase()) : true;
+      const matchesUserName = name ? user?.username?.toLowerCase().includes(name.toLowerCase()) : true;
       const matchesSkills = skillsArray.length
         ? skillsArray.some((skill) => user.skills.some((userSkill) => userSkill.toLowerCase().includes(skill)))
         : true;
-
       const matchesInterests = interestsArray.length
         ? interestsArray.some((interest) => user.interests.some((userInterest) => userInterest.toLowerCase().includes(interest)))
         : true;
@@ -86,14 +83,13 @@ const Discover = () => {
     setFilteredUsers(filtered);
   };
 
-
   const handleFilterChange = (e) => {
     setFilters({ ...filters, [e.target.name]: e.target.value });
   };
+
   const toggleFilters = () => {
     setShowFilters(!showFilters);
   };
-
 
   useEffect(() => {
     fetchUsers();
@@ -101,21 +97,19 @@ const Discover = () => {
 
   useEffect(() => {
     applyFilters();
-  }, [filters]); // Re-apply filters whenever the filter state changes
+  }, [filters]);
 
   useEffect(() => {
-
     if (isLoggedIn === true) {
       fetchUsers();
     }
-  }, [isLoggedIn]); // Trigger effect when isLoggedIn state changes
-
+  }, [isLoggedIn]);
 
   if (loadingProfiles) {
     return (
-      <div className="flex items-center justify-center h-screen bg-[#000104] text-white">
+      <div className="flex items-center justify-center h-screen bg-[#0d0d0d]">
         <div className="text-center">
-          <h2 className="text-xl font-semibold">Loading profiles...</h2>
+          <h2 className="text-xl font-semibold text-white">Loading profiles...</h2>
         </div>
       </div>
     );
@@ -123,118 +117,108 @@ const Discover = () => {
 
   if (error) {
     return (
-      <div className="flex items-center justify-center h-screen bg-[#000104] text-white">
+      <div className="flex items-center justify-center h-screen bg-[#0d0d0d]">
         <div className="text-center">
-          <h2 className="text-xl font-semibold">Error</h2>
-          <p>{error}</p>
+          <h2 className="text-xl font-semibold text-white">Error</h2>
+          <p className="text-gray-400">{error}</p>
         </div>
       </div>
     );
   }
 
   if (!isLoggedIn) {
-    navigate("/login"); // Redirect to login if user is not logged in
-
+    navigate("/login");
   }
-  return (
-    <div className="min-h-screen bg-gradient-to-t from-slate-800 to-[#000104] text-white py-8 px-4 md:px-20">
-      <h1 className="text-3xl md:text-4xl font-bold text-center mb-12 mt-4">
-        Discover Mentors and Mentees
-      </h1>
 
-      <div className=" flex flex-col  md:flex-row justify-start md:items-start items-center gap-4 md:gap-12 ">
-        {/* Filter Section */}
-        <div className="mb-12 bg-[#131313] rounded-lg shadow-lg   flex flex-col gap-4">
-          {/* Toggle Button */}
+  return (
+    <div className="min-h-screen bg-[#0d0d0d]">
+      
+
+      <div className="flex flex-col md:flex-row  px-4 md:px-8 gap-8 max-w-7xl mx-auto">
+
+        {/* Mobile Filter Toggle Button */}
+        <div className="md:hidden">
           <button
             onClick={toggleFilters}
-            className="flex items-center justify-between w-full bg-gray-800 text-white text-sm font-semibold px-4 py-2 rounded-md hover:bg-gray-700 transition mb-4"
+            className="w-full bg-[#262626] text-gray-300 text-sm font-semibold px-4 py-3 rounded-md hover:bg-[#333333] transition"
           >
-            {showFilters ? " Filters" : " Filters"}
-            {showFilters ? (
-              <svg className="w-4 h-4 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-              </svg>
-            ) : (
-              <svg className="w-4 h-4 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
-              </svg>
-            )}
+            {showFilters ? "Hide Filters" : "Show Filters"}
           </button>
-
-          {/* Filter Section (Collapsible) */}
-          {showFilters && (
-            <div className="transition-all duration-500 max-h-screen">
-              {/* Role Selection */}
-              <div className="relative w-full">
-                <label className="block text-gray-300 text-sm font-semibold mb-1">Select Role</label>
-                <select
-                  name="role"
-                  value={filters.role}
-                  onChange={handleFilterChange}
-                  className="bg-gray-900 text-white text-sm px-4 py-3 rounded-md border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 w-full cursor-pointer appearance-none"
-                >
-                  <option value="" disabled className="text-gray-400">
-                    Select Role
-                  </option>
-                  <option value="mentor">Mentor</option>
-                  <option value="mentee">Mentee</option>
-                </select>
-              </div>
-
-              {/* Name Search */}
-              <div className="w-full">
-                <label className="block text-gray-300 text-sm font-semibold mb-1">Search by Name</label>
-                <input
-                  type="text"
-                  name="name"
-                  placeholder="Enter name..."
-                  value={filters.name}
-                  onChange={handleFilterChange}
-                  className="bg-gray-900 text-white text-sm px-4 py-3 rounded-md border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-gray-400 w-full"
-                />
-              </div>
-
-              {/* Skills Filter */}
-              <div className="w-full">
-                <label className="block text-gray-300 text-sm font-semibold mb-1">Filter by Skills</label>
-                <input
-                  type="text"
-                  name="skills"
-                  placeholder="Enter skills..."
-                  value={filters.skills}
-                  onChange={handleFilterChange}
-                  className="bg-gray-900 text-white text-sm px-4 py-3 rounded-md border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-gray-400 w-full"
-                />
-              </div>
-
-              {/* Interests Filter */}
-              <div className="w-full">
-                <label className="block text-gray-300 text-sm font-semibold mb-1">Filter by Interests</label>
-                <input
-                  type="text"
-                  name="interests"
-                  placeholder="Enter interests..."
-                  value={filters.interests}
-                  onChange={handleFilterChange}
-                  className="bg-gray-900 text-white text-sm px-4 py-3 rounded-md border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-gray-400 w-full"
-                />
-              </div>
-
-              {/* Reset Filters Button */}
-              <button
-                onClick={() => setFilters({ role: "", name: "", skills: "", interests: "" })}
-                className="bg-blue-600 hover:bg-blue-700 text-white text-sm py-2 rounded-md font-semibold transition w-full mt-2"
-              >
-                Reset Filters
-              </button>
-            </div>
-          )}
         </div>
 
+        
+        {/* Filter Section (Mobile & Desktop) */}
+        <div
+          className={`w-full md:w-64 bg-[#1a1a1a] rounded-lg shadow-lg p-4 border border-gray-800 md:fixed md:top-24 md:left-8 md:h-[calc(100vh-10rem)] md:overflow-y-auto transition-all duration-300 ease-in-out ${showFilters || window.innerWidth >= 768
+              ? "max-h-[1000px] opacity-100" // Expanded state
+              : "max-h-0 opacity-0 overflow-hidden" // Collapsed state
+            }`}
+        >
+          <div className="space-y-4">
+            <div>
+              <label className="block text-gray-300 text-sm font-semibold mb-2">Select Role</label>
+              <select
+                name="role"
+                value={filters.role}
+                onChange={handleFilterChange}
+                className="bg-[#262626] text-gray-300 text-sm px-4 py-2 rounded-md border border-gray-700 w-full cursor-pointer"
+              >
+                <option value="" disabled className="text-gray-400">Select Role</option>
+                <option value="mentor">Mentor</option>
+                <option value="mentee">Mentee</option>
+              </select>
+            </div>
 
-        {/* Profiles Section */}
-        <div className="flex flex-col gap-4">
+            <div>
+              <label className="block text-gray-300 text-sm font-semibold mb-2">Search by Name</label>
+              <input
+                type="text"
+                name="name"
+                placeholder="Enter name..."
+                value={filters.name}
+                onChange={handleFilterChange}
+                className="bg-[#262626] text-gray-300 text-sm px-4 py-2 rounded-md border border-gray-700 w-full"
+              />
+            </div>
+
+            <div>
+              <label className="block text-gray-300 text-sm font-semibold mb-2">Filter by Skills</label>
+              <input
+                type="text"
+                name="skills"
+                placeholder="Enter skills..."
+                value={filters.skills}
+                onChange={handleFilterChange}
+                className="bg-[#262626] text-gray-300 text-sm px-4 py-2 rounded-md border border-gray-700 w-full"
+              />
+            </div>
+
+            <div>
+              <label className="block text-gray-300 text-sm font-semibold mb-2">Filter by Interests</label>
+              <input
+                type="text"
+                name="interests"
+                placeholder="Enter interests..."
+                value={filters.interests}
+                onChange={handleFilterChange}
+                className="bg-[#262626] text-gray-300 text-sm px-4 py-2 rounded-md border border-gray-700 w-full"
+              />
+            </div>
+
+            <button
+              onClick={() => setFilters({ role: "", name: "", skills: "", interests: "" })}
+              className="bg-gradient-to-r from-blue-700 to-purple-700 text-white text-sm py-2 rounded-md font-semibold transition w-full mt-2"
+            >
+              Reset Filters
+            </button>
+          </div>
+        </div>
+
+        {/* Scrollable Profile Section */}
+        <div className="flex-1 overflow-y-auto h-[100vh] md:ml-72 md:px-4 ">
+          <div className="max-w-7xl mx-auto px-4 py-3 my-4">
+            <h1 className="text-lg md:text-2xl font-bold text-white text-center ">Discover Mentors and Mentees</h1>
+          </div>
           {filteredUsers?.length > 0 ? (
             filteredUsers.map((item) =>
               item.id !== user?.id ? (
@@ -252,7 +236,6 @@ const Discover = () => {
         </div>
       </div>
     </div>
-
   );
 };
 

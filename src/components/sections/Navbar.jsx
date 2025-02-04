@@ -1,112 +1,108 @@
 import React, { useState, useEffect } from 'react';
-import { FiMenu, FiX } from 'react-icons/fi';
 import { useDispatch, useSelector } from 'react-redux';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { setLoggedOut } from '../../redux/actions/authActions';
+import { FiHome, FiSearch, FiMessageSquare, FiUser, FiLogOut } from 'react-icons/fi';
 import { FaRegUser } from "react-icons/fa";
-import { IoIosLogOut } from "react-icons/io";
-import { RiChatSmile3Line } from "react-icons/ri";
 
 const Navbar = () => {
-    const [showNavbar, setShowNavbar] = useState(true);
     const [lastScrollY, setLastScrollY] = useState(0);
-    const [isMenuOpen, setIsMenuOpen] = useState(false);
     const dispatch = useDispatch();
     const navigate = useNavigate();
+    const location = useLocation();
     const { isLoggedIn, user } = useSelector((state) => state.auth);
-
-    const menuClass = "text-xs md:text-sm lg:text-sm font-semibold text-center relative bg-clip-text text-transparent bg-gradient-to-b from-neutral-800 via-white to-white hover:scale-105 transition-all duration-500";
 
     const handleLogout = () => {
         dispatch(setLoggedOut());
         navigate('/login');
     };
 
-    const handleScroll = () => {
-        if (window.scrollY <= 0) {
-            setShowNavbar(true); // Always show navbar at the top
-        } else if (window.scrollY > lastScrollY) {
-            setShowNavbar(false); // Hide navbar when scrolling down
-        } else {
-            setShowNavbar(true); // Show navbar when scrolling up
-        }
-        setLastScrollY(window.scrollY);
-    };
 
-    const toggleMenu = () => {
-        setIsMenuOpen(!isMenuOpen);
-    };
 
-    useEffect(() => {
-        window.addEventListener('scroll', handleScroll);
-        return () => {
-            window.removeEventListener('scroll', handleScroll);
-        };
-    }, [lastScrollY]);
+    // Desktop Navigation Items
+    const DesktopNavItem = ({ to, children }) => (
+        <Link
+            to={to}
+            className={`px-4 py-2 hover:text-blue-400 font-semibold transition-colors ${location.pathname === to ? 'text-blue-400' : 'text-gray-300'
+                }`}
+        >
+            {children}
+        </Link>
+    );
+
+    // Mobile Navigation Icon
+    const MobileNavIcon = ({ to, icon: Icon, label }) => (
+        <Link
+            to={to}
+            className="flex flex-col items-center text-gray-300 hover:text-blue-400 transition-colors"
+        >
+            <Icon className="h-6 w-6 mb-1" />
+            <span className="text-xs">{label}</span>
+        </Link>
+    );
 
     return (
-        <div className={` text-white  w-full transition-transform duration-500 z-50 ${showNavbar ? 'translate-y-0' : '-translate-y-full'}`}>
-            <div className="max-w-7xl flex items-center justify-between transition-all duration-500 py-4 px-4 md:px-8 shadow-sm bg-gradient-to-t from-[#000104] to-slate-800 mx-auto">
-                {/* Logo */}
-                <Link to="/">
-                    <img
-                        src="https://via.placeholder.com/100x50.png?text=Mentorship+Platform"
-                        alt="Mentorship Platform"
-                        className="md:w-16 w-14"
-                    />
-                </Link>
+        <>
+            {/* Desktop Navigation */}
+            <div className="hidden md:block fixed top-0 w-full z-50 bg-[#0d0d0d] border-b border-gray-800">
+                <div className="max-w-7xl mx-auto px-4 md:px-8 py-3 flex items-center justify-between">
+                    {/* Logo */}
+                    <Link to="/" className="flex items-center">
+                        <span className="text-xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
+                            Mentorship
+                        </span>
+                    </Link>
 
-                {/* Hamburger Icon for mobile */}
-                <button className="md:hidden z-40 focus:outline-none" onClick={toggleMenu}>
-                    {isMenuOpen ? <FiX size={28} /> : <FiMenu size={28} />}
-                </button>
+                    {/* Navigation Links */}
+                    <div className="flex items-center text-sm space-x-2">
+                        <DesktopNavItem to="/">Home</DesktopNavItem>
+                        <DesktopNavItem to="/discover">Discover</DesktopNavItem>
+                        {isLoggedIn && <DesktopNavItem to="/matchmaking">Matchmaking</DesktopNavItem>}
+                        {isLoggedIn && <DesktopNavItem to="/messages">Chats</DesktopNavItem>}
+                        {/* User Section */}
+                        <div className="flex items-center space-x-4">
+                            {isLoggedIn ? (
+                                <>
+                                    <Link
+                                        to={`/profile/${user.username}`}
+                                        className="p-2 hover:bg-gray-800 rounded-full transition-colors"
+                                    >
+                                        <FaRegUser className="h-5 w-5 text-gray-300" />
+                                    </Link>
 
-                {/* Menu for larger screens */}
-                <div className="hidden md:flex items-center gap-5">
-                    <Link to="/" className={menuClass}>Home</Link>
-                    <Link to="/discover" className={menuClass}>Discover</Link>
-                    {isLoggedIn && <Link to="/matchmaking" className={menuClass}>Matchmaking</Link>}
-                    {isLoggedIn && <Link to="/messages" className={menuClass}>Chats</Link>}
-
-                    {isLoggedIn ? (
-                        <div className="flex items-center gap-4">
-                            <Link to={`/profile/${user.username}`} title="View Profile">
-                                <FaRegUser className='text-white hover:text-blue-600 font-bold' />
-                            </Link>
-                            <button className="text-red-500 hover:text-red-700 transition" onClick={handleLogout}>
-                                <IoIosLogOut size={20} />
-                            </button>
+                                </>
+                            ) : (
+                                <Link
+                                    to="/login"
+                                    className="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg text-sm transition-colors"
+                                >
+                                    Login
+                                </Link>
+                            )}
                         </div>
-                    ) : (
-                        <Link
-                            to="/login"
-                            className='bg-blue-500 text-white text-xs py-1 px-3 rounded-md hover:bg-blue-700 transition duration-300'
-                        >
-                            Login
-                        </Link>
-                    )}
-                </div>
-
-                {/* Mobile Menu (Sliding Drawer) */}
-                <div className={`md:hidden absolute top-0 left-0 h-screen w-full bg-black bg-opacity-90 transform transition-all duration-300 ${isMenuOpen ? "opacity-100 scale-100" : "opacity-0 scale-95 pointer-events-none"}`}>
-                    <div className="flex flex-col items-center justify-center h-full gap-8">
-                        <Link to="/" className="text-xl font-semibold text-white" onClick={toggleMenu}>Home</Link>
-                        <Link to="/discover" className="text-xl font-semibold text-white" onClick={toggleMenu}>Discover</Link>
-                        {isLoggedIn && <Link to="/matchmaking" className="text-xl font-semibold text-white" onClick={toggleMenu}>Matchmaking</Link>}
-                        {isLoggedIn && <Link to="/messages" className="text-xl font-semibold text-white" onClick={toggleMenu}>Chats</Link>}
-                        
-                        {isLoggedIn ? (
-                            <>
-                                <Link to={`/profile/${user.username}`} className="text-xl font-semibold text-white" onClick={toggleMenu}>Profile</Link>
-                                <button className="text-xl font-semibold text-red-500" onClick={() => { handleLogout(); toggleMenu(); }}>Logout</button>
-                            </>
-                        ) : (
-                            <Link to="/login" className="text-xl font-semibold text-white" onClick={toggleMenu}>Login</Link>
-                        )}
                     </div>
+
+
                 </div>
             </div>
-        </div>
+
+            {/* Mobile Bottom Navigation */}
+            {isLoggedIn && (
+                <div className="md:hidden fixed bottom-0 w-full z-50 bg-[#0d0d0d] border-t border-gray-800">
+                    <div className="flex justify-around items-center py-3">
+                        <MobileNavIcon to="/" icon={FiHome} label="Home" />
+                        <MobileNavIcon to="/discover" icon={FiSearch} label="Discover" />
+                        <MobileNavIcon to="/messages" icon={FiMessageSquare} label="Chats" />
+                        <MobileNavIcon
+                            to={`/profile/${user.username}`}
+                            icon={FiUser}
+                            label="Profile"
+                        />
+
+                    </div>
+                </div>
+            )}
+        </>
     );
 };
 
