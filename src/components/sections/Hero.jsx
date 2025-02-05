@@ -12,7 +12,7 @@ const HeroSection = () => {
                         <h1 className="text-2xl sm:text-5xl md:text-6xl font-bold leading-tight mb-4 md:mb-6">
                             Transform Your Career with{' '}
                             <span className="bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
-                                Smart Mentorship
+                               SkillSync 
                             </span>
                         </h1>
                         <p className="text-sm md:text-lg lg:text-xl text-gray-400 mb-6 md:mb-10 leading-relaxed">

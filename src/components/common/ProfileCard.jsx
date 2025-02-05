@@ -62,7 +62,7 @@ const ProfileCard = ({ profile, currentUserId, matchScore }) => {
   const { icon, tooltip } = getIconAndTooltip();
 
   return (
-    <div className="bg-[#0d0d0d] w-full max-w-3xl overflow-hidden mx-auto relative px-6 py-4 rounded-lg shadow-lg flex flex-col gap-4 border border-gray-800">
+    <div className="bg-[#0d0d0d] w-full max-w-3xl overflow-hidden mx-auto relative px-6 py-4 rounded-lg shadow-lg flex flex-col gap-3 border border-gray-800">
       {/* Match Score Badge */}
       {matchScore && (
         <span className="bg-gradient-to-r from-blue-700 to-purple-700 absolute top-4 right-20 text-white text-xs font-bold px-3 py-1 rounded-full shadow-md">
@@ -112,14 +112,14 @@ const ProfileCard = ({ profile, currentUserId, matchScore }) => {
       </div>
       )}
       {/* Skills Section */}
-      <div className="mt-1">
+      <div className="mt-0">
         <h3 className="text-sm font-semibold text-gray-300 mb-2">Skills:</h3>
         {skills?.length > 0 ? (
           <div className="flex flex-wrap gap-2">
             {skills?.map((skill, index) => (
               <span
                 key={index}
-                className="text-white text-xs font-semibold px-3 py-1 rounded-full border border-gray-600 hover:border-gray-500 transition-all duration-300"
+                className="text-white text-xs font-semibold px-3 py-1 rounded-lg border border-gray-600 hover:border-gray-500 transition-all duration-300"
               >
                 {skill}
               </span>

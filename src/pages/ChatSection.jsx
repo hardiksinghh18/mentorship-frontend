@@ -26,7 +26,6 @@ const ChatSection = () => {
   useEffect(() => {
     if (!isLoggedIn || !user?.id) return;
 
-    // Initialize socket connection (Only once)
     if (!socketRef.current) {
       socketRef.current = io(process.env.REACT_APP_BACKEND_BASE_URL, {
         transports: ["websocket"],
@@ -178,6 +177,14 @@ const ChatSection = () => {
             Array(5).fill().map((_, i) => (
               <div key={i} className="h-14 bg-gray-700 animate-pulse rounded-lg" />
             ))
+          ) : filteredChats.length === 0 ? (
+            <div className="text-gray-400 text-center p-4">
+              {allChats.length === 0 ? (
+                "You have no connections. Connect with others to start chatting."
+              ) : (
+                "No results found."
+              )}
+            </div>
           ) : (
             filteredChats?.map((chat) => (
               <div
@@ -193,7 +200,6 @@ const ChatSection = () => {
                 </div>
                 <div className="ml-3">
                   <p className="text-white font-medium">{chat.sender.username}</p>
-                  {/* <p className="text-gray-400 text-sm truncate">{chat.message || "New Message"}</p> */}
                 </div>
               </div>
             ))
@@ -203,51 +209,72 @@ const ChatSection = () => {
 
       {/* Chat Section */}
       <div className={`w-full md:flex-1 flex flex-col ${isChatOpen ? "flex" : "hidden md:flex"}`}>
-        {/* Header */}
-        <div className="bg-[#1a1a1a] p-2 flex items-center border-b border-gray-700 md:mt-16">
-          <button className="md:hidden text-white text-2xl hover:text-gray-300 transition" onClick={() => setIsChatOpen(false)}>
-            <IoArrowBack />
-          </button>
-          <div className="ml-4 flex items-center">
-            <h2 className="text-sm md:text-lg font-semibold  text-white">{receiver?.username}</h2>
-          </div>
-        </div>
-
-        {/* Messages */}
-        <div className="flex-1 overflow-y-auto p-4 space-y-4 custom-scroll">
-          {loadingMessages ? (
-            Array(6).fill().map((_, i) => (
-              <div
-                key={i}
-                className={`h-8 w-1/3 bg-gray-700 animate-pulse rounded-xl ${i % 2 === 0 ? "ml-auto" : "mr-auto"}`}
-              />
-            ))
-          ) : (
-            messages?.map((msg, index) => (
-              <div key={index} className={`flex ${msg.senderId === user?.id ? "justify-end" : "justify-start"} gap-2`}>
-                <div className={`px-4 py-2 rounded-xl text-white ${msg.senderId === user?.id ? "bg-blue-600" : "bg-[#1a1a1a]"}`}>
-                  {msg.message}
-                </div>
+        {currentId ? (
+          <>
+            {/* Header */}
+            <div className="bg-[#1a1a1a] p-2 flex items-center border-b border-gray-700 md:mt-16">
+              <button className="md:hidden text-white text-2xl hover:text-gray-300 transition" onClick={() => setIsChatOpen(false)}>
+                <IoArrowBack />
+              </button>
+              <div className="ml-4 flex items-center">
+                <h2 className="text-sm md:text-lg font-semibold text-white">{receiver?.username}</h2>
               </div>
-            ))
-          )}
-          <div ref={messagesEndRef}></div>
-        </div>
+            </div>
 
-        {/* Message Input */}
-        <div className="p-4 bg-[#1a1a1a] flex items-center border-t border-gray-700">
-          <FaRegSmile className="text-gray-400 text-xl cursor-pointer hover:text-white transition" />
-          <input
-            type="text"
-            className="ml-3 w-full p-2 bg-[#131313] text-white rounded-lg focus:ring-2 focus:ring-blue-500 border border-gray-700"
-            placeholder="Type a message..."
-            value={message}
-            onChange={(e) => setMessage(e.target.value)}
-          />
-          <button onClick={sendMessage} className="ml-3 bg-blue-600 p-3 rounded-lg text-white hover:bg-blue-700 transition">
-            <FaPaperPlane />
-          </button>
-        </div>
+            {/* Messages */}
+            <div className="flex-1 overflow-y-auto p-4 space-y-4 custom-scroll">
+              {loadingMessages ? (
+                Array(6).fill().map((_, i) => (
+                  <div
+                    key={i}
+                    className={`h-8 w-1/3 bg-gray-700 animate-pulse rounded-xl ${i % 2 === 0 ? "ml-auto" : "mr-auto"}`}
+                  />
+                ))
+              ) : (
+                messages?.map((msg, index) => (
+                  <div key={index} className={`flex ${msg.senderId === user?.id ? "justify-end" : "justify-start"} gap-2`}>
+                    <div className={`px-4 py-2 rounded-xl text-white ${msg.senderId === user?.id ? "bg-blue-600" : "bg-[#1a1a1a]"}`}>
+                      {msg.message}
+                    </div>
+                  </div>
+                ))
+              )}
+              <div ref={messagesEndRef}></div>
+            </div>
+
+            {/* Message Input */}
+            <div className="p-4 bg-[#1a1a1a] flex items-center border-t border-gray-700">
+              <FaRegSmile className="text-gray-400 text-xl cursor-pointer hover:text-white transition" />
+              <input
+                type="text"
+                className="ml-3 w-full p-2 bg-[#131313] text-white rounded-lg focus:ring-2 focus:ring-blue-500 border border-gray-700"
+                placeholder="Type a message..."
+                value={message}
+                onChange={(e) => setMessage(e.target.value)}
+                onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
+              />
+              <button onClick={sendMessage} className="ml-3 bg-blue-600 p-3 rounded-lg text-white hover:bg-blue-700 transition">
+                <FaPaperPlane />
+              </button>
+            </div>
+          </>
+        ) : (
+          <div className="flex-1 flex flex-col items-center justify-center text-gray-400 text-center p-4">
+            {allChats.length === 0 ? (
+              <>
+                <p className="mb-4">You have no connections yet.</p>
+                <Link
+                  to="/discover"
+                  className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition"
+                >
+                  Find Friends
+                </Link>
+              </>
+            ) : (
+              "Select a chat to start messaging"
+            )}
+          </div>
+        )}
       </div>
     </div>
   );

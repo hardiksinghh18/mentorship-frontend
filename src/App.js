@@ -53,7 +53,7 @@ const [loading, setLoading] = useState(true);
   useEffect(() => {
    
     verifyTokens();
-  }, [dispatch,isLoggedIn]);
+  }, [dispatch,isLoggedIn,loading]);
 
 
   if (loading) {

@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { setLoggedOut } from '../../redux/actions/authActions';
 import { FiHome, FiSearch, FiMessageSquare, FiUser, FiLogOut } from 'react-icons/fi';
-import { FaRegUser } from "react-icons/fa";
+import { FaHandsHelping, FaRegUser } from "react-icons/fa";
 
 const Navbar = () => {
     const [lastScrollY, setLastScrollY] = useState(0);
@@ -23,7 +23,7 @@ const Navbar = () => {
     const DesktopNavItem = ({ to, children }) => (
         <Link
             to={to}
-            className={`px-4 py-2 hover:text-blue-400 font-semibold transition-colors ${location.pathname === to ? 'text-blue-400' : 'text-gray-300'
+            className={`px-2 py-2 hover:text-blue-400 font-semibold transition-colors ${location.pathname === to ? 'text-blue-400' : 'text-gray-300'
                 }`}
         >
             {children}
@@ -49,7 +49,7 @@ const Navbar = () => {
                     {/* Logo */}
                     <Link to="/" className="flex items-center">
                         <span className="text-xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
-                            Mentorship
+                        SkillSync 
                         </span>
                     </Link>
 
@@ -57,7 +57,7 @@ const Navbar = () => {
                     <div className="flex items-center text-sm space-x-2">
                         <DesktopNavItem to="/">Home</DesktopNavItem>
                         <DesktopNavItem to="/discover">Discover</DesktopNavItem>
-                        {isLoggedIn && <DesktopNavItem to="/matchmaking">Matchmaking</DesktopNavItem>}
+                        {isLoggedIn && <DesktopNavItem to="/matchmaking">Match</DesktopNavItem>}
                         {isLoggedIn && <DesktopNavItem to="/messages">Chats</DesktopNavItem>}
                         {/* User Section */}
                         <div className="flex items-center space-x-4">
@@ -74,7 +74,7 @@ const Navbar = () => {
                             ) : (
                                 <Link
                                     to="/login"
-                                    className="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg text-sm transition-colors"
+                                    className="px-2 py-1 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg text-xs transition-colors"
                                 >
                                     Login
                                 </Link>
@@ -88,10 +88,11 @@ const Navbar = () => {
 
             {/* Mobile Bottom Navigation */}
             {isLoggedIn && (
-                <div className="md:hidden fixed bottom-0 w-full z-50 bg-[#0d0d0d] border-t border-gray-800">
+                <div className="md:hidden fixed bottom-0 mt-10 w-full z-50 bg-[#0d0d0d] border-t border-gray-800">
                     <div className="flex justify-around items-center py-3">
                         <MobileNavIcon to="/" icon={FiHome} label="Home" />
                         <MobileNavIcon to="/discover" icon={FiSearch} label="Discover" />
+                        <MobileNavIcon to="/matchmaking" icon={FaHandsHelping } label="Match" />
                         <MobileNavIcon to="/messages" icon={FiMessageSquare} label="Chats" />
                         <MobileNavIcon
                             to={`/profile/${user.username}`}

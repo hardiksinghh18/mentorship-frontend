@@ -11,9 +11,9 @@ const Notifications = ({ pendingRequests, handleRequest }) => {
                 </span>
             </div>
 
-            {pendingRequests.length > 0 ? (
+            {pendingRequests?.length > 0 ? (
                 <div className="space-y-4">
-                    {pendingRequests.map((request) => (
+                    {pendingRequests?.map((request) => (
                         <div
                             key={request.id}
                             className="flex items-center justify-between p-4 rounded-lg bg-[#1a1a1a] hover:bg-[#262626] transition-colors"

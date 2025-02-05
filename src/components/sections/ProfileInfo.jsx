@@ -50,8 +50,8 @@ const ProfileInfo = ({ profile, isOwnProfile, currentUserId, onSendRequest }) =>
     <div className="max-w-4xl mx-auto bg-[#0d0d0d] rounded-xl overflow-hidden shadow-xl border border-gray-800">
     {/* Cover Photo Section */}
     <div className="h-32 bg-gradient-to-r from-blue-800 to-purple-800 relative">
-      <div className="absolute -bottom-16 left-6">
-        <div className="w-32 h-32 bg-gray-700 rounded-full border-4 border-[#0d0d0d] flex items-center justify-center shadow-xl">
+      <div className="absolute -bottom-8 left-4 md:-bottom-16 md:left-6">
+        <div className="w-16 h-16 md:w-32 md:h-32 bg-gray-700 rounded-full border-4 border-[#0d0d0d] flex items-center justify-center shadow-xl">
           <FaUserCircle className="text-gray-300 text-7xl" />
         </div>
       </div>

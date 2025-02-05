@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import axios from 'axios';
 import ProfileCard from '../components/common/ProfileCard';
+import DiscoverLoader from '../components/loaders/DiscoverLoader';
 
 const Matchmaking = () => {
   const [users, setUsers] = useState([]);
@@ -57,7 +58,7 @@ const Matchmaking = () => {
       })
       .sort((a, b) => b.matchScore - a.matchScore); // Sort by match score in descending order
 
-    return matches;
+    return matches.filter(item=>item.matchScore>0);
   };
 
   useEffect(() => {
@@ -72,24 +73,22 @@ const Matchmaking = () => {
 
   if (loadingProfiles) {
     return (
-      <div className="flex items-center justify-center h-screen bg-[#000104] text-white">
-        <div className="text-center">
-          <h2 className="text-xl font-semibold">Loading profiles...</h2>
-        </div>
-      </div>
+     <DiscoverLoader/>
     );
   }
 
   const bestMatches = getBestMatches();
 
   return (
-    <div className="min-h-screen bg-[#0d0d0d]">
+    <div className="min-h-screen pb-20 md:pb-4 bg-[#0d0d0d]">
       {/* Main Content */}
       <div className="flex flex-col px-4 md:px-8 gap-8 max-w-7xl mx-auto">
         {/* Scrollable Profile Section */}
-        <div className="flex-1 overflow-y-auto h-[calc(100vh-6rem)] md:px-4 pb-10">
-          <div className="max-w-7xl mx-auto px-4 py-3 my-4">
-            <h1 className="text-lg md:text-2xl font-bold text-white text-center">Your Best Matches</h1>
+        <div className="flex-1 overflow-y-auto  md:px-4 md:pt-4 mt-16"> 
+          <div className="max-w-7xl mx-auto px-4 pb-3 my-4">
+            <h1 className="text-lg md:text-3xl font-bold text-white text-center">
+              Your Best Matches
+            </h1>
           </div>
           {bestMatches.length > 0 ? (
             <div className="space-y-4">
@@ -105,7 +104,7 @@ const Matchmaking = () => {
               )}
             </div>
           ) : (
-            <p className="text-center text-gray-400">No matches found yet. Please try again later.</p>
+            <p className="text-center flex justify-center items-center h-[20rem] text-gray-400">No matches found yet. Please try again later.</p>
           )}
         </div>
       </div>

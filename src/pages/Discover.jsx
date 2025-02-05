@@ -4,6 +4,8 @@ import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import ProfileCard from "../components/common/ProfileCard";
 import { useNavigate } from "react-router-dom";
+import { FaBars, FaTimes } from "react-icons/fa";
+import DiscoverLoader from "../components/loaders/DiscoverLoader";
 
 const Discover = () => {
   const [users, setUsers] = useState([]);
@@ -105,19 +107,12 @@ const Discover = () => {
     }
   }, [isLoggedIn]);
 
-  if (loadingProfiles) {
-    return (
-      <div className="flex items-center justify-center h-screen bg-[#0d0d0d]">
-        <div className="text-center">
-          <h2 className="text-xl font-semibold text-white">Loading profiles...</h2>
-        </div>
-      </div>
-    );
-  }
-
+  if(loadingProfiles){
+    return <DiscoverLoader/>
+   }
   if (error) {
     return (
-      <div className="flex items-center justify-center h-screen bg-[#0d0d0d]">
+      <div className="flex items-center justify-center h-screen  bg-[#0d0d0d]">
         <div className="text-center">
           <h2 className="text-xl font-semibold text-white">Error</h2>
           <p className="text-gray-400">{error}</p>
@@ -129,32 +124,33 @@ const Discover = () => {
   if (!isLoggedIn) {
     navigate("/login");
   }
-
+ 
   return (
-    <div className="min-h-screen bg-[#0d0d0d]">
-      
+    <div className="min-h-screen pb-20 md:pb-4 bg-[#0d0d0d]">
 
-      <div className="flex flex-col md:flex-row  px-4 md:px-8 gap-8 max-w-7xl mx-auto">
+
+      <div className="flex flex-col md:flex-row  px-0 md:px-8 gap-8 max-w-7xl mx-auto">
 
         {/* Mobile Filter Toggle Button */}
-        <div className="md:hidden">
+        <div className="md:hidden w-full fixed top-4 left-2  z-50">
           <button
             onClick={toggleFilters}
-            className="w-full bg-[#262626] text-gray-300 text-sm font-semibold px-4 py-3 rounded-md hover:bg-[#333333] transition"
+            className="p-2 bg-[#262626] text-gray-300 rounded-md hover:bg-[#333333] transition z-50"
           >
-            {showFilters ? "Hide Filters" : "Show Filters"}
+            {showFilters ? <FaTimes size={16} /> : <FaBars size={16} />}
           </button>
         </div>
 
-        
         {/* Filter Section (Mobile & Desktop) */}
         <div
-          className={`w-full md:w-64 bg-[#1a1a1a] rounded-lg shadow-lg p-4 border border-gray-800 md:fixed md:top-24 md:left-8 md:h-[calc(100vh-10rem)] md:overflow-y-auto transition-all duration-300 ease-in-out ${showFilters || window.innerWidth >= 768
-              ? "max-h-[1000px] opacity-100" // Expanded state
-              : "max-h-0 opacity-0 overflow-hidden" // Collapsed state
-            }`}
+          className={`fixed  top-0 md:top-14 left-0 h-full md:h-[calc(100vh-4rem)] bg-[#1a1a1a] flex flex-col items-center justify-center shadow-lg p-4 border border-gray-800 transition-all duration-300 ease-in-out  z-40
+    ${showFilters ? "w-64 opacity-100" : "w-0 opacity-0 overflow-hidden"} md:w-64 md:opacity-100 md:block`}
         >
-          <div className="space-y-4">
+            <h1 className=" text-lg md:text-xl font-bold text-white text-center ">
+              Filters
+            </h1>
+
+          <div className="space-y-4 flex flex-col h-full w-full  justify-center">
             <div>
               <label className="block text-gray-300 text-sm font-semibold mb-2">Select Role</label>
               <select
@@ -214,13 +210,16 @@ const Discover = () => {
           </div>
         </div>
 
+
         {/* Scrollable Profile Section */}
-        <div className="flex-1 overflow-y-auto h-[100vh] md:ml-72 md:px-4 ">
-          <div className="max-w-7xl mx-auto px-4 py-3 my-4">
-            <h1 className="text-lg md:text-2xl font-bold text-white text-center ">Discover Mentors and Mentees</h1>
+        <div className="flex-1 overflow-y-auto md:ml-48  md:px-4 md:pt-4 mt-16">
+          <div className="max-w-7xl mx-auto px-4 pb-3 my-4">
+            <h1 className="text-lg md:text-3xl font-bold text-white text-center">
+              Discover Mentors and Mentees
+            </h1>
           </div>
           {filteredUsers?.length > 0 ? (
-            filteredUsers.map((item) =>
+            filteredUsers?.map((item) =>
               item.id !== user?.id ? (
                 <ProfileCard
                   key={item.id}
