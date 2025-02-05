@@ -75,7 +75,7 @@ const ChatSection = () => {
     try {
       const response = await axios.get(`${process.env.REACT_APP_BACKEND_BASE_URL}/api/connections/requests/${user?.username}`);
       let connections = response?.data.requests.filter(request => request.status === "accepted");
-      
+
       setAllChats(connections);
       setFilteredChats(connections);
 
@@ -216,9 +216,12 @@ const ChatSection = () => {
               <button className="md:hidden text-white text-2xl hover:text-gray-300 transition" onClick={() => setIsChatOpen(false)}>
                 <IoArrowBack />
               </button>
-              <div className="ml-4 flex items-center">
-                <h2 className="text-sm md:text-lg font-semibold text-white">{receiver?.username}</h2>
-              </div>
+              <Link to={`/profile/${receiver?.username}`} className="ml-4 flex items-center">
+                <div className="w-10 h-10 bg-gray-700 rounded-full flex items-center justify-center text-white font-bold">
+                  {receiver?.username.charAt(0).toUpperCase()}
+                </div>
+                <h2 className="text-sm md:text-lg ml-4 font-semibold text-white">{receiver?.username}</h2>
+              </Link>
             </div>
 
             {/* Messages */}
@@ -243,8 +246,8 @@ const ChatSection = () => {
             </div>
 
             {/* Message Input */}
-            <div className="p-4 bg-[#1a1a1a] flex items-center border-t border-gray-700">
-              <FaRegSmile className="text-gray-400 text-xl cursor-pointer hover:text-white transition" />
+            <div className="md:p-4 pb-20  bg-[#1a1a1a] flex items-center border-t border-gray-700">
+              {/* <FaRegSmile className="text-gray-400 text-xl cursor-pointer hover:text-white transition" /> */}
               <input
                 type="text"
                 className="ml-3 w-full p-2 bg-[#131313] text-white rounded-lg focus:ring-2 focus:ring-blue-500 border border-gray-700"
