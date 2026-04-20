@@ -8,6 +8,8 @@ import ProfileInfo from "../components/sections/ProfileInfo";
 import Notifications from "../components/sections/Notifications";
 import Connections from "../components/sections/Connections";
 
+import ProfileLoader from "../components/loaders/ProfileLoader";
+
 const Profile = () => {
     const { isLoggedIn, user } = useSelector((state) => state.auth);
     const { username } = useParams();
@@ -60,12 +62,12 @@ const Profile = () => {
                     username: response?.data.user.username || "Not provided",
                     role: response?.data.user.role || "Not specified",
                     bio: response?.data.user.bio || "No bio available.",
-                    skills: response?.data.user.skills
-                        ? response?.data.user.skills.split(",").map((skill) => skill.trim())
-                        : [],
-                    interests: response?.data.user.interests
-                        ? response?.data.user.interests.split(",").map((interest) => interest.trim())
-                        : [],
+                    skills: Array.isArray(response?.data.user.skills)
+                        ? response.data.user.skills
+                        : (response?.data.user.skills ? response.data.user.skills.split(",").map((skill) => skill.trim()) : []),
+                    interests: Array.isArray(response?.data.user.interests)
+                        ? response.data.user.interests
+                        : (response?.data.user.interests ? response.data.user.interests.split(",").map((interest) => interest.trim()) : []),
                     email: response?.data.user.email || "Not provided",
                     receivedRequests: response?.data.user.receivedRequests,
                     sentRequests: response?.data.user.sentRequests,
@@ -144,7 +146,7 @@ const Profile = () => {
                     receiverId: connection.receiverId,
                 },
                 withCredentials: true,
-            });
+              });
 
             if (response.data.success) {
                 setProfile((prevProfile) => ({
@@ -166,16 +168,7 @@ const Profile = () => {
     const isOwnProfile = user?.email === profile?.email;
 
     if (authLoading || loadingProfile) {
-        return (
-            <div className="flex items-center justify-center h-screen bg-[#000104] text-white">
-                <div className="text-center">
-                    <h2 className="text-2xl font-semibold">Loading...</h2>
-                    <p className="text-gray-400">
-                        {authLoading ? "Verifying session..." : "Loading profile..."}
-                    </p>
-                </div>
-            </div>
-        );
+        return <ProfileLoader />;
     }
 
     if (error) {
@@ -185,10 +178,10 @@ const Profile = () => {
                     <h2 className="text-2xl font-semibold">Error</h2>
                     <p>{error}</p>
                     <Link
-                        to="/discover"
+                        to="/explore"
                         className="bg-blue-600 hover:bg-blue-700 px-6 py-2 text-sm rounded-md text-white shadow-md hover:shadow-lg mt-4 inline-block"
                     >
-                        Go Back to Discover
+                        Go Back to Explore
                     </Link>
                 </div>
             </div>
@@ -204,11 +197,13 @@ const Profile = () => {
       
       }
     return (
-        <div className="min-h-screen pb-20 md:pb-4 bg-[#0d0d0d] text-white  md:p-12">
-            <div className="max-w-6xl mx-auto px-1 py-6 md:px-8 md:py-8 rounded-lg grid grid-cols-1 md:grid-cols-3 gap-8">
-                {profile && <div className="md:col-span-2">
-                    <ProfileInfo profile={profile} isOwnProfile={isOwnProfile} currentUserId={user?.id} onSendRequest={handleSendRequest} />
-                </div>}
+        <div className="min-h-screen bg-black text-white selection:bg-white selection:text-black pt-28 pb-20 md:pb-12">
+            <div className="max-w-7xl mx-auto px-4 md:px-12 grid grid-cols-1 lg:grid-cols-3 gap-12">
+                {profile && (
+                    <div className="lg:col-span-2">
+                        <ProfileInfo profile={profile} isOwnProfile={isOwnProfile} currentUserId={user?.id} onSendRequest={handleSendRequest} />
+                    </div>
+                )}
 
                 <div className="md:col-span-1 flex flex-col gap-8">
                     {isOwnProfile && pendingRequests && (

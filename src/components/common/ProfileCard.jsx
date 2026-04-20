@@ -5,7 +5,7 @@ import { toast } from "react-toastify";
 import { FaUserPlus, FaUserCheck, FaClock } from "react-icons/fa"; // Icons for different states
 
 const ProfileCard = ({ profile, currentUserId, matchScore }) => {
-  const { id, name, role, skills, interests, username, bio, receivedRequests, sentRequests } = profile;
+  const { id, name, role, skills, username, bio, receivedRequests, sentRequests } = profile;
 
   const [buttonStatus, setButtonStatus] = useState("connect");
 
@@ -30,10 +30,9 @@ const ProfileCard = ({ profile, currentUserId, matchScore }) => {
     try {
       const response = await axios.post(`${process.env.REACT_APP_BACKEND_BASE_URL}/api/connections/send`, { receiverId, senderId });
       toast.success(response.data.message);
-      setButtonStatus("pending"); // Update status to "pending" after sending the request
+      setButtonStatus("pending");
     } catch (error) {
       toast.error(error.response?.data?.message || "Error sending request");
-      console.error(error.response?.data?.message);
     }
   };
 
@@ -47,107 +46,106 @@ const ProfileCard = ({ profile, currentUserId, matchScore }) => {
     }
   };
 
-  // Determine the icon and tooltip based on the button status
-  const getIconAndTooltip = () => {
+  const getButtonConfig = () => {
     switch (buttonStatus) {
       case "connected":
-        return { icon: <FaUserCheck className="text-white text-lg" />, tooltip: "Connected" };
+        return { 
+          text: "Connected", 
+          icon: <FaUserCheck size={14} />, 
+          className: "bg-white/10 text-white cursor-default" 
+        };
       case "pending":
-        return { icon: <FaClock className="text-white text-lg" />, tooltip: "Request Pending" };
+        return { 
+          text: "Pending", 
+          icon: <FaClock size={14} />, 
+          className: "bg-white/5 text-white/50 cursor-default" 
+        };
       default:
-        return { icon: <FaUserPlus className="text-white text-lg" />, tooltip: "Send Request" };
+        return { 
+          text: "Connect", 
+          icon: <FaUserPlus size={14} />, 
+          className: "bg-white text-black hover:bg-white/90" 
+        };
     }
   };
 
-  const { icon, tooltip } = getIconAndTooltip();
+  const btnConfig = getButtonConfig();
 
   return (
-    <div className="bg-[#0d0d0d] w-full max-w-3xl overflow-hidden mx-auto relative px-6 py-4 rounded-lg shadow-lg flex flex-col gap-3 border border-gray-800">
-      {/* Match Score Badge */}
-      {matchScore && (
-        <span className="bg-gradient-to-r from-blue-700 to-purple-700 absolute top-4 right-20 text-white text-xs font-bold px-3 py-1 rounded-full shadow-md">
-          Match-score: {matchScore}
-        </span>
-      )}
-
-      {/* Profile Header */}
-      <div className="flex items-start gap-4">
-        {/* Profile Picture */}
-        <Link to={`/profile/${username}`} className="flex-shrink-0 w-12 h-12 bg-gray-700 rounded-full flex items-center justify-center text-white font-bold text-xl shadow-md">
-          {username[0]?.toUpperCase()}
-        </Link>
-
-        {/* Profile Details */}
-        <div className="flex-grow">
-          <div className="flex items-center gap-2">
-            <Link to={`/profile/${username}`} className="text-lg font-bold text-white hover:text-blue-500 transition-colors">
-              {username}
-            </Link>
-          </div>
-
-          {/* Role Display */}
-          {role && (
-            <p className="text-sm text-gray-400 ">{role}</p>
+    <div className="group relative bg-white/[0.02] hover:bg-white/[0.04] transition-all duration-500 rounded-[2rem] p-8 border border-white/[0.05] hover:border-white/10">
+      {/* Editorial Layout */}
+      <div className="flex flex-col md:flex-row gap-8 items-start">
+        
+        {/* Profile Image & Avatar */}
+        <div className="relative shrink-0">
+          <Link to={`/profile/${username}`} className="block w-20 h-20 rounded-2xl overflow-hidden bg-zinc-900 border border-white/5 group-hover:border-white/20 transition-all duration-500">
+             <div className="w-full h-full flex items-center justify-center text-2xl font-bold text-white/20 group-hover:text-white/40 transition-colors">
+               {username[0]?.toUpperCase()}
+             </div>
+          </Link>
+          {matchScore && (
+            <div className="absolute -bottom-2 -right-2 bg-white text-black text-[10px] font-black px-2 py-1 rounded-md shadow-2xl tracking-tighter">
+              {matchScore}% MATCH
+            </div>
           )}
-
-          
         </div>
 
-        {/* Add Person Icon */}
-        <button
-          onClick={handleSendRequest}
-          disabled={buttonStatus !== "connect"}
-          className="flex-shrink-0 p-2 bg-gradient-to-r from-blue-700 to-purple-700 rounded-full hover:opacity-90 transition-opacity"
-          title={tooltip}
-        >
-          {icon}
-        </button>
-      </div>
-      {bio && (<div className="flex font-semibold text-gray-300 gap-2">
-        {/* Bio Display */}
-         <h3 className="text-sm  ">Bio : </h3>
-        
-            <p className="text-sm  ">{bio.length>15?`${bio.slice(0,70)}...`:bio}</p>
-          
-      </div>
-      )}
-      {/* Skills Section */}
-      <div className="mt-0">
-        <h3 className="text-sm font-semibold text-gray-300 mb-2">Skills:</h3>
-        {skills?.length > 0 ? (
-          <div className="flex flex-wrap gap-2">
-            {skills?.map((skill, index) => (
+        {/* Content Section */}
+        <div className="flex-1 space-y-4">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div>
+              <div className="flex flex-wrap items-center gap-3">
+                <Link to={`/profile/${username}`} className="text-2xl font-bold text-white tracking-tight hover:text-zinc-300 transition-colors">
+                  {name}
+                </Link>
+                {role && (
+                  <span className="px-2.5 py-1 bg-white text-black text-[9px] font-black uppercase tracking-[0.2em] rounded border border-white">
+                    {role}
+                  </span>
+                )}
+              </div>
+              <Link to={`/profile/${username}`} className="block text-zinc-500 text-base font-bold tracking-tight mt-1 opacity-80 italic lowercase hover:text-white transition-colors">
+                @{username}
+              </Link>
+            </div>
+
+            <button
+              onClick={handleSendRequest}
+              disabled={buttonStatus !== "connect"}
+              className={`flex items-center gap-2.5 px-6 py-2.5 rounded-full text-xs font-black tracking-widest uppercase transition-all active:scale-[0.98] ${btnConfig.className}`}
+            >
+              {btnConfig.icon}
+              {btnConfig.text}
+            </button>
+          </div>
+
+          {bio && (
+            <p className="text-zinc-400 text-sm leading-relaxed max-w-2xl font-medium">
+              {bio.length > 120 ? `${bio.slice(0, 117)}...` : bio}
+            </p>
+          )}
+
+          {/* Tags */}
+          <div className="pt-2 flex flex-wrap gap-2">
+            {skills?.slice(0, 4).map((skill, index) => (
               <span
                 key={index}
-                className="text-white text-xs font-semibold px-3 py-1 rounded-lg border border-gray-600 hover:border-gray-500 transition-all duration-300"
+                className="px-3 py-1 bg-white/[0.03] border border-white/[0.05] rounded-lg text-[10px] font-bold text-zinc-500 uppercase tracking-wider group-hover:border-white/10 transition-colors"
               >
                 {skill}
               </span>
             ))}
+            {skills?.length > 4 && (
+              <span className="px-3 py-1 text-[10px] font-bold text-zinc-600 uppercase tracking-wider">
+                +{skills.length - 4} MORE
+              </span>
+            )}
           </div>
-        ) : (
-          <p className="text-sm text-gray-400">No skills listed.</p>
-        )}
+        </div>
       </div>
 
-      {/* Interests Section
-      <div className="">
-        <h3 className="text-sm font-semibold text-gray-300 mb-2">Interests:</h3>
-        {interests?.length > 0 ? (
-          <div className="flex flex-wrap gap-2">
-            {interests?.map((interest, index) => (
-              <span
-                key={index}
-                className="text-white text-xs font-semibold px-3 py-1 rounded-full border border-gray-600 hover:border-gray-500 transition-all duration-300"
-              >
-                {interest}
-              </span>
-            ))}
-          </div>
-        ) : (
-          <p className="text-sm text-gray-400">No interests listed.</p>
-        )}
-      </div> */}
+      {/* Subtle Bottom Light Leak */}
+      <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-1/2 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
     </div>
   );
 };

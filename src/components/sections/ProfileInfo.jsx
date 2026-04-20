@@ -47,125 +47,130 @@ const ProfileInfo = ({ profile, isOwnProfile, currentUserId, onSendRequest }) =>
   };
 
   return (
-    <div className="max-w-4xl mx-auto bg-[#0d0d0d] rounded-xl overflow-hidden shadow-xl border border-gray-800">
-    {/* Cover Photo Section */}
-    <div className="h-32 bg-gradient-to-r from-blue-800 to-purple-800 relative">
-      <div className="absolute -bottom-8 left-4 md:-bottom-16 md:left-6">
-        <div className="w-16 h-16 md:w-32 md:h-32 bg-gray-700 rounded-full border-4 border-[#0d0d0d] flex items-center justify-center shadow-xl">
-          <FaUserCircle className="text-gray-300 text-7xl" />
-        </div>
+    <div className="max-w-4xl mx-auto bg-black rounded-[2.5rem] overflow-hidden border border-white/[0.03]">
+      {/* Editorial Cover Section */}
+      <div className="h-40 bg-zinc-900/50 relative overflow-hidden">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_var(--tw-gradient-stops))] from-white/[0.02] to-transparent" />
+        <div className="absolute bottom-0 left-0 right-0 h-px bg-white/5" />
       </div>
-    </div>
 
-    {/* Profile Header */}
-    <div className="pt-20 px-6 pb-6">
-      <div className="flex justify-between items-start">
-        <div>
-          <h1 className="text-3xl font-bold text-white">{profile?.fullName || profile?.username}</h1>
-          <p className="text-gray-400 mt-1">@{profile?.username}</p>
-          <div className="flex items-center gap-2 mt-2">
-            <FiBriefcase className="text-gray-400" />
-            <span className="text-gray-400">{profile?.role}</span>
-          </div>
-          <div className="flex items-center gap-2 mt-1">
-            <FiMail className="text-gray-400" />
-            <span className="text-gray-400">{profile?.email}</span>
+      {/* Identity Stack */}
+      <div className="relative px-8 pb-10">
+        {/* Avatar positioned partially over cover */}
+        <div className="absolute -top-16 left-8">
+          <div className="w-32 h-32 bg-zinc-950 rounded-[2rem] border-4 border-black flex items-center justify-center shadow-2xl overflow-hidden group">
+            <FaUserCircle className="text-zinc-800 text-9xl group-hover:text-white transition-colors duration-500" />
+            <div className="absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity" />
           </div>
         </div>
-        
-        {/* Social Icons */}
-        <div className="flex gap-3">
-          <button className="p-2 rounded-full bg-gray-800 hover:bg-gray-700 transition">
-            <FaLinkedin className="text-blue-500 text-xl" />
-          </button>
-          <button className="p-2 rounded-full bg-gray-800 hover:bg-gray-700 transition">
-            <FaTwitter className="text-blue-400 text-xl" />
-          </button>
-        </div>
-      </div>
 
-      {/* Stats Bar */}
-      <div className="flex gap-6 mt-4 border-y border-gray-800 py-4">
-        <div className="text-center">
-          <span className="text-white font-semibold">0</span>
-          <p className="text-gray-400 text-sm">Connections</p>
-        </div>
-        <div className="text-center">
-          <span className="text-white font-semibold">{profile?.skills?.length || 0}</span>
-          <p className="text-gray-400 text-sm">Skills</p>
-        </div>
-      </div>
-    </div>
+        <div className="pt-20">
+          <div className="flex flex-col md:flex-row justify-between items-start gap-6">
+            <div className="space-y-4">
+              <div className="flex flex-wrap items-center gap-4 pt-2">
+                <h1 className="text-4xl md:text-5xl font-black text-white tracking-tighter leading-none">
+                  {profile?.fullName || profile?.username}
+                </h1>
+                {profile?.role && (
+                  <span className="px-3 py-1 bg-white text-black text-[10px] font-black uppercase tracking-[0.2em] rounded">
+                    {profile.role}
+                  </span>
+                )}
+              </div>
 
-    {/* Bio Section */}
-    <div className="px-6 pb-6">
-      <h2 className="text-xl font-semibold text-white mb-2">About</h2>
-      <p className="text-gray-300 leading-relaxed">
-        {profile?.bio || "No bio available"}
-      </p>
-    </div>
+              <div className="flex flex-col gap-2">
+                <Link to={`/profile/${profile?.username}`} className="text-zinc-500 text-lg font-bold italic tracking-tight hover:text-white transition-colors">
+                  @{profile?.username}
+                </Link>
+                <div className="flex flex-wrap items-center gap-6 pt-2">
+                  <div className="flex items-center gap-2 text-zinc-400 group cursor-default">
+                    <FiMail className="text-sm group-hover:text-white transition-colors" />
+                    <span className="text-xs font-medium tracking-wide">{profile?.email}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
 
-    {/* Skills Section */}
-    <div className="px-6 pb-6">
-      <h2 className="text-xl font-semibold text-white mb-4">Featured Skills</h2>
-      <div className="flex flex-wrap gap-3">
-        {profile?.skills?.map((skill, index) => (
-          <div key={index} className="bg-gray-800 px-4 py-2 rounded-full flex items-center gap-2">
-            <span className="text-white text-sm">{skill}</span>
-            {/* <span className="text-blue-400 text-xs">• 0 endorsements</span> */}
+            {/* Main Action Group */}
+            <div className="w-full md:w-auto pt-4 md:pt-0">
+              {!isOwnProfile ? (
+                <button
+                  onClick={handleButtonClick}
+                  className={`w-full md:w-48 py-4 rounded-xl font-black text-[10px] uppercase tracking-[0.2em] transition-all border ${buttonStatus === "pending"
+                      ? "bg-zinc-900 text-zinc-500 border-white/5 cursor-not-allowed"
+                      : buttonStatus === "connected"
+                        ? "bg-white text-black border-white"
+                        : "bg-white text-black border-white hover:bg-black hover:text-white"
+                    }`}
+                  disabled={buttonStatus !== "connect"}
+                >
+                  {buttonStatus === "pending" ? "Pending" : buttonStatus === "connected" ? "Connected" : "Connect"}
+                </button>
+              ) : (
+                <div className="flex items-center gap-4">
+                  <Link
+                    to="/profile/setup"
+                    className="px-10 py-3 bg-white text-black font-black text-[10px] uppercase tracking-[0.3em] rounded-full hover:bg-zinc-200 transition-all text-center shadow-lg hover:shadow-white/10"
+                  >
+                    Edit
+                  </Link>
+                  <button
+                    onClick={handleLogout}
+                    className="px-8 py-3 bg-zinc-900 text-zinc-500 font-black text-[10px] uppercase tracking-[0.3em] rounded-full hover:text-white hover:bg-zinc-800 transition-all"
+                  >
+                    Logout
+                  </button>
+                </div>
+              )}
+            </div>
           </div>
-        ))}
-        {!profile?.skills?.length && <p className="text-gray-400">No skills added yet</p>}
-      </div>
-    </div>
 
-    {/* Interests Section */}
-    <div className="px-6 pb-6">
-      <h2 className="text-xl font-semibold text-white mb-4">Interests</h2>
-      <div className="flex flex-wrap gap-3">
-        {profile?.interests?.map((interest, index) => (
-          <div key={index} className="bg-gray-800 px-4 py-2 rounded-full">
-            <span className="text-white text-sm">{interest}</span>
+          {/* Stats Architectural Bar */}
+          <div className="flex gap-12 mt-12 pt-8 border-t border-white/[0.03]">
+            <div className="group">
+              <p className="text-2xl font-black text-white tracking-tighter group-hover:translate-y-[-2px] transition-transform">0</p>
+              <p className="text-[10px] font-black uppercase tracking-widest text-zinc-500 mt-1">Connections</p>
+            </div>
+            <div className="group">
+              <p className="text-2xl font-black text-white tracking-tighter group-hover:translate-y-[-2px] transition-transform">{profile?.skills?.length || 0}</p>
+              <p className="text-[10px] font-black uppercase tracking-widest text-zinc-500 mt-1">Acquired Skills</p>
+            </div>
           </div>
-        ))}
-        {!profile?.interests?.length && <p className="text-gray-400">No interests added yet</p>}
+        </div>
+
+        {/* Content Sections */}
+        <div className="mt-12 space-y-16">
+          <section className="space-y-4">
+            <h2 className="text-[11px] font-black uppercase tracking-[0.3em] text-zinc-600 block mb-6">Brief Narrative</h2>
+            <p className="text-zinc-400 text-lg leading-[1.6] font-medium max-w-3xl">
+              {profile?.bio || "Trajectory details currently undisclosed."}
+            </p>
+          </section>
+
+          <section className="space-y-6">
+            <h2 className="text-[11px] font-black uppercase tracking-[0.3em] text-zinc-600">Core Proficiencies</h2>
+            <div className="flex flex-wrap gap-2">
+              {profile?.skills?.map((skill, index) => (
+                <span key={index} className="px-4 py-2 bg-white/[0.02] border border-white/[0.05] rounded-lg text-xs font-bold text-zinc-300 hover:text-white hover:bg-white/[0.05] transition-all cursor-default">
+                  {skill}
+                </span>
+              ))}
+            </div>
+          </section>
+
+          <section className="space-y-6">
+            <h2 className="text-[11px] font-black uppercase tracking-[0.3em] text-zinc-600">Active Interests</h2>
+            <div className="flex flex-wrap gap-2">
+              {profile?.interests?.map((interest, index) => (
+                <span key={index} className="px-4 py-2 bg-transparent border border-white/5 rounded-lg text-xs font-bold text-zinc-500 hover:text-zinc-300 transition-all cursor-default">
+                  {interest}
+                </span>
+              ))}
+            </div>
+          </section>
+        </div>
       </div>
     </div>
-
-    {/* Action Buttons */}
-    <div className="px-6 pb-6">
-      {!isOwnProfile ? (
-        <button
-          onClick={handleButtonClick}
-          className={`w-full py-3 rounded-lg font-semibold transition-all ${
-            buttonStatus === "pending"
-              ? "bg-yellow-500 text-white cursor-not-allowed"
-              : buttonStatus === "connected"
-              ? "bg-green-600 text-white cursor-not-allowed"
-              : "bg-gradient-to-r from-blue-600 to-purple-600 hover:opacity-90 text-white"
-          }`}
-          disabled={buttonStatus !== "connect"}
-        >
-          {buttonStatus === "pending" ? "Pending" : buttonStatus === "connected" ? "Connected" : "Connect"}
-        </button>
-      ) : (
-        <div className="flex gap-4">
-          <Link
-            to="/profile/setup"
-            className="flex-1 bg-gradient-to-r from-blue-600 to-purple-600 px-6 py-3 rounded-lg text-white text-center hover:opacity-90 transition-all"
-          >
-            Edit Profile
-          </Link>
-          <button
-            onClick={handleLogout}
-            className="flex-1 bg-red-600 px-6 py-3 rounded-lg text-white hover:bg-red-700 transition-all"
-          >
-            Logout
-          </button>
-        </div>
-      )}
-    </div>
-  </div>
   );
 };
 

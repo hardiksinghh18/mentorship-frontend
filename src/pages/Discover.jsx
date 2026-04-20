@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef, useCallback } from "react";
 import axios from "axios";
 import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
@@ -7,82 +7,119 @@ import { useNavigate } from "react-router-dom";
 import { FaBars, FaTimes } from "react-icons/fa";
 import DiscoverLoader from "../components/loaders/DiscoverLoader";
 
+const CardSkeleton = () => (
+  <div className="h-72 bg-white/[0.02] border border-white/[0.05] rounded-[3rem] p-8 flex gap-8 animate-pulse">
+    <div className="w-20 h-20 bg-white/[0.05] rounded-2xl shrink-0"></div>
+    <div className="flex-1 space-y-6">
+      <div className="flex justify-between items-start">
+        <div className="space-y-3">
+          <div className="h-6 w-48 bg-white/[0.05] rounded-lg"></div>
+          <div className="h-3 w-32 bg-white/[0.02] rounded-md"></div>
+        </div>
+        <div className="h-10 w-32 bg-white/[0.05] rounded-full"></div>
+      </div>
+      <div className="h-4 w-full bg-white/[0.02] rounded-lg"></div>
+      <div className="flex gap-2 pt-2">
+        <div className="h-6 w-16 bg-white/[0.03] rounded-lg"></div>
+        <div className="h-6 w-20 bg-white/[0.03] rounded-lg"></div>
+      </div>
+    </div>
+  </div>
+);
+
 const Discover = () => {
   const [users, setUsers] = useState([]);
-  const [filteredUsers, setFilteredUsers] = useState([]);
   const [loadingProfiles, setLoadingProfiles] = useState(false);
+  const [loadingMore, setLoadingMore] = useState(false);
   const [error, setError] = useState(null);
-  const [filters, setFilters] = useState({ role: "", skills: "", interests: "", name: '' });
+  const [filters, setFilters] = useState({ role: "", skills: "", interests: "", name: "" });
+  const [debouncedFilters, setDebouncedFilters] = useState(filters);
   const [showFilters, setShowFilters] = useState(false);
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
 
   const { user, isLoggedIn } = useSelector((state) => state.auth);
   const navigate = useNavigate();
+  const observer = useRef();
 
-  const fetchUsers = async () => {
-    try {
-      setLoadingProfiles(true);
-      const response = await axios.get(`${process.env.REACT_APP_BACKEND_BASE_URL}/users`, {
-        withCredentials: true,
+  // Debounce logic
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedFilters(filters);
+      setPage(1); // Also reset page when debounced filters change
+    }, 500);
+
+    return () => clearTimeout(handler);
+  }, [filters]);
+
+  const lastUserElementRef = useCallback(
+    (node) => {
+      if (loadingProfiles || loadingMore) return;
+      if (observer.current) observer.current.disconnect();
+      observer.current = new IntersectionObserver((entries) => {
+        if (entries[0].isIntersecting && hasMore) {
+          setPage((prevPage) => prevPage + 1);
+        }
       });
-      const fetchedUsers = response.data.users || [];
+      if (node) observer.current.observe(node);
+    },
+    [loadingProfiles, loadingMore, hasMore]
+  );
 
-      const normalizedUsers = fetchedUsers.map((user) => ({
-        id: user?.id || "Unknown ID",
-        username: user?.username,
-        name: user?.fullName || user?.username || "Anonymous",
-        role: user?.role,
-        bio: user?.bio,
-        skills: user?.skills
-          ? user?.skills.split(",").map((skill) => skill.trim()).slice(0, 6)
-          : [],
-        interests: user?.interests
-          ? user?.interests.split(",").map((interest) => interest.trim()).slice(0, 6)
-          : [],
-        receivedRequests: user?.receivedRequests,
-        sentRequests: user?.sentRequests,
+  const fetchUsers = async (pageNumber, isInitial = false) => {
+    try {
+      if (isInitial) {
+        setLoadingProfiles(true);
+      } else {
+        setLoadingMore(true);
+      }
+
+      const params = new URLSearchParams({
+        page: pageNumber,
+        limit: 10,
+        ...debouncedFilters,
+      });
+
+      const response = await axios.get(
+        `${process.env.REACT_APP_BACKEND_BASE_URL}/users?${params.toString()}`,
+        { withCredentials: true }
+      );
+      
+      const newUsers = response.data.users || [];
+      const normalizedUsers = newUsers.map((u) => ({
+        id: u?.id || "Unknown ID",
+        username: u?.username,
+        name: u?.fullName || u?.username || "Anonymous",
+        role: u?.role,
+        bio: u?.bio,
+        skills: Array.isArray(u?.skills) ? u.skills : [],
+        interests: Array.isArray(u?.interests) ? u.interests : [],
+        receivedRequests: u?.receivedRequests,
+        sentRequests: u?.sentRequests,
       }));
 
-      setUsers(normalizedUsers);
-      setFilteredUsers(normalizedUsers);
+      setUsers((prev) => (isInitial ? normalizedUsers : [...prev, ...normalizedUsers]));
+      setHasMore(response.data.hasMore);
+      setError(null);
     } catch (error) {
       console.error("Error fetching user profiles:", error);
       setError("Failed to load user profiles. Please try again later.");
     } finally {
       setLoadingProfiles(false);
+      setLoadingMore(false);
     }
   };
 
   const handleSendRequest = async (receiverId, senderId) => {
     try {
-      const response = await axios.post(`${process.env.REACT_APP_BACKEND_BASE_URL}/api/connections/send`, { receiverId, senderId });
+      const response = await axios.post(
+        `${process.env.REACT_APP_BACKEND_BASE_URL}/api/connections/send`,
+        { receiverId, senderId }
+      );
       toast.success(response.data.message);
     } catch (error) {
       toast.error(error.response?.data?.message || "Error sending request");
-      console.error(error.response?.data?.message);
     }
-  };
-
-  const applyFilters = () => {
-    const { role, skills, interests, name } = filters;
-
-    const skillsArray = skills ? skills.split(',').map((skill) => skill.trim().toLowerCase()) : [];
-    const interestsArray = interests ? interests.split(',').map((interest) => interest.trim().toLowerCase()) : [];
-
-    const filtered = users.filter((user) => {
-      const matchesRole = role ? user.role?.toLowerCase().includes(role.toLowerCase()) : true;
-      const matchesName = name ? user?.name?.toLowerCase().includes(name.toLowerCase()) : true;
-      const matchesUserName = name ? user?.username?.toLowerCase().includes(name.toLowerCase()) : true;
-      const matchesSkills = skillsArray.length
-        ? skillsArray.some((skill) => user.skills.some((userSkill) => userSkill.toLowerCase().includes(skill)))
-        : true;
-      const matchesInterests = interestsArray.length
-        ? interestsArray.some((interest) => user.interests.some((userInterest) => userInterest.toLowerCase().includes(interest)))
-        : true;
-
-      return matchesRole && matchesSkills && matchesInterests && matchesUserName;
-    });
-
-    setFilteredUsers(filtered);
   };
 
   const handleFilterChange = (e) => {
@@ -93,29 +130,34 @@ const Discover = () => {
     setShowFilters(!showFilters);
   };
 
+  // Initial load or filter change
   useEffect(() => {
-    fetchUsers();
-  }, []);
-
-  useEffect(() => {
-    applyFilters();
-  }, [filters]);
-
-  useEffect(() => {
-    if (isLoggedIn === true) {
-      fetchUsers();
+    if (isLoggedIn) {
+      fetchUsers(1, true);
     }
-  }, [isLoggedIn]);
+  }, [debouncedFilters, isLoggedIn]);
 
-  if(loadingProfiles){
-    return <DiscoverLoader/>
-   }
-  if (error) {
+  // Load more pages
+  useEffect(() => {
+    if (page > 1 && isLoggedIn) {
+      fetchUsers(page, false);
+    }
+  }, [page]);
+
+  // Initial load logic moved into the grid render to allow sidebar to remain visible
+  
+  if (error && users.length === 0) {
     return (
-      <div className="flex items-center justify-center h-screen  bg-[#0d0d0d]">
+      <div className="flex items-center justify-center h-screen bg-black">
         <div className="text-center">
-          <h2 className="text-xl font-semibold text-white">Error</h2>
-          <p className="text-gray-400">{error}</p>
+          <h2 className="text-xl font-bold text-white">Error</h2>
+          <p className="text-zinc-500 mt-2">{error}</p>
+          <button 
+            onClick={() => fetchUsers(1, true)}
+            className="mt-6 px-6 py-2 bg-white text-black font-bold rounded-full uppercase text-[10px] tracking-widest"
+          >
+            Retry
+          </button>
         </div>
       </div>
     );
@@ -124,114 +166,164 @@ const Discover = () => {
   if (!isLoggedIn) {
     navigate("/login");
   }
- 
+
   return (
-    <div className="min-h-screen pb-20 md:pb-4 bg-[#0d0d0d]">
+    <div className="min-h-screen bg-black text-white font-inter selection:bg-white selection:text-black pt-28">
+      <div className="max-w-7xl mx-auto flex flex-col md:flex-row relative px-4 md:px-0">
+        
+        {/* Sidebar Filter - Refined Editorial Panel */}
+        <div 
+          className={`fixed inset-0 md:sticky md:top-10 md:self-start md:w-80 h-full md:h-[calc(100vh-2.5rem)] bg-black md:bg-transparent z-50 md:z-auto transition-transform duration-500 md:translate-x-0 ${
+            showFilters ? 'translate-x-0' : '-translate-x-full'
+          }`}
+        >
+          <div className="h-full flex flex-col p-8 md:p-12 md:pt-6 space-y-10 border-r border-white/5 md:border-white/[0.03] overflow-y-auto no-scrollbar">
+            {/* Mobile Close */}
+            <button 
+              onClick={toggleFilters}
+              className="md:hidden self-end p-2 text-zinc-500 hover:text-white"
+            >
+              <FaTimes size={20} />
+            </button>
 
+            <div className="space-y-2">
+              <h2 className="text-xs font-black tracking-[0.3em] uppercase text-zinc-400">
+                Directory
+              </h2>
+              <div className="w-12 h-px bg-white/10" />
+            </div>
 
-      <div className="flex flex-col md:flex-row  px-0 md:px-8 gap-8 max-w-7xl mx-auto">
+            <div className="space-y-8 flex-grow">
+              {/* Role Filter */}
+              <div className="space-y-3">
+                <label className="block text-[11px] font-black uppercase tracking-[0.15em] text-zinc-500 ml-1">
+                  Categorization
+                </label>
+                <div className="relative group">
+                  <select
+                    name="role"
+                    value={filters.role}
+                    onChange={handleFilterChange}
+                    className="appearance-none w-full bg-white/[0.02] border border-white/5 rounded-xl px-5 py-3.5 text-sm font-bold text-white focus:outline-none focus:border-white/30 focus:bg-white/[0.05] transition-all cursor-pointer"
+                  >
+                    <option value="" className="bg-zinc-950">All Identities</option>
+                    <option value="mentor" className="bg-zinc-950">Elite Mentors</option>
+                    <option value="mentee" className="bg-zinc-950">Mentees</option>
+                  </select>
+                  <div className="absolute right-5 top-1/2 -translate-y-1/2 pointer-events-none text-zinc-600 group-hover:text-white transition-colors text-[10px]">
+                    ▼
+                  </div>
+                </div>
+              </div>
 
-        {/* Mobile Filter Toggle Button */}
-        <div className="md:hidden w-full fixed top-4 left-2  z-50">
-          <button
-            onClick={toggleFilters}
-            className="p-2 bg-[#262626] text-gray-300 rounded-md hover:bg-[#333333] transition z-50"
-          >
-            {showFilters ? <FaTimes size={16} /> : <FaBars size={16} />}
-          </button>
+              {/* Name Search */}
+              <div className="space-y-3">
+                <label className="block text-[11px] font-black uppercase tracking-[0.15em] text-zinc-500 ml-1">
+                  Identity Search
+                </label>
+                <input
+                  type="text"
+                  name="name"
+                  placeholder="Enter name or tag..."
+                  value={filters.name}
+                  onChange={handleFilterChange}
+                  className="w-full bg-white/[0.02] border border-white/5 rounded-xl px-5 py-3.5 text-sm font-bold text-white placeholder:text-zinc-700 focus:outline-none focus:border-white/30 focus:bg-white/[0.05] transition-all"
+                />
+              </div>
+
+              {/* Skills Filter */}
+              <div className="space-y-3">
+                <label className="block text-[11px] font-black uppercase tracking-[0.15em] text-zinc-500 ml-1">
+                  Proficiencies
+                </label>
+                <input
+                  type="text"
+                  name="skills"
+                  placeholder="UI, React, Strategy..."
+                  value={filters.skills}
+                  onChange={handleFilterChange}
+                  className="w-full bg-white/[0.02] border border-white/5 rounded-xl px-5 py-3.5 text-sm font-bold text-white placeholder:text-zinc-700 focus:outline-none focus:border-white/30 focus:bg-white/[0.05] transition-all"
+                />
+              </div>
+
+              {/* Reset Action */}
+              <button
+                onClick={() => setFilters({ role: "", name: "", skills: "", interests: "" })}
+                className="w-full py-3.5 text-[10px] font-black tracking-widest uppercase text-zinc-500 hover:text-white hover:bg-white/5 border border-white/5 hover:border-white/10 rounded-xl transition-all"
+              >
+                Flush All Filters
+              </button>
+            </div>
+          </div>
         </div>
 
-        {/* Filter Section (Mobile & Desktop) */}
-        <div
-          className={`fixed  top-0 md:top-14 left-0 h-full md:h-[calc(100vh-4rem)] bg-[#1a1a1a] flex flex-col items-center justify-center shadow-lg p-4 border border-gray-800 transition-all duration-300 ease-in-out  z-40
-    ${showFilters ? "w-64 opacity-100" : "w-0 opacity-0 overflow-hidden"} md:w-64 md:opacity-100 md:block`}
-        >
-            <h1 className=" text-lg md:text-xl font-bold text-white text-center ">
-              Filters
-            </h1>
-
-          <div className="space-y-4 flex flex-col h-full w-full  justify-center">
-            <div>
-              <label className="block text-gray-300 text-sm font-semibold mb-2">Select Role</label>
-              <select
-                name="role"
-                value={filters.role}
-                onChange={handleFilterChange}
-                className="bg-[#262626] text-gray-300 text-sm px-4 py-2 rounded-md border border-gray-700 w-full cursor-pointer"
-              >
-                <option value="" disabled className="text-gray-400">Select Role</option>
-                <option value="mentor">Mentor</option>
-                <option value="mentee">Mentee</option>
-              </select>
-            </div>
-
-            <div>
-              <label className="block text-gray-300 text-sm font-semibold mb-2">Search by Name</label>
-              <input
-                type="text"
-                name="name"
-                placeholder="Enter name..."
-                value={filters.name}
-                onChange={handleFilterChange}
-                className="bg-[#262626] text-gray-300 text-sm px-4 py-2 rounded-md border border-gray-700 w-full"
-              />
-            </div>
-
-            <div>
-              <label className="block text-gray-300 text-sm font-semibold mb-2">Filter by Skills</label>
-              <input
-                type="text"
-                name="skills"
-                placeholder="Enter skills..."
-                value={filters.skills}
-                onChange={handleFilterChange}
-                className="bg-[#262626] text-gray-300 text-sm px-4 py-2 rounded-md border border-gray-700 w-full"
-              />
-            </div>
-
-            <div>
-              <label className="block text-gray-300 text-sm font-semibold mb-2">Filter by Interests</label>
-              <input
-                type="text"
-                name="interests"
-                placeholder="Enter interests..."
-                value={filters.interests}
-                onChange={handleFilterChange}
-                className="bg-[#262626] text-gray-300 text-sm px-4 py-2 rounded-md border border-gray-700 w-full"
-              />
-            </div>
-
+        {/* Main Content Feed */}
+        <div className="flex-1 p-6 md:p-12 md:pt-6 space-y-12">
+          
+          {/* Mobile Header Toggle */}
+          <div className="md:hidden flex items-center justify-between mb-8">
             <button
-              onClick={() => setFilters({ role: "", name: "", skills: "", interests: "" })}
-              className="bg-gradient-to-r from-blue-700 to-purple-700 text-white text-sm py-2 rounded-md font-semibold transition w-full mt-2"
+              onClick={toggleFilters}
+              className="flex items-center gap-3 text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400"
             >
-              Reset Filters
+              <FaBars size={12} />
+              Refine Feed
             </button>
           </div>
-        </div>
 
-
-        {/* Scrollable Profile Section */}
-        <div className="flex-1 overflow-y-auto md:ml-48  md:px-4 md:pt-4 mt-16">
-          <div className="max-w-7xl mx-auto px-4 pb-3 my-4">
-            <h1 className="text-lg md:text-3xl font-bold text-white text-center">
-              Discover Mentors and Mentees
+          {/* Editorial Header */}
+          <div className="space-y-6 max-w-3xl">
+            <h1 className="text-4xl md:text-6xl font-black tracking-tighter leading-[0.9] text-white">
+              Explore the <br/>
+              <span className="text-zinc-500 italic font-medium">Synchronized</span> Collective
             </h1>
+            <p className="text-zinc-500 text-lg md:text-xl font-medium leading-relaxed">
+              Curating high-value mentorship connections through the Onyx network.
+            </p>
           </div>
-          {filteredUsers?.length > 0 ? (
-            filteredUsers?.map((item) =>
-              item.id !== user?.id ? (
-                <ProfileCard
-                  key={item.id}
-                  profile={item}
-                  currentUserId={user?.id}
-                  onSendRequest={handleSendRequest}
-                />
-              ) : null
-            )
-          ) : (
-            <p className="text-center text-gray-400">No profiles found matching filters.</p>
-          )}
+
+          {/* Results Grid */}
+          <div className="grid grid-cols-1 gap-12 pb-20">
+            {loadingProfiles && page === 1 ? (
+              // Initial/Filter Loading State
+              <>
+                <CardSkeleton />
+                <CardSkeleton />
+                <CardSkeleton />
+              </>
+            ) : users?.length > 0 ? (
+              users.map((item, index) => {
+                const isLast = users.length === index + 1;
+                return item.id !== user?.id ? (
+                  <div key={item.id} ref={isLast ? lastUserElementRef : null}>
+                    <ProfileCard
+                      profile={item}
+                      currentUserId={user?.id}
+                      onSendRequest={handleSendRequest}
+                    />
+                  </div>
+                ) : null;
+              })
+            ) : (
+              <div className="py-20 border border-white/5 rounded-[3rem] flex flex-col items-center justify-center space-y-4">
+                <p className="text-zinc-600 font-bold uppercase tracking-widest text-xs">No Matches Found</p>
+                <button 
+                  onClick={() => setFilters({ role: "", name: "", skills: "", interests: "" })}
+                  className="text-white font-bold hover:underline"
+                >
+                  Clear search parameters
+                </button>
+              </div>
+            )}
+
+            {/* Loading More Indicator */}
+            {loadingMore && (
+              <div className="space-y-12">
+                <CardSkeleton />
+                <CardSkeleton />
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </div>
