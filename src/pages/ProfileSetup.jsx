@@ -14,8 +14,8 @@ const ProfileSetup = () => {
   const [formData, setFormData] = useState({
     fullName: user?.fullName || "",
     role: user?.role || "",
-    skills: user?.skills || "",
-    interests: user?.interests || "",
+    skills: Array.isArray(user?.skills) ? user.skills.join(", ") : (user?.skills || ""),
+    interests: Array.isArray(user?.interests) ? user.interests.join(", ") : (user?.interests || ""),
     bio: user?.bio || "",
   });
 
@@ -48,115 +48,136 @@ const ProfileSetup = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#0d0d0d] ">
-      <div className="w-full max-w-2xl bg-[#0d0d0d] rounded-xl shadow-2xl border md:my-24 border-[#30363d] overflow-hidden">
-        <div className="p-8 border-b border-[#30363d]">
-          <div className="flex items-center gap-3 mb-6">
-            <div className="p-3 bg-[#238636] rounded-lg">
-              <FiEdit className="text-md md:text-2xl text-white" />
-            </div>
-            <div>
-              <h2 className="text-sm md:text-2xl font-bold text-white">Complete Your Profile</h2>
-              <p className="text-xs md:text-sm text-[#8b949e] mt-1">Help us match you with ideal mentors/mentees</p>
-            </div>
+    <div className="min-h-screen bg-black text-white selection:bg-white selection:text-black flex items-center justify-center p-6 sm:p-12">
+      <div className="w-full max-w-2xl bg-black rounded-[2.5rem] border border-white/[0.03] overflow-hidden">
+        <div className="p-10 md:p-16">
+          <div className="flex flex-col gap-2 mb-16">
+            <h2 className="text-[11px] font-black uppercase tracking-[0.4em] text-zinc-600 mb-2">Configuration</h2>
+            <h1 className="text-4xl md:text-5xl font-black text-white tracking-tighter leading-none mb-4">
+              Refine Your Identity
+            </h1>
+            <p className="text-zinc-500 text-sm font-medium tracking-tight">
+              Adjust your trajectory to synchronize with the ideal mentorship network.
+            </p>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-6">
-            {/* Name Field */}
-            <div className="relative group">
-              <div className="absolute inset-y-0 left-0 flex items-center pl-3 text-[#8b949e] group-focus-within:text-[#58a6ff]">
-                <FiUser className="w-5 h-5" />
+          <form onSubmit={handleSubmit} className="space-y-12">
+            <div className="space-y-8">
+              {/* Name Field */}
+              <div className="space-y-3">
+                <label className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-500 ml-1">Full Name</label>
+                <div className="relative group">
+                  <div className="absolute inset-y-0 left-0 flex items-center pl-4 text-zinc-600 group-focus-within:text-white transition-colors">
+                    <FiUser size={18} />
+                  </div>
+                  <input
+                    type="text"
+                    name="fullName"
+                    placeholder="Enter full name"
+                    className="w-full pl-12 pr-6 py-4 bg-white/[0.02] rounded-2xl border border-white/[0.05] text-white placeholder:text-zinc-700 focus:border-white focus:bg-white/[0.05] transition-all outline-none font-bold"
+                    value={formData.fullName}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
               </div>
-              <input
-                type="text"
-                name="fullName"
-                placeholder="Full Name"
-                className="w-full pl-10 pr-4 py-3 bg-[#0d1117] rounded-lg border border-[#30363d] text-white focus:border-[#58a6ff] focus:ring-1 focus:ring-[#58a6ff] transition-all"
-                value={formData.fullName}
-                onChange={handleChange}
-                required
-              />
-            </div>
 
-            {/* Role Select */}
-            <div className="relative group">
-              <div className="absolute inset-y-0 left-0 flex items-center pl-3 text-[#8b949e] group-focus-within:text-[#58a6ff]">
-                <FiBriefcase className="w-5 h-5" />
+              {/* Role Select */}
+              <div className="space-y-3">
+                <label className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-500 ml-1">Operational Role</label>
+                <div className="relative group">
+                  <div className="absolute inset-y-0 left-0 flex items-center pl-4 text-zinc-600 group-focus-within:text-white transition-colors pointer-events-none">
+                    <FiBriefcase size={18} />
+                  </div>
+                  <select
+                    name="role"
+                    className="w-full pl-12 pr-6 py-4 bg-white/[0.02] rounded-2xl border border-white/[0.05] text-white focus:border-white focus:bg-white/[0.05] appearance-none transition-all outline-none font-bold"
+                    value={formData.role}
+                    onChange={handleChange}
+                    required
+                  >
+                    <option value="" className="bg-zinc-950">Select Trajectory</option>
+                    <option value="mentor" className="bg-zinc-950">Mentor</option>
+                    <option value="mentee" className="bg-zinc-950">Mentee</option>
+                  </select>
+                  <div className="absolute inset-y-0 right-4 flex items-center pointer-events-none text-zinc-600">
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" /></svg>
+                  </div>
+                </div>
               </div>
-              <select
-                name="role"
-                className="w-full pl-10 pr-4 py-3 bg-[#0d1117] rounded-lg border border-[#30363d] text-white focus:border-[#58a6ff] focus:ring-1 focus:ring-[#58a6ff] appearance-none transition-all"
-                value={formData.role}
-                onChange={handleChange}
-                required
-              >
-                <option value="">Select Role</option>
-                <option value="mentor" className="bg-[#161b22]">Mentor</option>
-                <option value="mentee" className="bg-[#161b22]">Mentee</option>
-              </select>
-            </div>
 
-            {/* Skills Field */}
-            <div className="relative group">
-              <div className="absolute inset-y-0 left-0 flex items-center pl-3 text-[#8b949e] group-focus-within:text-[#58a6ff]">
-                <FiTool className="w-5 h-5" />
+              {/* Skills Field */}
+              <div className="space-y-3">
+                <label className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-500 ml-1">Acquired Proficiencies</label>
+                <div className="relative group">
+                  <div className="absolute inset-y-0 left-0 flex items-center pl-4 text-zinc-600 group-focus-within:text-white transition-colors">
+                    <FiTool size={18} />
+                  </div>
+                  <input
+                    type="text"
+                    name="skills"
+                    placeholder="Skills (comma separated)"
+                    className="w-full pl-12 pr-6 py-4 bg-white/[0.02] rounded-2xl border border-white/[0.05] text-white placeholder:text-zinc-700 focus:border-white focus:bg-white/[0.05] transition-all outline-none font-bold"
+                    value={formData.skills}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
               </div>
-              <input
-                type="text"
-                name="skills"
-                placeholder="Skills (comma separated)"
-                className="w-full pl-10 pr-4 py-3 bg-[#0d1117] rounded-lg border border-[#30363d] text-white focus:border-[#58a6ff] focus:ring-1 focus:ring-[#58a6ff] transition-all"
-                value={formData.skills}
-                onChange={handleChange}
-                required
-              />
-            </div>
 
-            {/* Interests Field */}
-            <div className="relative group">
-              <div className="absolute inset-y-0 left-0 flex items-center pl-3 text-[#8b949e] group-focus-within:text-[#58a6ff]">
-                <FiHeart className="w-5 h-5" />
+              {/* Interests Field */}
+              <div className="space-y-3">
+                <label className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-500 ml-1">Active Interests</label>
+                <div className="relative group">
+                  <div className="absolute inset-y-0 left-0 flex items-center pl-4 text-zinc-600 group-focus-within:text-white transition-colors">
+                    <FiHeart size={18} />
+                  </div>
+                  <input
+                    type="text"
+                    name="interests"
+                    placeholder="Interests (comma separated)"
+                    className="w-full pl-12 pr-6 py-4 bg-white/[0.02] rounded-2xl border border-white/[0.05] text-white placeholder:text-zinc-700 focus:border-white focus:bg-white/[0.05] transition-all outline-none font-bold"
+                    value={formData.interests}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
               </div>
-              <input
-                type="text"
-                name="interests"
-                placeholder="Interests (comma separated)"
-                className="w-full pl-10 pr-4 py-3 bg-[#0d1117] rounded-lg border border-[#30363d] text-white focus:border-[#58a6ff] focus:ring-1 focus:ring-[#58a6ff] transition-all"
-                value={formData.interests}
-                onChange={handleChange}
-                required
-              />
-            </div>
 
-            {/* Bio Textarea */}
-            <div className="relative group">
-              <div className="absolute inset-y-0 left-0 pt-3 pl-3 text-[#8b949e] group-focus-within:text-[#58a6ff]">
-                <FiUser className="w-5 h-5" />
+              {/* Bio Textarea */}
+              <div className="space-y-3">
+                <label className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-500 ml-1">Narrative</label>
+                <div className="relative group">
+                  <div className="absolute top-4 left-4 text-zinc-600 group-focus-within:text-white transition-colors">
+                    <FiEdit size={18} />
+                  </div>
+                  <textarea
+                    name="bio"
+                    placeholder="Describe your journey..."
+                    className="w-full pl-12 pr-6 py-4 bg-white/[0.02] rounded-2xl border border-white/[0.05] text-white placeholder:text-zinc-700 focus:border-white focus:bg-white/[0.05] transition-all outline-none font-bold resize-none min-h-[160px]"
+                    value={formData.bio}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
               </div>
-              <textarea
-                name="bio"
-                placeholder="Tell us about yourself..."
-                className="w-full pl-10 pr-4 py-3 bg-[#0d1117] rounded-lg border border-[#30363d] text-white focus:border-[#58a6ff] focus:ring-1 focus:ring-[#58a6ff] transition-all resize-none min-h-[120px]"
-                value={formData.bio}
-                onChange={handleChange}
-                required
-              />
             </div>
 
             {/* Submit Button */}
-            <button
-              type="submit"
-              className="w-full py-3.5 bg-gradient-to-r from-[#238636] to-[#2ea043] hover:from-[#2ea043] hover:to-[#238636] rounded-lg text-white font-semibold flex items-center justify-center gap-2 transition-all hover:shadow-lg"
-            >
-              <FiEdit className="w-5 h-5" />
-              Complete Profile
-            </button>
+            <div className="pt-8">
+              <button
+                type="submit"
+                className="w-full py-5 bg-white text-black text-[11px] font-black uppercase tracking-[0.4em] rounded-[1.5rem] hover:bg-zinc-200 transition-all flex items-center justify-center gap-2 group shadow-2xl shadow-white/5 active:scale-[0.98]"
+              >
+                Apply Changes
+              </button>
+            </div>
           </form>
         </div>
         
-        <div className="p-4 bg-[#0d1117] text-center border-t border-[#30363d]">
-          <p className="text-sm text-[#8b949e]">
-            Need help? <span className="text-[#58a6ff] cursor-pointer hover:underline">Contact support</span>
+        <div className="px-10 py-8 bg-zinc-900/10 border-t border-white/[0.03]">
+          <p className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-700 text-center">
+            SkillSync <span className="text-zinc-800 mx-2">|</span> Identity Management Core
           </p>
         </div>
       </div>

@@ -3,10 +3,12 @@ import { thunk } from 'redux-thunk';
 
 import { combineReducers } from 'redux';
 import { authReducer } from './reducers/authReducer';
+import uiReducer from './reducers/uiReducer';
 
 // Combine reducers (add more as needed)
 const rootReducer = combineReducers({
   auth: authReducer,
+  ui: uiReducer,
 });
 
 // Create Redux store with middleware

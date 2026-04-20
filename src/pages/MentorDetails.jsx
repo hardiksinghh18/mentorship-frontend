@@ -5,36 +5,34 @@ import { setLoggedIn, setLoggedOut } from '../redux/actions/authActions';
 import axios from 'axios';
 
 const MentorDetails = () => {
-  const { isLoggedIn } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const [authLoading, setAuthLoading] = useState(true); // Tracks auth verification loading
-
-  // Function to verify authentication
-  const verifyAuth = async () => {
-    try {
-      const response = await axios.get(
-        `${process.env.REACT_APP_BACKEND_BASE_URL}/auth/verify-tokens`,
-        { withCredentials: true }
-      );
-
-      if (response.data.loggedIn) {
-        dispatch(setLoggedIn());
-      } else {
-        dispatch(setLoggedOut());
-        navigate('/login');
-      }
-    } catch (error) {
-      console.error('Error verifying tokens:', error);
-      dispatch(setLoggedOut());
-      navigate('/login');
-    } finally {
-      setAuthLoading(false); // Stop loading after auth check
-    }
-  };
+  const [authLoading, setAuthLoading] = useState(true);
 
   useEffect(() => {
+    const verifyAuth = async () => {
+      try {
+        const response = await axios.get(
+          `${process.env.REACT_APP_BACKEND_BASE_URL}/auth/verify-tokens`,
+          { withCredentials: true }
+        );
+
+        if (response.data.loggedIn) {
+          dispatch(setLoggedIn());
+        } else {
+          dispatch(setLoggedOut());
+          navigate('/login');
+        }
+      } catch (error) {
+        console.error('Error verifying tokens:', error);
+        dispatch(setLoggedOut());
+        navigate('/login');
+      } finally {
+        setAuthLoading(false);
+      }
+    };
+
     verifyAuth();
   }, [dispatch, navigate]);
 

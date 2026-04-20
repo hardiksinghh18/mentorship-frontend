@@ -3,11 +3,14 @@ import { FaUserCircle } from "react-icons/fa";
 
 const Notifications = ({ pendingRequests, handleRequest }) => {
     return (
-        <div className="bg-[#0d0d0d] rounded-xl shadow-lg border border-gray-800 p-6">
-            <div className="flex justify-between items-center mb-6">
-                <h2 className="text-xl font-semibold text-white">Connection Requests</h2>
-                <span className="text-gray-400 text-sm">
-                    {pendingRequests.length} pending
+        <div className="bg-black rounded-[2rem] border border-white/[0.03] p-8">
+            <div className="flex justify-between items-end mb-10">
+                <div>
+                    <h2 className="text-[11px] font-black uppercase tracking-[0.3em] text-zinc-600 block mb-2">Inbound</h2>
+                    <p className="text-xl font-black text-white tracking-tighter">Connection Requests</p>
+                </div>
+                <span className="px-2 py-1 bg-white/5 text-zinc-500 text-[10px] font-black uppercase tracking-widest rounded whitespace-nowrap">
+                    {pendingRequests.length} Waiting
                 </span>
             </div>
 
@@ -16,48 +19,50 @@ const Notifications = ({ pendingRequests, handleRequest }) => {
                     {pendingRequests?.map((request) => (
                         <div
                             key={request.id}
-                            className="flex items-center justify-between p-4 rounded-lg bg-[#1a1a1a] hover:bg-[#262626] transition-colors"
+                            className="group flex flex-col gap-6 p-6 rounded-2xl bg-white/[0.02] border border-white/[0.03] hover:border-white/10 transition-all"
                         >
                             <Link 
                                 to={`/profile/${request.sender.username}`}
-                                className="flex items-center gap-4 flex-1"
+                                className="flex items-center gap-4"
                             >
-                                <div className="w-10 h-10 bg-gray-700 rounded-full flex items-center justify-center">
-                                    {request.sender.username?.[0]?.toUpperCase() || 
-                                    <FaUserCircle className="text-gray-300 text-xl" />}
+                                <div className="w-12 h-12 bg-zinc-900 rounded-xl flex items-center justify-center text-zinc-500 font-black text-lg group-hover:bg-white group-hover:text-black transition-all">
+                                    {request.sender.username?.[0]?.toUpperCase() || "!"}
                                 </div>
                                 <div>
-                                    <h3 className="font-semibold text-white hover:text-blue-400 transition-colors">
+                                    <h3 className="font-bold text-white text-sm tracking-tight leading-none mb-1">
                                         {request.sender.fullName || request.sender.username}
                                     </h3>
-                                    <p className="text-gray-400 text-sm">{request.sender.role}</p>
+                                    <p className="text-zinc-500 text-[10px] font-black uppercase tracking-widest leading-none">
+                                        {request.sender.role}
+                                    </p>
                                 </div>
                             </Link>
-                            <div className="flex gap-2">
+                            
+                            <div className="flex gap-3">
                                 <button
                                     onClick={() => handleRequest(request.receiverId, request.sender.id, "accepted")}
-                                    className="px-2 py-2 rounded-full border border-green-500 text-green-500 hover:bg-green-500/10 transition-colors text-xs font-semibold"
+                                    className="flex-1 py-3 bg-white text-black text-[10px] font-black uppercase tracking-widest rounded-full hover:bg-zinc-200 transition-all"
                                 >
                                     Accept
                                 </button>
                                 <button
                                     onClick={() => handleRequest(request.receiverId, request.sender.id, "declined")}
-                                    className="px-2 py-2 rounded-full border border-red-500 text-red-500 hover:bg-red-500/10 transition-colors text-xs font-semibold"
+                                    className="flex-1 py-3 bg-zinc-900 text-zinc-500 text-[10px] font-black uppercase tracking-widest rounded-full hover:text-white hover:bg-zinc-800 transition-all"
                                 >
-                                    Decline
+                                    Ignore
                                 </button>
                             </div>
                         </div>
                     ))}
                 </div>
             ) : (
-                <div className="text-center py-8">
-                    <p className="text-gray-400 mb-4">No pending requests</p>
+                <div className="text-center py-12 border border-dashed border-white/5 rounded-2xl">
+                    <p className="text-zinc-600 text-xs font-bold uppercase tracking-widest mb-6">No pending invitations</p>
                     <Link
                         to="/discover"
-                        className="text-blue-400 hover:text-blue-300 text-sm transition-colors"
+                        className="text-[10px] font-black uppercase tracking-[0.2em] text-white hover:underline"
                     >
-                        Discover new connections
+                        Explore the Directory
                     </Link>
                 </div>
             )}

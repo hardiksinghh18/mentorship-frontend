@@ -1,13 +1,17 @@
+import React from "react";
 import { Link } from "react-router-dom";
-import { FaUserCircle } from "react-icons/fa";
+import { FaTimes } from "react-icons/fa";
 
 const Connections = ({ acceptedRequests, isOwnProfile, handleRemoveConnection }) => {
     return (
-        <div className="bg-[#0d0d0d] rounded-xl shadow-lg border border-gray-800 p-6">
-            <div className="flex justify-between items-center mb-6">
-                <h2 className="text-xl font-semibold text-white">Connections</h2>
-                <span className="text-gray-400 text-sm">
-                    {acceptedRequests.length} connections
+        <div className="bg-black rounded-[2rem] border border-white/[0.03] p-8">
+            <div className="flex justify-between items-end mb-10">
+                <div>
+                    <h2 className="text-[11px] font-black uppercase tracking-[0.3em] text-zinc-600 block mb-2">Network</h2>
+                    <p className="text-xl font-black text-white tracking-tighter">Established Connections</p>
+                </div>
+                <span className="px-2 py-1 bg-white/5 text-zinc-500 text-[10px] font-black uppercase tracking-widest rounded">
+                    {acceptedRequests.length} Active
                 </span>
             </div>
 
@@ -16,42 +20,44 @@ const Connections = ({ acceptedRequests, isOwnProfile, handleRemoveConnection })
                     {acceptedRequests.map((connection) => (
                         <div
                             key={connection.id}
-                            className="flex items-center justify-between p-4 rounded-lg bg-[#1a1a1a] hover:bg-[#262626] transition-colors"
+                            className="group flex items-center justify-between p-5 rounded-2xl bg-white/[0.02] border border-white/[0.03] hover:border-white/10 transition-all"
                         >
                             <Link
                                 to={`/profile/${connection.sender.username}`}
                                 className="flex items-center gap-4 flex-1"
                             >
-                                <div className="w-10 h-10 bg-gray-700 rounded-full flex items-center justify-center">
-                                    {connection.sender.username?.[0]?.toUpperCase() || 
-                                    <FaUserCircle className="text-gray-300 text-xl" />}
+                                <div className="w-10 h-10 bg-zinc-900 rounded-lg flex items-center justify-center text-zinc-400 font-bold group-hover:bg-white group-hover:text-black transition-all">
+                                    {connection.sender.username?.[0]?.toUpperCase() || "!"}
                                 </div>
                                 <div>
-                                    <h3 className="font-semibold text-white hover:text-blue-400 transition-colors">
+                                    <h3 className="font-bold text-white text-sm tracking-tight leading-none mb-1">
                                         {connection.sender.fullName || connection.sender.username}
                                     </h3>
-                                    <p className="text-gray-400 text-sm">Connected</p>
+                                    <p className="text-zinc-600 text-[9px] font-black uppercase tracking-widest leading-none">
+                                        Synchronized
+                                    </p>
                                 </div>
                             </Link>
                             {isOwnProfile && (
                                 <button
                                     onClick={() => handleRemoveConnection(connection)}
-                                    className="text-red-500 hover:text-red-400 px-4 py-2 border border-red-500 hover:border-red-400 rounded-full text-sm transition-colors"
+                                    className="p-2 text-zinc-700 hover:text-white transition-colors"
+                                    title="Sever Connection"
                                 >
-                                    Remove
+                                    <FaTimes size={14} />
                                 </button>
                             )}
                         </div>
                     ))}
                 </div>
             ) : (
-                <div className="text-center py-8">
-                    <p className="text-gray-400 mb-4">No connections yet</p>
+                <div className="text-center py-12 border border-dashed border-white/5 rounded-2xl">
+                    <p className="text-zinc-600 text-xs font-bold uppercase tracking-widest mb-6">No active synchronization</p>
                     <Link
                         to="/discover"
-                        className="text-blue-400 hover:text-blue-300 text-sm transition-colors"
+                        className="text-[10px] font-black uppercase tracking-[0.2em] text-white hover:underline"
                     >
-                        Discover mentors and mentees
+                        Initiate First Connection
                     </Link>
                 </div>
             )}

@@ -2,7 +2,8 @@ import { SET_AUTH, LOGOUT } from '../actions/authActions';
 
 const initialState = {
   isLoggedIn: false,
-  user: null, // Stores user info (e.g., email) if needed
+  isChecking: true,
+  user: null, 
 };
 
 export const authReducer = (state = initialState, action) => {
@@ -11,6 +12,7 @@ export const authReducer = (state = initialState, action) => {
       return {
         ...state,
         isLoggedIn: action.payload.isLoggedIn,
+        isChecking: false,
         user: action.payload.user,
       };
 
@@ -18,6 +20,7 @@ export const authReducer = (state = initialState, action) => {
       return {
         ...state,
         isLoggedIn: false,
+        isChecking: false,
         user: null,
       };
 
