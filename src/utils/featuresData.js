@@ -1,7 +1,7 @@
 export const coreFeatures = [
     {
         title: "Smart Matchmaking",
-        desc: "Our algorithms rank users based on overlapping skills and interests to help you find the absolute perfect mentor or mentee.",
+        desc: "Our algorithms rank users based on overlapping skills to help you find the absolute perfect mentor or mentee.",
         color: "from-purple-500",
         tilt: "rotate-2",
         offset: "md:translate-y-4",
@@ -25,7 +25,7 @@ export const coreFeatures = [
     },
     {
         title: "Comprehensive Profiles",
-        desc: "Stand out by building a rich profile that highlights your specialized skills, current role, interests, and professional bio.",
+        desc: "Stand out by building a rich profile that highlights your specialized skills, current role, and professional bio.",
         color: "from-pink-500",
         tilt: "-rotate-2",
         offset: "md:-translate-y-4",

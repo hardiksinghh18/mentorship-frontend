@@ -6,22 +6,72 @@ import ProfileCard from "../components/common/ProfileCard";
 import { useNavigate } from "react-router-dom";
 import { FaBars, FaTimes } from "react-icons/fa";
 import DiscoverLoader from "../components/loaders/DiscoverLoader";
+import { Select, MenuItem, FormControl } from "@mui/material";
+import { RiSearchLine } from 'react-icons/ri';
+import { FiFilter } from 'react-icons/fi';
+import ProfileCompletionBanner from "../components/sections/ProfileCompletionBanner";
 
 const CardSkeleton = () => (
-  <div className="h-72 bg-white/[0.02] border border-white/[0.05] rounded-[3rem] p-8 flex gap-8 animate-pulse">
-    <div className="w-20 h-20 bg-white/[0.05] rounded-2xl shrink-0"></div>
+  <div className="bg-white/[0.02] border border-white/[0.05] rounded-[16px] p-6 flex flex-col md:flex-row gap-6 animate-pulse">
+    {/* Left Column: Persona (Desktop) */}
+    <div className="hidden md:flex shrink-0 flex-col items-center gap-4 min-w-[80px]">
+      <div className="w-14 h-14 bg-white/[0.05] rounded-full"></div>
+      <div className="h-3 w-12 bg-white/[0.03] rounded-md"></div>
+    </div>
+
+    {/* Content Section */}
     <div className="flex-1 space-y-6">
-      <div className="flex justify-between items-start">
-        <div className="space-y-3">
-          <div className="h-6 w-48 bg-white/[0.05] rounded-lg"></div>
-          <div className="h-3 w-32 bg-white/[0.02] rounded-md"></div>
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div className="flex items-center gap-4">
+          {/* Mobile Avatar Placeholder */}
+          <div className="md:hidden w-10 h-10 bg-white/[0.05] rounded-full shrink-0"></div>
+
+          <div className="space-y-2">
+            <div className="h-6 w-48 bg-white/[0.05] rounded-lg"></div>
+            <div className="h-3 w-32 bg-white/[0.02] rounded-md"></div>
+          </div>
         </div>
-        <div className="h-10 w-32 bg-white/[0.05] rounded-full"></div>
+
+        <div className="flex items-center gap-6">
+          <div className="flex gap-3">
+            <div className="h-4 w-4 bg-white/[0.03] rounded-full"></div>
+            <div className="h-4 w-4 bg-white/[0.03] rounded-full"></div>
+            <div className="h-4 w-4 bg-white/[0.03] rounded-full"></div>
+          </div>
+          <div className="h-10 w-10 bg-white/[0.05] rounded-full shrink-0"></div>
+        </div>
       </div>
-      <div className="h-4 w-full bg-white/[0.02] rounded-lg"></div>
-      <div className="flex gap-2 pt-2">
-        <div className="h-6 w-16 bg-white/[0.03] rounded-lg"></div>
-        <div className="h-6 w-20 bg-white/[0.03] rounded-lg"></div>
+
+      {/* Info Grid Placeholder */}
+      <div className="space-y-3">
+        <div className="flex items-center gap-3">
+          <div className="w-4 h-4 bg-white/[0.03] rounded-sm"></div>
+          <div className="h-3 w-2/3 bg-white/[0.02] rounded-md"></div>
+        </div>
+        <div className="flex items-center gap-3">
+          <div className="w-4 h-4 bg-white/[0.03] rounded-sm"></div>
+          <div className="h-3 w-1/2 bg-white/[0.02] rounded-md"></div>
+        </div>
+        <div className="flex items-start gap-3 pt-2">
+          <div className="w-4 h-4 bg-white/[0.03] rounded-sm mt-1"></div>
+          <div className="space-y-2 flex-1">
+            <div className="h-3 w-full bg-white/[0.01] rounded-md"></div>
+            <div className="h-3 w-4/5 bg-white/[0.01] rounded-md"></div>
+          </div>
+        </div>
+      </div>
+
+      {/* Footer Section Placeholder */}
+      <div className="pt-2 flex items-center gap-4">
+        <div className="flex items-center gap-2">
+          <div className="w-3 h-3 bg-white/[0.03] rounded-sm"></div>
+          <div className="h-2 w-10 bg-white/[0.02] rounded-sm uppercase"></div>
+        </div>
+        <div className="flex gap-2">
+          <div className="h-6 w-16 bg-white/[0.02] rounded-full border border-white/[0.03]"></div>
+          <div className="h-6 w-20 bg-white/[0.02] rounded-full border border-white/[0.03]"></div>
+          <div className="h-6 w-14 bg-white/[0.02] rounded-full border border-white/[0.03]"></div>
+        </div>
       </div>
     </div>
   </div>
@@ -32,7 +82,13 @@ const Discover = () => {
   const [loadingProfiles, setLoadingProfiles] = useState(false);
   const [loadingMore, setLoadingMore] = useState(false);
   const [error, setError] = useState(null);
-  const [filters, setFilters] = useState({ role: "", skills: "", interests: "", name: "" });
+  const [filters, setFilters] = useState({
+    role: "",
+    skills: "",
+    name: "",
+    minExperience: "",
+    connectionStatus: "all"
+  });
   const [debouncedFilters, setDebouncedFilters] = useState(filters);
   const [showFilters, setShowFilters] = useState(false);
   const [page, setPage] = useState(1);
@@ -68,6 +124,7 @@ const Discover = () => {
 
   const fetchUsers = async (pageNumber, isInitial = false) => {
     try {
+      setError(null); // Clear previous errors on retry/new fetch
       if (isInitial) {
         setLoadingProfiles(true);
       } else {
@@ -77,6 +134,7 @@ const Discover = () => {
       const params = new URLSearchParams({
         page: pageNumber,
         limit: 10,
+        currentUserId: user?.id,
         ...debouncedFilters,
       });
 
@@ -84,8 +142,8 @@ const Discover = () => {
         `${process.env.REACT_APP_BACKEND_BASE_URL}/users?${params.toString()}`,
         { withCredentials: true }
       );
-      
-      const newUsers = response.data.users || [];
+
+      const newUsers = response?.data.users || [];
       const normalizedUsers = newUsers.map((u) => ({
         id: u?.id || "Unknown ID",
         username: u?.username,
@@ -93,9 +151,11 @@ const Discover = () => {
         role: u?.role,
         bio: u?.bio,
         skills: Array.isArray(u?.skills) ? u.skills : [],
-        interests: Array.isArray(u?.interests) ? u.interests : [],
         receivedRequests: u?.receivedRequests,
         sentRequests: u?.sentRequests,
+        experience: u?.experience,
+        socialLinks: u?.socialLinks,
+        education: u?.education
       }));
 
       setUsers((prev) => (isInitial ? normalizedUsers : [...prev, ...normalizedUsers]));
@@ -145,14 +205,14 @@ const Discover = () => {
   }, [page]);
 
   // Initial load logic moved into the grid render to allow sidebar to remain visible
-  
+
   if (error && users.length === 0) {
     return (
       <div className="flex items-center justify-center h-screen bg-black">
         <div className="text-center">
           <h2 className="text-xl font-bold text-white">Error</h2>
           <p className="text-zinc-500 mt-2">{error}</p>
-          <button 
+          <button
             onClick={() => fetchUsers(1, true)}
             className="mt-6 px-6 py-2 bg-white text-black font-bold rounded-full uppercase text-[10px] tracking-widest"
           >
@@ -168,124 +228,216 @@ const Discover = () => {
   }
 
   return (
-    <div className="min-h-screen bg-black text-white font-inter selection:bg-white selection:text-black pt-28">
-      <div className="max-w-7xl mx-auto flex flex-col md:flex-row relative px-4 md:px-0">
-        
-        {/* Sidebar Filter - Refined Editorial Panel */}
-        <div 
-          className={`fixed inset-0 md:sticky md:top-10 md:self-start md:w-80 h-full md:h-[calc(100vh-2.5rem)] bg-black md:bg-transparent z-50 md:z-auto transition-transform duration-500 md:translate-x-0 ${
-            showFilters ? 'translate-x-0' : '-translate-x-full'
-          }`}
-        >
-          <div className="h-full flex flex-col p-8 md:p-12 md:pt-6 space-y-10 border-r border-white/5 md:border-white/[0.03] overflow-y-auto no-scrollbar">
-            {/* Mobile Close */}
-            <button 
-              onClick={toggleFilters}
-              className="md:hidden self-end p-2 text-zinc-500 hover:text-white"
-            >
-              <FaTimes size={20} />
-            </button>
+    <>
+      <div className="min-h-screen bg-black text-white font-inter selection:bg-white selection:text-black pt-8">
+        <div className="max-w-7xl mx-auto px-6 md:px-12">
 
+          {/* Editorial Header */}
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8">
             <div className="space-y-2">
-              <h2 className="text-xs font-black tracking-[0.3em] uppercase text-zinc-400">
-                Directory
-              </h2>
-              <div className="w-12 h-px bg-white/10" />
+              <h1 className="text-xl md:text-2xl font-bold tracking-tight text-white">
+                Explore
+              </h1>
+              <p className="text-zinc-500 text-sm font-medium max-w-xl">
+                Connect with expert mentors and ambitious mentees across the globe.
+              </p>
+            </div>
+          </div>
+
+          <div className="mb-4">
+            <ProfileCompletionBanner variant="explore" />
+          </div>
+
+
+          {/* Horizontal Filter Bar - LinkedIn Style */}
+          <div className="flex flex-wrap items-center gap-y-3 gap-x-0 mb-12 p-1 bg-white/[0.02] sm:bg-white/[0.02] border border-white/5 rounded-xl backdrop-blur-xl sticky top-4 z-40 w-full">
+            <div className="hidden sm:flex items-center justify-center pl-4 pr-1 text-zinc-500 shrink-0">
+              <FiFilter size={14} />
             </div>
 
-            <div className="space-y-8 flex-grow">
+            <div className="hidden sm:block w-px h-6 bg-white/10 shrink-0" />
+
+            {/* GROUP 1: DROPDOWNS */}
+            <div className="flex flex-wrap items-center w-full sm:w-auto">
               {/* Role Filter */}
-              <div className="space-y-3">
-                <label className="block text-[11px] font-black uppercase tracking-[0.15em] text-zinc-500 ml-1">
-                  Categorization
-                </label>
-                <div className="relative group">
-                  <select
+              <div className="shrink-0 min-w-[130px]">
+                <FormControl fullWidth size="small">
+                  <Select
                     name="role"
                     value={filters.role}
                     onChange={handleFilterChange}
-                    className="appearance-none w-full bg-white/[0.02] border border-white/5 rounded-xl px-5 py-3.5 text-sm font-bold text-white focus:outline-none focus:border-white/30 focus:bg-white/[0.05] transition-all cursor-pointer"
+                    displayEmpty
+                    className="bg-transparent text-xs font-bold text-white transition-all cursor-pointer"
+                    sx={{
+                      '& .MuiSelect-select': { py: 1.5, px: 2, color: 'white' },
+                      '& .MuiOutlinedInput-notchedOutline': { border: 'none' },
+                      '& .MuiSvgIcon-root': { color: '#3f3f46' },
+                    }}
+                    MenuProps={{
+                      PaperProps: {
+                        sx: {
+                          bgcolor: '#09090b',
+                          border: '1px solid rgba(255,255,255,0.05)',
+                          borderRadius: '12px',
+                          mt: 1,
+                          '& .MuiMenuItem-root': {
+                            fontSize: '11px',
+                            fontWeight: 700,
+                            color: '#71717a',
+                            py: 1.5,
+                            '&:hover': { bgcolor: 'rgba(255,255,255,0.05)', color: 'white' }
+                          }
+                        }
+                      }
+                    }}
                   >
-                    <option value="" className="bg-zinc-950">All Identities</option>
-                    <option value="mentor" className="bg-zinc-950">Elite Mentors</option>
-                    <option value="mentee" className="bg-zinc-950">Mentees</option>
-                  </select>
-                  <div className="absolute right-5 top-1/2 -translate-y-1/2 pointer-events-none text-zinc-600 group-hover:text-white transition-colors text-[10px]">
-                    ▼
-                  </div>
-                </div>
+                    <MenuItem value="">All Members</MenuItem>
+                    <MenuItem value="mentor">Mentors Only</MenuItem>
+                    <MenuItem value="mentee">Mentees Only</MenuItem>
+                  </Select>
+                </FormControl>
               </div>
 
+              <div className="hidden sm:block w-px h-6 bg-white/10 shrink-0" />
+
+              {/* Experience Filter */}
+              <div className="shrink-0 min-w-[130px] flex-1 sm:flex-none">
+                <FormControl fullWidth size="small">
+                  <Select
+                    name="minExperience"
+                    value={filters.minExperience}
+                    onChange={handleFilterChange}
+                    displayEmpty
+                    className="bg-transparent text-xs font-bold text-white transition-all cursor-pointer"
+                    sx={{
+                      '& .MuiSelect-select': { py: 1.5, px: 2, color: 'white' },
+                      '& .MuiOutlinedInput-notchedOutline': { border: 'none' },
+                      '& .MuiSvgIcon-root': { color: '#3f3f46' },
+                    }}
+                    MenuProps={{
+                      PaperProps: {
+                        sx: {
+                          bgcolor: '#09090b',
+                          border: '1px solid rgba(255,255,255,0.05)',
+                          borderRadius: '12px',
+                          mt: 1,
+                          '& .MuiMenuItem-root': {
+                            fontSize: '11px',
+                            fontWeight: 700,
+                            color: '#71717a',
+                            py: 1.5,
+                            '&:hover': { bgcolor: 'rgba(255,255,255,0.05)', color: 'white' }
+                          }
+                        }
+                      }
+                    }}
+                  >
+                    <MenuItem value="">Any Experience</MenuItem>
+                    <MenuItem value="0">Entry Level</MenuItem>
+                    <MenuItem value="2">2+ Years</MenuItem>
+                    <MenuItem value="5">5+ Years</MenuItem>
+                    <MenuItem value="10">10+ Years</MenuItem>
+                  </Select>
+                </FormControl>
+              </div>
+
+              <div className="hidden sm:block w-px h-6 bg-white/10 shrink-0" />
+
+              {/* Connection Status Filter */}
+              <div className="shrink-0 min-w-[130px] flex-1 sm:flex-none">
+                <FormControl fullWidth size="small">
+                  <Select
+                    name="connectionStatus"
+                    value={filters.connectionStatus}
+                    onChange={handleFilterChange}
+                    displayEmpty
+                    className="bg-transparent text-xs font-bold text-white transition-all cursor-pointer"
+                    sx={{
+                      '& .MuiSelect-select': { py: 1.5, px: 2, color: 'white' },
+                      '& .MuiOutlinedInput-notchedOutline': { border: 'none' },
+                      '& .MuiSvgIcon-root': { color: '#3f3f46' },
+                    }}
+                    MenuProps={{
+                      PaperProps: {
+                        sx: {
+                          bgcolor: '#09090b',
+                          border: '1px solid rgba(255,255,255,0.05)',
+                          borderRadius: '12px',
+                          mt: 1,
+                          '& .MuiMenuItem-root': {
+                            fontSize: '11px',
+                            fontWeight: 700,
+                            color: '#71717a',
+                            py: 1.5,
+                            '&:hover': { bgcolor: 'rgba(255,255,255,0.05)', color: 'white' }
+                          }
+                        }
+                      }
+                    }}
+                  >
+                    <MenuItem value="all">All Status</MenuItem>
+                    <MenuItem value="connected">Connected</MenuItem>
+                    <MenuItem value="pending">Pending</MenuItem>
+                    <MenuItem value="not_connected">Not Connected</MenuItem>
+                  </Select>
+                </FormControl>
+              </div>
+            </div>
+
+            <div className="hidden sm:block w-px h-6 bg-white/10 shrink-0" />
+
+            {/* GROUP 2: INPUTS */}
+            <div className="flex items-center flex-wrap flex-1 min-w-full sm:min-w-[300px]">
               {/* Name Search */}
-              <div className="space-y-3">
-                <label className="block text-[11px] font-black uppercase tracking-[0.15em] text-zinc-500 ml-1">
-                  Identity Search
-                </label>
+              <div className="flex-1 min-w-[150px]">
                 <input
                   type="text"
                   name="name"
-                  placeholder="Enter name or tag..."
+                  placeholder="Search name..."
                   value={filters.name}
                   onChange={handleFilterChange}
-                  className="w-full bg-white/[0.02] border border-white/5 rounded-xl px-5 py-3.5 text-sm font-bold text-white placeholder:text-zinc-700 focus:outline-none focus:border-white/30 focus:bg-white/[0.05] transition-all"
+                  className="w-full bg-transparent px-4 py-2 text-xs font-bold text-white placeholder:text-zinc-600 focus:outline-none transition-all"
                 />
               </div>
 
+              <div className="hidden sm:block w-px h-6 bg-white/10 shrink-0" />
+
               {/* Skills Filter */}
-              <div className="space-y-3">
-                <label className="block text-[11px] font-black uppercase tracking-[0.15em] text-zinc-500 ml-1">
-                  Proficiencies
-                </label>
+              <div className="flex-1 min-w-full sm:min-w-[150px]">
                 <input
                   type="text"
                   name="skills"
-                  placeholder="UI, React, Strategy..."
+                  placeholder="Skills (React, Python)..."
                   value={filters.skills}
                   onChange={handleFilterChange}
-                  className="w-full bg-white/[0.02] border border-white/5 rounded-xl px-5 py-3.5 text-sm font-bold text-white placeholder:text-zinc-700 focus:outline-none focus:border-white/30 focus:bg-white/[0.05] transition-all"
+                  className="w-full bg-transparent px-4 py-2 text-xs font-bold text-white placeholder:text-zinc-600 focus:outline-none transition-all"
                 />
               </div>
-
-              {/* Reset Action */}
-              <button
-                onClick={() => setFilters({ role: "", name: "", skills: "", interests: "" })}
-                className="w-full py-3.5 text-[10px] font-black tracking-widest uppercase text-zinc-500 hover:text-white hover:bg-white/5 border border-white/5 hover:border-white/10 rounded-xl transition-all"
-              >
-                Flush All Filters
-              </button>
             </div>
-          </div>
-        </div>
 
-        {/* Main Content Feed */}
-        <div className="flex-1 p-6 md:p-12 md:pt-6 space-y-12">
-          
-          {/* Mobile Header Toggle */}
-          <div className="md:hidden flex items-center justify-between mb-8">
-            <button
-              onClick={toggleFilters}
-              className="flex items-center gap-3 text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400"
-            >
-              <FaBars size={12} />
-              Refine Feed
-            </button>
-          </div>
-
-          {/* Editorial Header */}
-          <div className="space-y-6 max-w-3xl">
-            <h1 className="text-4xl md:text-6xl font-black tracking-tighter leading-[0.9] text-white">
-              Explore the <br/>
-              <span className="text-zinc-500 italic font-medium">Synchronized</span> Collective
-            </h1>
-            <p className="text-zinc-500 text-lg md:text-xl font-medium leading-relaxed">
-              Curating high-value mentorship connections through the Onyx network.
-            </p>
+            {/* Reset Action */}
+            {(filters.role || filters.name || filters.skills || filters.minExperience || filters.connectionStatus !== 'all') && (
+              <>
+                <div className="block w-px h-6 bg-white/10 shrink-0 mx-1" />
+                <button
+                  onClick={() => setFilters({
+                    role: "",
+                    name: "",
+                    skills: "",
+                    minExperience: "",
+                    connectionStatus: "all"
+                  })}
+                  className="px-4 py-2 text-[10px] font-black tracking-widest uppercase text-zinc-500 hover:text-white transition-all whitespace-nowrap"
+                >
+                  Clear All
+                </button>
+              </>
+            )}
           </div>
 
           {/* Results Grid */}
-          <div className="grid grid-cols-1 gap-12 pb-20">
+          <div className="grid grid-cols-1 gap-8 pb-20">
             {loadingProfiles && page === 1 ? (
-              // Initial/Filter Loading State
               <>
                 <CardSkeleton />
                 <CardSkeleton />
@@ -305,20 +457,25 @@ const Discover = () => {
                 ) : null;
               })
             ) : (
-              <div className="py-20 border border-white/5 rounded-[3rem] flex flex-col items-center justify-center space-y-4">
-                <p className="text-zinc-600 font-bold uppercase tracking-widest text-xs">No Matches Found</p>
-                <button 
-                  onClick={() => setFilters({ role: "", name: "", skills: "", interests: "" })}
-                  className="text-white font-bold hover:underline"
+              <div className="py-32 border border-white/5 rounded-[3rem] flex flex-col items-center justify-center space-y-6 bg-white/[0.01]">
+                <div className="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center">
+                  <RiSearchLine size={24} className="text-zinc-700" />
+                </div>
+                <div className="text-center space-y-2">
+                  <h2 className="text-xl font-bold text-white tracking-tight block">No Matches Found</h2>
+                  <p className="text-zinc-600 text-[11px] font-medium">Try adjusting your filters or search terms.</p>
+                </div>
+                <button
+                  onClick={() => setFilters({ role: "", name: "", skills: "" })}
+                  className="px-8 py-2 bg-white text-black text-[10px] font-black uppercase tracking-widest rounded-full hover:bg-zinc-200 transition-all"
                 >
-                  Clear search parameters
+                  Clear all filters
                 </button>
               </div>
             )}
 
-            {/* Loading More Indicator */}
             {loadingMore && (
-              <div className="space-y-12">
+              <div className="space-y-8">
                 <CardSkeleton />
                 <CardSkeleton />
               </div>
@@ -326,7 +483,7 @@ const Discover = () => {
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 

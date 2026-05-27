@@ -1,11 +1,40 @@
 import axios from "axios";
 import React, { useState, useEffect } from "react";
+import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
-import { FaUserPlus, FaUserCheck, FaClock } from "react-icons/fa"; // Icons for different states
+import { FaUserCheck, FaClock, FaLinkedin, FaGithub, FaTwitter, FaLink, FaExternalLinkAlt, FaGraduationCap } from "react-icons/fa";
+import { FiBriefcase, FiTerminal, FiAlignLeft, FiUserPlus } from "react-icons/fi";
+import { Tooltip, Chip } from "@mui/material";
 
 const ProfileCard = ({ profile, currentUserId, matchScore }) => {
-  const { id, name, role, skills, username, bio, receivedRequests, sentRequests } = profile;
+  const { id, name, role, skills, username, bio, receivedRequests, sentRequests, experience, socialLinks, education } = profile;
+
+  // Safely parse JSON fields
+  const parsedExperience = typeof experience === 'string' ? JSON.parse(experience) : experience;
+  const parsedSocialLinks = typeof socialLinks === 'string' ? JSON.parse(socialLinks) : socialLinks;
+  const parsedEducation = typeof education === 'string' ? JSON.parse(education) : education;
+
+  // Get current role and company
+  const currentExperience = parsedExperience && Array.isArray(parsedExperience) && parsedExperience.length > 0
+    ? parsedExperience.find(exp => exp.currentlyWorking) || parsedExperience[0]
+    : null;
+
+  // Get latest education
+  const currentEducation = parsedEducation && Array.isArray(parsedEducation) && parsedEducation.length > 0
+    ? [...parsedEducation].sort((a, b) => new Date(b.endYear) - new Date(a.endYear))[0]
+    : null;
+
+  const { user: currentUser } = useSelector((state) => state.auth);
+
+  // Calculate if the LOGGED-IN user has a complete profile
+  const isProfileComplete = (() => {
+    const fields = ['role', 'skills', 'bio', 'education', 'experience'];
+    return fields.every(field => {
+      const val = currentUser?.[field];
+      return Array.isArray(val) ? val.length > 0 : !!val;
+    });
+  })();
 
   const [buttonStatus, setButtonStatus] = useState("connect");
 
@@ -41,7 +70,7 @@ const ProfileCard = ({ profile, currentUserId, matchScore }) => {
   }, [receivedRequests, sentRequests, currentUserId, id]);
 
   const handleSendRequest = async () => {
-    if (buttonStatus === "connect") {
+    if (buttonStatus === "connect" && isProfileComplete) {
       await onSendRequest(id, currentUserId);
     }
   };
@@ -49,97 +78,227 @@ const ProfileCard = ({ profile, currentUserId, matchScore }) => {
   const getButtonConfig = () => {
     switch (buttonStatus) {
       case "connected":
-        return { 
-          text: "Connected", 
-          icon: <FaUserCheck size={14} />, 
-          className: "bg-white/10 text-white cursor-default" 
+        return {
+          text: "Connected",
+          icon: <FaUserCheck size={14} />,
+          className: "bg-white/10 text-white cursor-default"
         };
       case "pending":
-        return { 
-          text: "Pending", 
-          icon: <FaClock size={14} />, 
-          className: "bg-white/5 text-white/50 cursor-default" 
+        return {
+          text: "Pending",
+          icon: <FaClock size={14} />,
+          className: "bg-white/5 text-white/50 cursor-default"
         };
       default:
-        return { 
-          text: "Connect", 
-          icon: <FaUserPlus size={14} />, 
-          className: "bg-white text-black hover:bg-white/90" 
+        return {
+          text: "",
+          icon: <FiUserPlus size={18} />,
+          className: isProfileComplete 
+            ? "border-white/20 text-white hover:bg-white/10 hover:border-white/40" 
+            : "border-white/10 text-white/20 cursor-not-allowed"
         };
     }
   };
 
   const btnConfig = getButtonConfig();
 
+  // Helper for the tooltip message
+  const getTooltipTitle = () => {
+    if (buttonStatus !== "connect") return btnConfig.text || buttonStatus;
+    if (!isProfileComplete) return "Complete your profile to start connecting with others";
+    return "Connect with User";
+  };
+
   return (
-    <div className="group relative bg-white/[0.02] hover:bg-white/[0.04] transition-all duration-500 rounded-[2rem] p-8 border border-white/[0.05] hover:border-white/10">
-      {/* Editorial Layout */}
-      <div className="flex flex-col md:flex-row gap-8 items-start">
-        
-        {/* Profile Image & Avatar */}
-        <div className="relative shrink-0">
-          <Link to={`/profile/${username}`} className="block w-20 h-20 rounded-2xl overflow-hidden bg-zinc-900 border border-white/5 group-hover:border-white/20 transition-all duration-500">
-             <div className="w-full h-full flex items-center justify-center text-2xl font-bold text-white/20 group-hover:text-white/40 transition-colors">
-               {username[0]?.toUpperCase()}
-             </div>
-          </Link>
-          {matchScore && (
-            <div className="absolute -bottom-2 -right-2 bg-white text-black text-[10px] font-black px-2 py-1 rounded-md shadow-2xl tracking-tighter">
-              {matchScore}% MATCH
-            </div>
-          )}
+    <div className="group relative bg-white/[0.02] hover:bg-white/[0.04] transition-all duration-500 rounded-[16px] p-6 border border-white/[0.05] hover:border-white/10">
+      <div className="flex flex-col md:flex-row gap-6 items-start">
+        {/* Left Column: Persona (Desktop) */}
+        <div className="hidden md:flex shrink-0 flex-col items-center gap-4 min-w-[80px]">
+          <div className="relative">
+            <Link to={`/profile/${username}`} className="block w-14 h-14 rounded-full overflow-hidden bg-zinc-900 border border-white/5 group-hover:border-white/20 transition-all duration-500">
+              <div className="w-full h-full flex items-center justify-center text-2xl font-bold text-white/20 group-hover:text-white/40 transition-colors">
+                {username[0]?.toUpperCase()}
+              </div>
+            </Link>
+          </div>
+
+          <div className="flex flex-col items-center gap-2">
+            {role && (
+              <span className={`px-2 py-0.5 rounded text-[8px] font-black uppercase tracking-widest border ${role === 'mentor'
+                  ? 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20'
+                  : 'bg-amber-500/10 text-amber-500 border-amber-500/20'
+                }`}>
+                {role}
+              </span>
+            )}
+            {matchScore && (
+              <span className="text-[9px] font-bold text-white/30 tracking-tight">
+                {matchScore}% Match
+              </span>
+            )}
+          </div>
         </div>
 
         {/* Content Section */}
         <div className="flex-1 space-y-4">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-            <div>
-              <div className="flex flex-wrap items-center gap-3">
-                <Link to={`/profile/${username}`} className="text-2xl font-bold text-white tracking-tight hover:text-zinc-300 transition-colors">
-                  {name}
+            <div className="flex items-center gap-4 w-full md:w-auto">
+              {/* Mobile Avatar */}
+              <div className="md:hidden shrink-0 flex flex-col items-center gap-2">
+                <Link to={`/profile/${username}`} className="block w-10 h-10 rounded-full overflow-hidden bg-zinc-900 border border-white/5">
+                  <div className="w-full h-full flex items-center justify-center text-lg font-bold text-white/40">
+                    {username[0]?.toUpperCase()}
+                  </div>
                 </Link>
                 {role && (
-                  <span className="px-2.5 py-1 bg-white text-black text-[9px] font-black uppercase tracking-[0.2em] rounded border border-white">
+                  <span className={`px-2 py-0.5 rounded text-[7px] font-black uppercase tracking-widest border ${role === 'mentor'
+                      ? 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20'
+                      : 'bg-amber-500/10 text-amber-500 border-amber-500/20'
+                    }`}>
                     {role}
                   </span>
                 )}
               </div>
-              <Link to={`/profile/${username}`} className="block text-zinc-500 text-base font-bold tracking-tight mt-1 opacity-80 italic lowercase hover:text-white transition-colors">
-                @{username}
-              </Link>
+
+              <div className="flex-1 min-w-0">
+                <div className="flex flex-wrap items-center gap-3">
+                  <h3 className="text-xl font-bold text-white tracking-tight truncate">
+                    {name}
+                  </h3>
+                </div>
+                <div className="flex items-center gap-3 mt-1">
+                  <span className="text-zinc-500 text-xs font-bold tracking-tight lowercase">
+                    @{username}
+                  </span>
+                  <Tooltip title="View Full Profile" arrow>
+                    <Link
+                      to={`/profile/${username}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-zinc-700 hover:text-white transition-all hover:scale-110 active:scale-95"
+                    >
+                      <FaExternalLinkAlt size={14} />
+                    </Link>
+                  </Tooltip>
+                </div>
+              </div>
             </div>
 
-            <button
-              onClick={handleSendRequest}
-              disabled={buttonStatus !== "connect"}
-              className={`flex items-center gap-2.5 px-6 py-2.5 rounded-full text-xs font-black tracking-widest uppercase transition-all active:scale-[0.98] ${btnConfig.className}`}
-            >
-              {btnConfig.icon}
-              {btnConfig.text}
-            </button>
+            <div className="flex items-center gap-6">
+              {parsedSocialLinks && (
+                <div className="flex items-center gap-4">
+                  {parsedSocialLinks.linkedin && (
+                    <Tooltip title="LinkedIn" arrow>
+                      <a href={parsedSocialLinks.linkedin} target="_blank" rel="noopener noreferrer">
+                        <FaLinkedin className="text-zinc-600 hover:text-[#0077b5] transition-colors cursor-pointer" size={16} />
+                      </a>
+                    </Tooltip>
+                  )}
+                  {parsedSocialLinks.github && (
+                    <Tooltip title="GitHub" arrow>
+                      <a href={parsedSocialLinks.github} target="_blank" rel="noopener noreferrer">
+                        <FaGithub className="text-zinc-600 hover:text-white transition-colors cursor-pointer" size={16} />
+                      </a>
+                    </Tooltip>
+                  )}
+                  {parsedSocialLinks.twitter && (
+                    <Tooltip title="Twitter / X" arrow>
+                      <a href={parsedSocialLinks.twitter} target="_blank" rel="noopener noreferrer">
+                        <FaTwitter className="text-zinc-600 hover:text-[#1DA1F2] transition-colors cursor-pointer" size={16} />
+                      </a>
+                    </Tooltip>
+                  )}
+                  {parsedSocialLinks.portfolio && (
+                    <Tooltip title="Portfolio" arrow>
+                      <a href={parsedSocialLinks.portfolio} target="_blank" rel="noopener noreferrer">
+                        <FaLink className="text-zinc-600 hover:text-white transition-colors cursor-pointer" size={16} />
+                      </a>
+                    </Tooltip>
+                  )}
+                </div>
+              )}
+
+              <Tooltip title={getTooltipTitle()} arrow>
+                <span>
+                  <button
+                    onClick={handleSendRequest}
+                    disabled={buttonStatus !== "connect" || !isProfileComplete}
+                    className={`flex items-center justify-center w-10 h-10 rounded-full border transition-all active:scale-[0.98] ${btnConfig.className}`}
+                  >
+                    {btnConfig.icon}
+                  </button>
+                </span>
+              </Tooltip>
+            </div>
           </div>
 
-          {bio && (
-            <p className="text-zinc-400 text-sm leading-relaxed max-w-2xl font-medium">
-              {bio.length > 120 ? `${bio.slice(0, 117)}...` : bio}
-            </p>
-          )}
 
-          {/* Tags */}
-          <div className="pt-2 flex flex-wrap gap-2">
-            {skills?.slice(0, 4).map((skill, index) => (
-              <span
-                key={index}
-                className="px-3 py-1 bg-white/[0.03] border border-white/[0.05] rounded-lg text-[10px] font-bold text-zinc-500 uppercase tracking-wider group-hover:border-white/10 transition-colors"
-              >
-                {skill}
-              </span>
-            ))}
-            {skills?.length > 4 && (
-              <span className="px-3 py-1 text-[10px] font-bold text-zinc-600 uppercase tracking-wider">
-                +{skills.length - 4} MORE
-              </span>
+          {/* Info Grid */}
+          <div className="flex flex-col gap-3">
+            {currentExperience && (
+              <div className="flex items-center gap-3 text-white/60">
+                <FiBriefcase size={14} className="text-zinc-700 shrink-0" />
+                <p className="text-[12px] font-bold tracking-tight truncate">
+                  {currentExperience.role} <span className="text-zinc-700 mx-1">at</span> <span className="text-white/90">{currentExperience.company}</span>
+                </p>
+              </div>
             )}
+
+            {currentEducation && (
+              <div className="flex items-center gap-3 text-white/60">
+                <FaGraduationCap size={14} className="text-zinc-700 shrink-0" />
+                <p className="text-[12px] font-bold tracking-tight truncate">
+                  {currentEducation.degree} <span className="text-zinc-700 mx-1">from</span> <span className="text-white/90">{currentEducation.college}</span>
+                </p>
+              </div>
+            )}
+
+            {bio && (
+              <div className="flex items-start gap-3 text-white/60">
+                <FiAlignLeft size={14} className="text-zinc-700 shrink-0 mt-1" />
+                <p className="text-[12px] leading-relaxed font-medium text-zinc-400">
+                  {bio.length > 180 ? `${bio.slice(0, 177)}...` : bio}
+                </p>
+              </div>
+            )}
+          </div>
+
+          {/* Footer Section */}
+          <div className="pt-2 flex flex-col md:flex-row md:items-center justify-between gap-6">
+            <div className="flex items-center gap-4">
+              <div className="flex items-center gap-2 text-zinc-700">
+                <FiTerminal size={14} />
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {skills?.slice(0, 3).map((skill, index) => (
+                  <Chip
+                    key={index}
+                    label={skill}
+                    size="small"
+                    sx={{
+                      backgroundColor: 'rgba(255, 255, 255, 0.02)',
+                      border: '1px solid rgba(255, 255, 255, 0.05)',
+                      color: '#a1a1aa',
+                      fontSize: '9px',
+                      fontWeight: 800,
+                      height: '24px',
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.05em',
+                      borderRadius: '4px',
+                      '&:hover': {
+                        backgroundColor: 'rgba(255, 255, 255, 0.05)',
+                        borderColor: 'rgba(255, 255, 255, 0.2)',
+                      }
+                    }}
+                  />
+                ))}
+                {skills?.length > 3 && (
+                  <span className="px-2 py-1 text-[9px] font-bold text-zinc-600 uppercase tracking-wider">
+                    +{skills.length - 3}
+                  </span>
+                )}
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -151,163 +310,3 @@ const ProfileCard = ({ profile, currentUserId, matchScore }) => {
 };
 
 export default ProfileCard;
-
-
-
-
-// import axios from "axios";
-// import React, { useState, useEffect } from "react";
-// import { Link } from "react-router-dom";
-// import { toast } from "react-toastify";
-
-// const ProfileCard = ({ profile, currentUserId,matchScore }) => {
-//     const { id, name, role, skills, username, interests, receivedRequests, sentRequests } = profile;
-// console.log(typeof skills)
-//     const [buttonStatus, setButtonStatus] = useState("connect");
-
-//     const determineButtonStatus = () => {
-//         const receivedRequest = receivedRequests?.find(
-//             (req) => req.senderId === currentUserId && req.receiverId === id
-//         );
-//         const sentRequest = sentRequests?.find(
-//             (req) => req.receiverId === currentUserId && req.senderId === id
-//         );
-
-//         if (receivedRequest?.status === "accepted" || sentRequest?.status === "accepted") {
-//             return "connected";
-//         }
-//         if (receivedRequest?.status === "pending" || sentRequest?.status === "pending") {
-//             return "pending";
-//         }
-//         return "connect";
-//     };
-//     const onSendRequest = async (receiverId, senderId) => {
-//         try {
-//           const response = await axios.post(`${process.env.REACT_APP_BACKEND_BASE_URL}/api/connections/send`, { receiverId, senderId });
-//           toast.success(response.data.message);
-//         } catch (error) {
-//           toast.error(error.response?.data?.message || "Error sending request");
-//           console.error(error.response?.data?.message);
-//         }
-//       };
-
-
-//     useEffect(() => {
-//         setButtonStatus(determineButtonStatus());
-//     }, [receivedRequests, sentRequests, currentUserId, id]);
-
-//     const handleButtonClick = async () => {
-//         if (buttonStatus === "connect") {
-//             await onSendRequest(id, currentUserId);
-//             setButtonStatus("pending");
-//         }
-//     };
-
-//     const buttonText =
-//         buttonStatus === "pending"
-//             ? "Pending"
-//             : buttonStatus === "connected"
-//                 ? "Connected"
-//                 : "Connect";
-
-//     const buttonStyle =
-//         buttonStatus === "pending"
-//             ? "bg-green-500 hover:bg-green-600"
-//             : buttonStatus === "connected"
-//                 ? "bg-gray-500 cursor-not-allowed"
-//                 : "bg-gradient-to-r from-blue-500 to-indigo-500 hover:opacity-90";
-
-//     return (
-//         <div className="bg-[#0d0d0d] w-screen md:w-[45rem] relative px-4 py-6 rounded-2xl shadow-xl flex md:flex-row  gap-8">
-           
-//            {matchScore&&  <span className="bg-gradient-to-r  from-blue-700 to-purple-700 absolute top-4 right-4 text-white text-xs font-bold px-3 py-1 rounded-lg shadow-md">
-//                     Match-score :  {matchScore}
-//                         </span>}
-//             {/* Left Section: Name and Role */}
-//             <div>
-//                 <Link to={`/profile/${username}`} className="  flex-shrink-0 w-10 h-10 md:w-20 md:h-20 bg-gray-700 rounded-full flex items-center justify-center text-white font-bold text-xl">
-//                     {username[0]?.toUpperCase()}
-//                 </Link>
-//             </div>
-
-
-//             {/* Middle Section: Profile Details */}
-//             <div className="flex-grow flex flex-col gap-2">
-//                 <div className="flex items-center gap-4 relative">
-//                     <Link to={`/profile/${username}`} className="text-lg font-bold text-white hover:text-blue-500">{username}</Link>
-//                     {role && (
-//                         <span className="bg-gradient-to-r  from-blue-700 to-purple-700 relative bottom-2 right-2 text-white text-[.6rem] font-bold px-2 py-1 rounded-lg shadow-md">
-//                             {role}
-//                         </span>
-//                     )}
-
-                 
-                   
-//                 </div>
-
-//                 <div className="w-full bg-slate-800 h-[.1rem]" />
-//                 <div className="mt-2">
-//                     <h3 className="text-sm font-semibold text-white mb-2">Skills:</h3>
-//                     {skills?.length > 0 ? (
-//                         <div className="flex flex-wrap gap-2 mt-1">
-//                             {skills?.map((skill, index) => (
-//                                 <span
-//                                     key={index}
-//                                     className="text-white text-xs font-semibold px-3 py-1 rounded-full border border-gray-600 shadow-sm hover:shadow-md transition-all duration-300 relative overflow-hidden"
-//                                     style={{
-//                                         background: "linear-gradient(to right, rgba(29, 78, 216, 0.15), rgba(126, 34, 206, 0.15)), #1f2937",
-//                                     }}
-//                                 >
-//                                     {skill}
-//                                 </span>
-
-
-//                             ))}
-//                         </div>
-//                     ) : (
-//                         <p className="text-sm text-gray-400">No skills listed.</p>
-//                     )}
-//                 </div>
-
-
-
-//                 <div className="mt-2 hidden  md:block">
-//                     <h3 className="text-sm font-semibold text-white mb-2">Interests:</h3>
-//                     {interests?.length > 0 ? (
-//                         <div className="flex flex-wrap gap-2 mt-1">
-//                             {interests?.map((interest, index) => (
-//                                 <span
-//                                     key={index}
-//                                     className="text-white text-xs font-semibold px-3 py-1 rounded-full border border-gray-600 shadow-sm hover:shadow-md transition-all duration-300 relative overflow-hidden"
-//                                     style={{
-//                                         background: "linear-gradient(to right, rgba(29, 78, 216, 0.15), rgba(126, 34, 206, 0.15)), #1f2937",
-//                                     }}
-//                                 >
-//                                     {interest}
-//                                 </span>
-
-//                             ))}
-//                         </div>
-//                     ) : (
-//                         <p className="text-sm text-gray-400">No interests listed.</p>
-//                     )}
-//                 </div>
-
-//             </div>
-
-//             {/* Right Section: Actions */}
-//             <div className="md:flex flex-col hidden md:h-40 items-center justify-end gap-2">
-               
-//                 <button
-//                     onClick={handleButtonClick}
-//                     className={`${buttonStyle} text-white px-4 py-2 rounded-md text-sm font-semibold transition-opacity w-full`}
-//                     disabled={buttonStatus !== "connect"}
-//                 >
-//                     {buttonText}
-//                 </button>
-//             </div>
-//         </div>
-//     );
-// };
-
-// export default ProfileCard;

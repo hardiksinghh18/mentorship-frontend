@@ -8,10 +8,10 @@ const Connections = ({ acceptedRequests, isOwnProfile, handleRemoveConnection })
             <div className="flex justify-between items-end mb-10">
                 <div>
                     <h2 className="text-[11px] font-black uppercase tracking-[0.3em] text-zinc-600 block mb-2">Network</h2>
-                    <p className="text-xl font-black text-white tracking-tighter">Established Connections</p>
+                    <p className="text-xl font-black text-white tracking-tighter">My Connections</p>
                 </div>
                 <span className="px-2 py-1 bg-white/5 text-zinc-500 text-[10px] font-black uppercase tracking-widest rounded">
-                    {acceptedRequests.length} Active
+                    {acceptedRequests.length} Total
                 </span>
             </div>
 
@@ -34,7 +34,7 @@ const Connections = ({ acceptedRequests, isOwnProfile, handleRemoveConnection })
                                         {connection.sender.fullName || connection.sender.username}
                                     </h3>
                                     <p className="text-zinc-600 text-[9px] font-black uppercase tracking-widest leading-none">
-                                        Synchronized
+                                        Connected
                                     </p>
                                 </div>
                             </Link>
@@ -42,7 +42,7 @@ const Connections = ({ acceptedRequests, isOwnProfile, handleRemoveConnection })
                                 <button
                                     onClick={() => handleRemoveConnection(connection)}
                                     className="p-2 text-zinc-700 hover:text-white transition-colors"
-                                    title="Sever Connection"
+                                    title="Remove Connection"
                                 >
                                     <FaTimes size={14} />
                                 </button>
@@ -52,12 +52,12 @@ const Connections = ({ acceptedRequests, isOwnProfile, handleRemoveConnection })
                 </div>
             ) : (
                 <div className="text-center py-12 border border-dashed border-white/5 rounded-2xl">
-                    <p className="text-zinc-600 text-xs font-bold uppercase tracking-widest mb-6">No active synchronization</p>
+                    <p className="text-zinc-600 text-xs font-bold uppercase tracking-widest mb-6">No connections yet</p>
                     <Link
-                        to="/discover"
+                        to="/explore"
                         className="text-[10px] font-black uppercase tracking-[0.2em] text-white hover:underline"
                     >
-                        Initiate First Connection
+                        Start Networking
                     </Link>
                 </div>
             )}

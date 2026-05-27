@@ -6,6 +6,7 @@ import { setLoggedIn, setLoggedOut } from "../redux/actions/authActions";
 import { useDispatch, useSelector } from "react-redux";
 import { FaEye, FaEyeSlash, FaEnvelope, FaLock } from "react-icons/fa";
 import InputWrapper from "../components/common/InputWrapper";
+import { GoogleLogin } from "@react-oauth/google";
 
 interface AuthState {
   auth: {
@@ -19,6 +20,7 @@ const Login: React.FC = () => {
   const [errorMessage, setErrorMessage] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -56,6 +58,34 @@ const Login: React.FC = () => {
     }
   };
 
+  const handleGoogleSuccess = async (credentialResponse: any) => {
+    setIsGoogleLoading(true);
+    try {
+      const response = await axios.post(
+        `${process.env.REACT_APP_BACKEND_BASE_URL}/api/auth/google-login`,
+        { token: credentialResponse.credential },
+        { withCredentials: true }
+      );
+
+      if (response.data.loggedIn) {
+        toast.success(response.data.message);
+        (dispatch as any)(setLoggedIn());
+        setTimeout(() => {
+          navigate("/");
+        }, 500);
+      }
+    } catch (error: any) {
+      toast.error(error.response?.data.error || "Google login failed");
+    } finally {
+      setIsGoogleLoading(false);
+    }
+  };
+
+  const handleGoogleError = () => {
+    toast.error("Google authentication failed");
+  };
+
+
   if (isLoggedIn) {
     navigate("/");
     return null;
@@ -74,7 +104,7 @@ const Login: React.FC = () => {
               alt="SkillSync Logo" 
               className="h-12 w-auto mb-6"
             />
-            <h1 className="text-3xl font-bold tracking-tight mb-2">
+            <h1 className="text-xl font-bold tracking-tight mb-2">
               Welcome back
             </h1>
             <p className="text-muted font-medium text-center">
@@ -134,6 +164,30 @@ const Login: React.FC = () => {
               )}
             </button>
           </form>
+
+          <div className="my-6 flex items-center gap-4">
+            <div className="h-px flex-1 bg-white/10"></div>
+            <span className="text-xs font-bold text-muted uppercase tracking-widest">Or continue with</span>
+            <div className="h-px flex-1 bg-white/10"></div>
+          </div>
+
+          <div className="flex justify-center h-[44px] items-center">
+            {isGoogleLoading ? (
+              <div className="flex items-center gap-3 px-6 py-2 rounded-full bg-white/5 border border-white/10 text-white/50 animate-pulse">
+                <div className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin"></div>
+                <span className="text-sm font-medium">Verifying Google Account...</span>
+              </div>
+            ) : (
+              <GoogleLogin
+                onSuccess={handleGoogleSuccess}
+                onError={handleGoogleError}
+                theme="filled_black"
+                shape="pill"
+                size="large"
+                width="384px"
+              />
+            )}
+          </div>
 
           <div className="mt-10 pt-8 border-t border-white/5 text-center">
             <p className="text-muted text-sm font-medium">
