@@ -11,7 +11,7 @@ export const StatCard = ({ icon: Icon, label, value, description }) => (
         <div className="space-y-1">
             <h3 className="text-[10px] font-black uppercase tracking-[0.3em] text-zinc-500">{label}</h3>
             <div className="flex items-baseline space-x-2">
-                <span className="text-4xl font-black tracking-tighter text-white">{value}</span>
+                <span className="text-xl font-black tracking-tighter text-white">{value}</span>
             </div>
             <p className="text-zinc-600 text-xs font-medium leading-relaxed max-w-[180px]">
                 {description}

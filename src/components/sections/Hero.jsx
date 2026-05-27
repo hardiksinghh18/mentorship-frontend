@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 
 const HeroSection = () => {
     return (
-        <section className="relative bg-black text-white min-h-dvh md:min-h-[90vh] flex items-center justify-center overflow-hidden pt-20 pb-40 md:pb-20">
+        <section className="relative bg-black text-white min-h-screen flex items-center justify-center overflow-hidden pt-20 pb-40 md:pb-20">
             {/* Background Spotlights */}
             <div className="absolute top-[20%] left-1/2 -translate-x-1/2 w-[800px] h-[500px] bg-accent/20 blur-[130px] rounded-full pointer-events-none animate-glow opacity-50" />
             <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_50%_40%,rgba(255,255,255,0.03),transparent_70%)] pointer-events-none" />
@@ -17,7 +17,7 @@ const HeroSection = () => {
 
 
                     <div className="space-y-8">
-                        <h1 className="text-4xl lg:text-[4.5rem] font-bold tracking-tight leading-[0.9] text-white">
+                        <h1 className="text-xl lg:text-3xl font-bold tracking-tight leading-[0.9] text-white">
                             Transform Your Career <br />
                             <span className="text-muted/40 lowercase italic font-serif">with</span>{" "}
                             <span className="relative inline-block">
@@ -27,7 +27,7 @@ const HeroSection = () => {
                             </span>
                         </h1>
 
-                        <p className="text-muted text-xl lg:text-2xl max-w-3xl mx-auto leading-relaxed font-medium">
+                        <p className="text-muted text-sm lg:text-base max-w-3xl mx-auto leading-relaxed font-medium">
                             Unlock your full potential with personalized mentorship from industry leaders.
                             SkillSync connects you with expert mentors to guide your professional growth
                             at every stage of your journey.

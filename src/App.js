@@ -1,10 +1,17 @@
 import './App.css';
-import Navbar from './components/sections/Navbar';
 import { Route, Routes } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { setLoggedIn, setLoggedOut } from './redux/actions/authActions'; // Redux actions
 import axios from 'axios'; // Axios for API calls
+
+// Material UI Theme Integration
+import { ThemeProvider } from '@mui/material/styles';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import darkTheme from './theme';
 
 // Pages
 import Home from './pages/Home';
@@ -16,14 +23,13 @@ import Register from './pages/Register';
 import ProfileSetup from './pages/ProfileSetup';
 import Login from './pages/Login';
 import GlobalLoader from './components/loaders/GlobalLoader';
+import Sidebar from './components/sections/Sidebar';
 
-// Toast Notifications
-import { ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
 import ChatSection from './pages/ChatSection';
 import ChatDM from './components/sections/ChatDM';
 
 import Features from './pages/Features';
+import UserConnections from './pages/UserConnections';
 
 function App() {
   const dispatch = useDispatch();
@@ -56,37 +62,45 @@ function App() {
   }
 
   return (
-    <>
-      <ToastContainer
-        className={'text-sm'}
-        position="bottom-left"
-        autoClose={5000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-        theme="dark"
-      />
+    <ThemeProvider theme={darkTheme}>
+      <LocalizationProvider dateAdapter={AdapterDayjs}>
+        <ToastContainer
+          position="top-right"
+          autoClose={4000}
+          hideProgressBar={false}
+          newestOnTop={true}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          theme="dark"
+          toastClassName="noir-toast"
+          bodyClassName="noir-toast-body"
+          progressClassName="noir-toast-progress"
+        />
 
-      <Navbar isLoggedIn={isLoggedIn} />
 
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/features" element={<Features />} />
-        <Route path="/explore" element={<Discover />} />
-        <Route path="/messages" element={<ChatSection />} />
-        <Route path="/messages/:id" element={<ChatDM />} />
-        <Route path="/profile/:username" element={<Profile />} />
-        <Route path="/mentorship/:id" element={<MentorDetails />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/profile/setup" element={<ProfileSetup />} />
-        <Route path="*" element={<NotFound />} />
-      </Routes>
-    </>
+        <Sidebar />
+
+        <main className="md:pl-24 transition-all duration-500">
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/features" element={<Features />} />
+            <Route path="/explore" element={<Discover />} />
+            <Route path="/messages" element={<ChatSection />} />
+            <Route path="/messages/:id" element={<ChatDM />} />
+            <Route path="/profile/:username" element={<Profile />} />
+            <Route path="/profile/:username/connections" element={<UserConnections />} />
+            <Route path="/mentorship/:id" element={<MentorDetails />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/profile/setup" element={<ProfileSetup />} />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </main>
+      </LocalizationProvider>
+    </ThemeProvider>
   );
 }
 

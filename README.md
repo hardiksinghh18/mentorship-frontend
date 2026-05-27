@@ -5,8 +5,8 @@ A full-stack mentorship platform that allows users to connect as mentors and men
 ## Features
 
 - **User Registration and Login**: Secure authentication with input validation.
-- **Profile Setup**: Users can create and edit their profiles, specifying roles (mentor/mentee), skills, interests, and bio.
-- **User Discovery**: Browse and filter profiles by role, skills, and interests.
+- **Profile Setup**: Users can create and edit their profiles, specifying roles (mentor/mentee), skills, and bio.
+- **User Discovery**: Browse and filter profiles by skills, experience, role and more.
 - **Connection Requests**: Send, accept, decline, and manage mentorship requests.
 
 ## Tech Stack

@@ -4,7 +4,7 @@ import { coreFeatures } from '../utils/featuresData';
 const Features = () => {
 
     return (
-        <div className="bg-black min-h-screen text-white pt-32 px-6 lg:px-24 overflow-hidden relative">
+        <div className="bg-black min-h-screen text-white pt-12 px-6 lg:px-24 overflow-hidden relative">
 
             {/* Background Details */}
             <div className="fixed top-[-10%] left-[-10%] w-[60%] h-[60%] bg-purple-600/5 blur-[120px] rounded-full pointer-events-none" />
@@ -13,11 +13,11 @@ const Features = () => {
 
             <div className="max-w-7xl mx-auto relative z-10 pb-32">
                 <header className="mb-24 text-center">
-                    <h1 className="text-4xl lg:text-7xl font-bold tracking-tighter mb-6">
+                    <h1 className="text-xl lg:text-3xl font-bold tracking-tighter mb-6">
                         Engineered for <br />
                         <span className="text-muted italic font-serif lowercase">Connection</span>
                     </h1>
-                    <p className="text-muted text-lg md:text-xl max-w-2xl mx-auto font-medium">
+                    <p className="text-muted text-xs md:text-sm max-w-2xl mx-auto font-medium">
                         SkillSync is a full-stack mentorship matching platform built on a foundation of modern technologies, speed, and reliability.
                     </p>
                 </header>
@@ -36,10 +36,10 @@ const Features = () => {
                                     <div className="w-14 h-14 rounded-2xl bg-white/5 border border-white/10 mb-8 flex items-center justify-center shadow-inner group-hover:bg-white/10 transition-colors">
                                         <span className="text-white/40 font-black italic text-lg">0{i + 1}</span>
                                     </div>
-                                    <h3 className="text-3xl font-bold mb-4 tracking-tighter text-white/90 group-hover:text-white transition-all transform group-hover:translate-x-2">
+                                    <h3 className="text-lg font-bold mb-4 tracking-tighter text-white/90 group-hover:text-white transition-all transform group-hover:translate-x-2">
                                         {feature.title}
                                     </h3>
-                                    <p className="text-muted leading-relaxed font-medium text-base md:text-lg opacity-80 group-hover:opacity-100 transition-opacity">
+                                    <p className="text-muted leading-relaxed font-medium text-[10px] md:text-xs opacity-80 group-hover:opacity-100 transition-opacity">
                                         {feature.desc}
                                     </p>
                                 </div>

@@ -184,17 +184,17 @@ const ChatSection = () => {
   }
 
   return (
-    <div className="max-w-7xl mx-auto w-full flex h-dvh md:h-[calc(100vh-120px)] bg-black text-white selection:bg-white selection:text-black overflow-hidden mt-0 md:mt-28 md:border-x md:border-white/5">
+    <div className="max-w-7xl mx-auto w-full flex h-dvh md:h-[calc(100vh-40px)] bg-black text-white selection:bg-white selection:text-black overflow-hidden mt-0 md:mt-4 md:border-x md:border-white/5">
       {/* Sidebar (Conversations List) */}
       <div 
         className={`w-full md:w-[320px] lg:w-[380px] flex-shrink-0 bg-black border-r border-white/5 flex flex-col transition-all duration-500 ${
           isChatOpen ? "hidden md:flex" : "flex"
         }`}
       >
-        <div className="p-5 md:p-8 space-y-8 flex flex-col h-full overflow-y-auto no-scrollbar pb-32 md:pb-8">
+        <div className="p-5 md:p-8 md:pt-4 space-y-8 flex flex-col h-full overflow-y-auto no-scrollbar pb-32 md:pb-8">
           <div className="flex items-center justify-between">
             <div className="space-y-1">
-              <h1 className="text-xl md:text-2xl font-black tracking-tighter text-white">Messages</h1>
+              <h1 className="text-xl font-bold text-white tracking-tight">Messages</h1>
             </div>
           </div>
 
@@ -256,7 +256,7 @@ const ChatSection = () => {
       }`}>
         {currentId ? (
           <>
-            <div className="px-5 md:px-8 py-4 md:py-6 border-b border-white/5 flex items-center justify-between bg-black/60 backdrop-blur-2xl sticky top-0 z-10">
+            <div className="px-5 md:px-8 py-4 border-b border-white/5 flex items-center justify-between bg-black/60 backdrop-blur-2xl sticky top-0 z-10">
               <div className="flex items-center gap-4 md:gap-6">
                 <button 
                   className="md:hidden p-2 -ml-2 text-zinc-500 hover:text-white transition-colors"
