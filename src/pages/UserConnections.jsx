@@ -55,24 +55,20 @@ const UserConnections = () => {
                             <Link
                                 key={conn.id}
                                 to={`/profile/${conn.sender.username}`}
-                                className="group flex items-center justify-between p-6 rounded-3xl bg-white/[0.02] border border-white/[0.03] hover:border-white/10 hover:bg-white/[0.03] transition-all"
+                                className="group flex items-center justify-between p-6 rounded-lg bg-white/[0.02] border border-white/[0.03] hover:border-white/10 transition-all"
                             >
                                 <div className="flex items-center gap-6">
-                                    <div className="w-16 h-16 bg-zinc-900 rounded-2xl flex items-center justify-center text-zinc-600 text-2xl font-black group-hover:bg-white group-hover:text-black transition-all duration-500">
+                                    <div className="w-12 h-12 bg-zinc-900 rounded-full flex items-center justify-center text-zinc-600 text-2xl font-black group-hover:bg-white group-hover:text-black transition-all duration-500">
                                         {conn.sender.username?.[0]?.toUpperCase()}
                                     </div>
                                     <div className="space-y-1">
-                                        <h3 className="text-xl font-black text-white tracking-tight leading-none group-hover:text-white">
+                                        <h3 className="text-lg font-black text-white tracking-tight leading-none group-hover:text-white">
                                             {conn.sender.fullName || conn.sender.username}
                                         </h3>
                                         <p className="text-zinc-500 text-xs font-bold uppercase tracking-widest">
                                             {conn.sender.role}
                                         </p>
                                     </div>
-                                </div>
-                                <div className="hidden md:flex items-center gap-2 text-zinc-600 text-xs font-bold">
-                                    <FiMapPin />
-                                    <span>Profile Verified</span>
                                 </div>
                             </Link>
                         ))

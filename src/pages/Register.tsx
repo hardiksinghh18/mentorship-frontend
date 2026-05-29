@@ -1,5 +1,5 @@
 import axios from 'axios';
-import React, { useState, ChangeEvent, FormEvent } from 'react';
+import React, { useState, useEffect, ChangeEvent, FormEvent } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { setLoggedIn, setLoggedOut } from '../redux/actions/authActions';
@@ -22,8 +22,19 @@ const Register: React.FC = () => {
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [isGoogleLoading, setIsGoogleLoading] = useState(false);
+    const [windowWidth, setWindowWidth] = useState(typeof window !== "undefined" ? window.innerWidth : 480);
     const dispatch = useDispatch();
     const navigate = useNavigate();
+
+    useEffect(() => {
+        const handleResize = () => setWindowWidth(window.innerWidth);
+        window.addEventListener("resize", handleResize);
+        return () => window.removeEventListener("resize", handleResize);
+    }, []);
+
+    const googleBtnWidth = windowWidth < 480 
+        ? `${Math.max(200, Math.min(384, windowWidth - 90))}px` 
+        : "384px";
 
     const { isLoggedIn } = useSelector((state: AuthState) => state.auth);
 
@@ -253,7 +264,7 @@ const Register: React.FC = () => {
                                 theme="filled_black"
                                 shape="pill"
                                 size="large"
-                                width="384px"
+                                width={googleBtnWidth}
                             />
                         )}
                     </div>
