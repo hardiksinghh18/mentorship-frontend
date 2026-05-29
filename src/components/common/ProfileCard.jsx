@@ -7,7 +7,7 @@ import { FaUserCheck, FaClock, FaLinkedin, FaGithub, FaTwitter, FaLink, FaExtern
 import { FiBriefcase, FiTerminal, FiAlignLeft, FiUserPlus } from "react-icons/fi";
 import { Tooltip, Chip } from "@mui/material";
 
-const ProfileCard = ({ profile, currentUserId, matchScore }) => {
+const ProfileCard = ({ profile, currentUserId, matchScore, matchDetails }) => {
   const { id, name, role, skills, username, bio, receivedRequests, sentRequests, experience, socialLinks, education } = profile;
 
   // Safely parse JSON fields
@@ -110,7 +110,7 @@ const ProfileCard = ({ profile, currentUserId, matchScore }) => {
   };
 
   return (
-    <div className="group relative bg-white/[0.02] hover:bg-white/[0.04] transition-all duration-500 rounded-[16px] p-6 border border-white/[0.05] hover:border-white/10">
+    <div className="group relative bg-white/[0.02] transition-all duration-500 rounded-[16px] p-6 border border-white/[0.05] hover:border-white/10">
       <div className="flex flex-col md:flex-row gap-6 items-start">
         {/* Left Column: Persona (Desktop) */}
         <div className="hidden md:flex shrink-0 flex-col items-center gap-4 min-w-[80px]">
@@ -122,7 +122,7 @@ const ProfileCard = ({ profile, currentUserId, matchScore }) => {
             </Link>
           </div>
 
-          <div className="flex flex-col items-center gap-2">
+          <div className="flex flex-col items-center gap-3">
             {role && (
               <span className={`px-2 py-0.5 rounded text-[8px] font-black uppercase tracking-widest border ${role === 'mentor'
                   ? 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20'
@@ -131,7 +131,38 @@ const ProfileCard = ({ profile, currentUserId, matchScore }) => {
                 {role}
               </span>
             )}
-            {matchScore && (
+            
+            {matchDetails && (
+              <div className="relative flex items-center justify-center w-12 h-12 mt-1">
+                <svg className="w-full h-full transform -rotate-90">
+                  <circle
+                    cx="24"
+                    cy="24"
+                    r="18"
+                    stroke="rgba(255,255,255,0.03)"
+                    strokeWidth="3"
+                    fill="transparent"
+                  />
+                  <circle
+                    cx="24"
+                    cy="24"
+                    r="18"
+                    stroke={matchDetails.compatibilityScore >= 80 ? "#10b981" : matchDetails.compatibilityScore >= 60 ? "#f59e0b" : "#3b82f6"}
+                    strokeWidth="3"
+                    strokeDasharray={2 * Math.PI * 18}
+                    strokeDashoffset={2 * Math.PI * 18 - (matchDetails.compatibilityScore / 100) * (2 * Math.PI * 18)}
+                    strokeLinecap="round"
+                    fill="transparent"
+                    className="transition-all duration-1000 ease-out"
+                  />
+                </svg>
+                <span className="absolute text-[9px] font-black tracking-tight text-white/95">
+                  {matchDetails.compatibilityScore}%
+                </span>
+              </div>
+            )}
+            
+            {matchScore && !matchDetails && (
               <span className="text-[9px] font-bold text-white/30 tracking-tight">
                 {matchScore}% Match
               </span>
@@ -165,6 +196,23 @@ const ProfileCard = ({ profile, currentUserId, matchScore }) => {
                   <h3 className="text-xl font-bold text-white tracking-tight truncate">
                     {name}
                   </h3>
+                  {matchDetails && (
+                    <span className="md:hidden px-2 py-0.5 rounded-[4px] text-[8px] font-black tracking-widest uppercase border transition-all duration-300 bg-zinc-900 border-white/5 flex items-center gap-1.5">
+                      <span className={`inline-block w-1.5 h-1.5 rounded-full ${
+                        matchDetails.compatibilityScore >= 80 ? 'bg-emerald-500 animate-pulse' : matchDetails.compatibilityScore >= 60 ? 'bg-amber-500 animate-pulse' : 'bg-blue-500'
+                      }`} />
+                      <span className={
+                        matchDetails.compatibilityScore >= 80 ? 'text-emerald-400' : matchDetails.compatibilityScore >= 60 ? 'text-amber-400' : 'text-blue-400'
+                      }>
+                        {matchDetails.compatibilityScore}% Match
+                      </span>
+                    </span>
+                  )}
+                  {matchScore && !matchDetails && (
+                    <span className="md:hidden px-2 py-0.5 rounded-[4px] text-[8px] font-black tracking-widest uppercase border bg-zinc-900 border-white/5 text-zinc-400">
+                      {matchScore}% Match
+                    </span>
+                  )}
                 </div>
                 <div className="flex items-center gap-3 mt-1">
                   <span className="text-zinc-500 text-xs font-bold tracking-tight lowercase">
@@ -181,6 +229,7 @@ const ProfileCard = ({ profile, currentUserId, matchScore }) => {
                     </Link>
                   </Tooltip>
                 </div>
+
               </div>
             </div>
 
@@ -233,32 +282,62 @@ const ProfileCard = ({ profile, currentUserId, matchScore }) => {
           </div>
 
 
-          {/* Info Grid */}
-          <div className="flex flex-col gap-3">
-            {currentExperience && (
-              <div className="flex items-center gap-3 text-white/60">
-                <FiBriefcase size={14} className="text-zinc-700 shrink-0" />
-                <p className="text-[12px] font-bold tracking-tight truncate">
-                  {currentExperience.role} <span className="text-zinc-700 mx-1">at</span> <span className="text-white/90">{currentExperience.company}</span>
-                </p>
-              </div>
-            )}
+          {/* Info Grid with Right-Aligned AI Match Badges */}
+          <div className="flex flex-col md:flex-row justify-between gap-6 items-start">
+            {/* Left Column: Core Profile Details */}
+            <div className="flex-1 flex flex-col gap-3 min-w-0">
+              {currentExperience && (
+                <div className="flex items-center gap-3 text-white/60">
+                  <FiBriefcase size={14} className="text-zinc-700 shrink-0" />
+                  <p className="text-[12px] font-bold tracking-tight truncate">
+                    {currentExperience.role} <span className="text-zinc-700 mx-1">at</span> <span className="text-white/90">{currentExperience.company}</span>
+                  </p>
+                </div>
+              )}
 
-            {currentEducation && (
-              <div className="flex items-center gap-3 text-white/60">
-                <FaGraduationCap size={14} className="text-zinc-700 shrink-0" />
-                <p className="text-[12px] font-bold tracking-tight truncate">
-                  {currentEducation.degree} <span className="text-zinc-700 mx-1">from</span> <span className="text-white/90">{currentEducation.college}</span>
-                </p>
-              </div>
-            )}
+              {currentEducation && (
+                <div className="flex items-center gap-3 text-white/60">
+                  <FaGraduationCap size={14} className="text-zinc-700 shrink-0" />
+                  <p className="text-[12px] font-bold tracking-tight truncate">
+                    {currentEducation.degree} <span className="text-zinc-700 mx-1">from</span> <span className="text-white/90">{currentEducation.college}</span>
+                  </p>
+                </div>
+              )}
 
-            {bio && (
-              <div className="flex items-start gap-3 text-white/60">
-                <FiAlignLeft size={14} className="text-zinc-700 shrink-0 mt-1" />
-                <p className="text-[12px] leading-relaxed font-medium text-zinc-400">
-                  {bio.length > 180 ? `${bio.slice(0, 177)}...` : bio}
-                </p>
+              {bio && (
+                <div className="flex items-start gap-3 text-white/60">
+                  <FiAlignLeft size={14} className="text-zinc-700 shrink-0 mt-1" />
+                  <p className="text-[12px] leading-relaxed font-medium text-zinc-400">
+                    {bio.length > 180 ? `${bio.slice(0, 177)}...` : bio}
+                  </p>
+                </div>
+              )}
+            </div>
+
+            {/* Right Column: AI Smart Match Badges */}
+            {matchDetails?.insights && (
+              <div className="flex md:flex-col flex-wrap gap-2 md:items-end shrink-0 max-w-full md:max-w-[220px] mt-2 md:mt-0">
+                {matchDetails.insights.map((insight, idx) => {
+                  const isOverlap = insight.includes('Shared');
+                  const isSync = insight.includes('Peer') || insight.includes('Level');
+                  const isMentor = insight.includes('Guide') || insight.includes('Learner') || insight.includes('Experience');
+                  return (
+                    <span
+                      key={idx}
+                      className={`px-3 py-1 rounded-[6px] text-[8px] font-black uppercase tracking-widest border transition-all duration-300 ${
+                        isOverlap 
+                          ? 'bg-violet-500/10 text-violet-400 border-violet-500/20 hover:bg-violet-500/20' 
+                          : isSync
+                            ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20 hover:bg-emerald-500/20'
+                            : isMentor
+                              ? 'bg-blue-500/10 text-blue-400 border-blue-500/20 hover:bg-blue-500/20'
+                              : 'bg-white/[0.02] text-white/50 border-white/[0.05]'
+                      }`}
+                    >
+                      {insight}
+                    </span>
+                  );
+                })}
               </div>
             )}
           </div>
