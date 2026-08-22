@@ -61,8 +61,8 @@ const ProfileInfo = ({ profile, isOwnProfile, onSendRequest, currentUserId, conn
       {/* Premium Header System */}
       <div className="relative mb-12">
         {/* Banner Area */}
-        <div className="h-32 md:h-40 w-full bg-white/[0.02] border border-white/5 rounded-[2rem] overflow-hidden relative">
-            <div className="absolute inset-0 bg-gradient-to-br from-zinc-900/50 to-transparent" />
+        <div className="h-32 md:h-40 w-full bg-gradient-to-r from-slate-100 via-zinc-100 to-slate-200 border border-zinc-200 rounded-[2rem] overflow-hidden relative shadow-sm">
+            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(255,255,255,0.8),transparent)]" />
         </div>
 
         {/* Identity & Actions Container */}
@@ -70,13 +70,12 @@ const ProfileInfo = ({ profile, isOwnProfile, onSendRequest, currentUserId, conn
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-8">
                 {/* Avatar & Name */}
                 <div className="flex-1 space-y-4">
-                    <div className="w-20 h-20 md:w-28 md:h-28 bg-zinc-900 border-4 border-black rounded-[1.5rem] flex items-center justify-center text-zinc-700 shadow-2xl relative overflow-hidden group">
+                    <div className="w-20 h-20 md:w-28 md:h-28 bg-zinc-100 border-4 border-white rounded-[1.5rem] flex items-center justify-center text-zinc-700 shadow-lg relative overflow-hidden group">
                         <FiUser size={32} className="group-hover:scale-110 transition-transform duration-700" />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                     </div>
                     
                     <div className="space-y-4">
-                        <h1 className="text-3xl font-bold text-white tracking-tight leading-tight">
+                        <h1 className="text-3xl font-bold text-zinc-900 tracking-tight leading-tight">
                             {profile?.fullName}
                         </h1>
                         
@@ -105,7 +104,7 @@ const ProfileInfo = ({ profile, isOwnProfile, onSendRequest, currentUserId, conn
                                 return (
                                     <div className="flex items-center gap-6">
                                         {links && (
-                                            <div className="flex items-center gap-4 pl-4 border-l border-white/10">
+                                            <div className="flex items-center gap-4 pl-4 border-l border-zinc-200">
                                                 {links.linkedin && links.linkedin.trim() !== "" && (
                                                     <Tooltip title="LinkedIn" arrow>
                                                         <a 
@@ -124,7 +123,7 @@ const ProfileInfo = ({ profile, isOwnProfile, onSendRequest, currentUserId, conn
                                                             href={links.github.trim().startsWith('http') ? links.github.trim() : `https://${links.github.trim()}`} 
                                                             target="_blank" 
                                                             rel="noopener noreferrer"
-                                                            className="text-zinc-500 hover:text-white transition-all hover:scale-110"
+                                                            className="text-zinc-500 hover:text-zinc-900 transition-all hover:scale-110"
                                                         >
                                                             <FiGithub size={16} />
                                                         </a>
@@ -148,7 +147,7 @@ const ProfileInfo = ({ profile, isOwnProfile, onSendRequest, currentUserId, conn
                                                             href={links.portfolio.trim().startsWith('http') ? links.portfolio.trim() : `https://${links.portfolio.trim()}`} 
                                                             target="_blank" 
                                                             rel="noopener noreferrer"
-                                                            className="text-zinc-500 hover:text-white transition-all hover:scale-110"
+                                                            className="text-zinc-500 hover:text-zinc-900 transition-all hover:scale-110"
                                                         >
                                                             <FiLink size={16} />
                                                         </a>
@@ -189,7 +188,7 @@ const ProfileInfo = ({ profile, isOwnProfile, onSendRequest, currentUserId, conn
                         <div className="pt-2">
                             <Link 
                                 to={`/profile/${profile?.username}/connections`}
-                                className="text-[10px] font-black text-zinc-600 hover:text-white transition-all uppercase tracking-[0.3em] border-b border-white/5 hover:border-white pb-1 w-fit"
+                                className="text-[10px] font-black text-zinc-500 hover:text-zinc-900 transition-all uppercase tracking-[0.3em] border-b border-zinc-200 hover:border-zinc-900 pb-1 w-fit"
                             >
                                 {connectionCount} {connectionCount === 1 ? 'Connection' : 'Connections'}
                             </Link>
@@ -202,7 +201,7 @@ const ProfileInfo = ({ profile, isOwnProfile, onSendRequest, currentUserId, conn
                     <div className="flex items-center gap-3 md:pb-4">
                         <Link 
                             to="/profile/setup"
-                            className="w-10 h-10 md:w-12 md:h-12 flex items-center justify-center bg-white/5 backdrop-blur-xl text-white/50 border border-white/10 rounded-2xl hover:text-white hover:bg-white/10 transition-all group"
+                            className="w-10 h-10 md:w-12 md:h-12 flex items-center justify-center bg-zinc-100 text-zinc-700 border border-zinc-200 rounded-2xl hover:bg-zinc-200 hover:text-zinc-900 transition-all group"
                             title="Edit Profile"
                         >
                             <FiSettings size={18} className="group-hover:rotate-90 transition-transform duration-500" />
@@ -213,11 +212,11 @@ const ProfileInfo = ({ profile, isOwnProfile, onSendRequest, currentUserId, conn
             </div>
         </div>
 
-        <div className="px-8 md:px-12 space-y-12 border-t border-white/[0.03] pt-10">
+        <div className="px-8 md:px-12 space-y-12 border-t border-zinc-200 pt-10">
         {/* Bio Section */}
         <section className="space-y-6">
-          <h2 className="text-xl font-bold text-white tracking-tight block">About</h2>
-          <p className="text-zinc-400 text-sm md:text-base font-medium leading-relaxed tracking-tight max-w-4xl">
+          <h2 className="text-xl font-bold text-zinc-900 tracking-tight block">About</h2>
+          <p className="text-zinc-600 text-sm md:text-base font-medium leading-relaxed tracking-tight max-w-4xl">
             {profile?.bio || "No bio provided."}
           </p>
         </section>
@@ -225,34 +224,34 @@ const ProfileInfo = ({ profile, isOwnProfile, onSendRequest, currentUserId, conn
         {/* Experience Section */}
         {experienceGroups.length > 0 && (
           <section className="space-y-10">
-            <h2 className="text-xl font-bold text-white tracking-tight block">Experience</h2>
+            <h2 className="text-xl font-bold text-zinc-900 tracking-tight block">Experience</h2>
             <div className="space-y-12">
               {experienceGroups.map((group, gIndex) => (
                 <div key={gIndex} className="flex gap-6 relative">
-                  <div className="flex-shrink-0 w-14 h-14 bg-white/[0.03] border border-white/5 rounded-2xl flex items-center justify-center text-zinc-600 text-xl font-black">
+                  <div className="flex-shrink-0 w-14 h-14 bg-zinc-100 border border-zinc-200 rounded-2xl flex items-center justify-center text-zinc-700 text-xl font-black">
                     {group.company.charAt(0)}
                   </div>
                   <div className="flex-1 space-y-6">
                     <div>
-                      <h3 className="text-sm font-black text-white tracking-tight">{group.company}</h3>
+                      <h3 className="text-sm font-black text-zinc-900 tracking-tight">{group.company}</h3>
                       <div className="flex items-center gap-2 text-xs font-bold text-zinc-500 mt-1 uppercase tracking-wider">
                         <span>{group.totalDuration}</span>
                         {group.location && (
-                          <><span className="text-zinc-800">•</span><span>{group.location}</span></>
+                          <><span className="text-zinc-400">•</span><span>{group.location}</span></>
                         )}
                       </div>
                     </div>
                     <div className="space-y-8 relative ml-1">
                       {group.roles.length > 1 && (
-                        <div className="absolute left-[7px] top-2 bottom-2 w-[2px] bg-white/[0.05]" />
+                        <div className="absolute left-[7px] top-2 bottom-2 w-[2px] bg-zinc-200" />
                       )}
                       {group.roles.map((role, rIndex) => (
                         <div key={rIndex} className="flex gap-5 relative group/role">
                           <div className={`flex-shrink-0 w-4 h-4 rounded-full border-2 transition-all duration-500 z-10 mt-1.5
-                            ${group.roles.length > 1 ? 'bg-zinc-950 border-white/10 group-hover/role:border-white group-hover/role:scale-125' : 'hidden'}`} 
+                            ${group.roles.length > 1 ? 'bg-zinc-100 border-zinc-300 group-hover/role:border-zinc-900 group-hover/role:scale-125' : 'hidden'}`} 
                           />
                           <div className="space-y-1 flex-1">
-                             <h4 className="text-xs font-black text-white tracking-tight leading-none">{role.role}</h4>
+                             <h4 className="text-xs font-black text-zinc-900 tracking-tight leading-none">{role.role}</h4>
                             <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs font-bold text-zinc-600 uppercase tracking-widest">
                               <span>{role.employmentType}</span>
                               <span className="text-zinc-800">•</span>

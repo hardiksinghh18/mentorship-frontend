@@ -128,16 +128,16 @@ const Dashboard = () => {
     }, [user]);
 
     return (
-        <div className="min-h-screen bg-black text-white selection:bg-white selection:text-black pt-12 pb-16 px-6 md:px-12 lg:px-24">
+        <div className="min-h-screen bg-white text-zinc-900 pt-12 pb-16 px-6 md:px-12 lg:px-24">
             <div className="max-w-7xl mx-auto space-y-16">
 
                 {/* Header Section */}
                 <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 animate-in fade-in slide-in-from-bottom-8 duration-1000">
                     <div className="space-y-4">
-                        <h1 className="text-xl md:text-2xl font-black tracking-tighter leading-none">
+                        <h1 className="text-2xl md:text-3xl font-black tracking-tighter leading-none text-zinc-900">
                             {getGreeting()}, {user?.fullName ? user.fullName.split(' ')[0] : user?.username}
                         </h1>
-                        <p className="text-zinc-500 text-[9px] md:text-xs max-w-xl font-medium tracking-tight">
+                        <p className="text-zinc-500 text-xs md:text-sm max-w-xl font-medium tracking-tight">
                             Manage your mentorships, chat with connections, and explore new opportunities.
                         </p>
                     </div>
@@ -154,7 +154,7 @@ const Dashboard = () => {
                     `}</style>
 
                     <div className="space-y-2">
-                        <h2 className="text-xl font-bold text-white tracking-tight">Suggested Profiles</h2>
+                        <h2 className="text-xl font-bold text-zinc-900 tracking-tight">Suggested Profiles</h2>
                     </div>
 
                     {/* Subsection 1: AI Smart Matches */}
@@ -162,7 +162,7 @@ const Dashboard = () => {
                         title="AI Smart Matches"
                         subtitle="Top-tier neural recommendations computed dynamically from your profiles."
                         icon={HiSparkles}
-                        iconBgClass="bg-violet-500/10 border border-violet-500/20 text-violet-400"
+                        iconBgClass="bg-violet-50 border border-violet-200 text-violet-600"
                         items={aiMatches}
                         loading={loading}
                         ctaLink="/explore?tab=ai-match"
@@ -170,8 +170,8 @@ const Dashboard = () => {
                         ctaDesc="Reveal the full, hyper-curated list of candidates matching your direct skill compatibility matrix."
                         ctaActionLabel="Unlock Matches"
                         ctaIcon={FiCpu}
-                        ctaBgClass="bg-gradient-to-br from-violet-950/20 to-fuchsia-950/20 border border-violet-500/10 hover:border-violet-500/30"
-                        ctaLabelColorClass="text-violet-400 group-hover:text-white"
+                        ctaBgClass="bg-gradient-to-br from-violet-50 to-fuchsia-50 border border-violet-200 hover:border-violet-400"
+                        ctaLabelColorClass="text-violet-600 group-hover:text-violet-900"
                     />
 
                     {/* Subsection 2: Recommended Connections (Normal) */}

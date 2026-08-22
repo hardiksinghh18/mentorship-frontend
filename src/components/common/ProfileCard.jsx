@@ -80,22 +80,22 @@ const ProfileCard = ({ profile, currentUserId, matchScore, matchDetails }) => {
       case "connected":
         return {
           text: "Connected",
-          icon: <FaUserCheck size={14} />,
-          className: "bg-white/10 text-white cursor-default"
+          icon: <FaUserCheck size={16} />,
+          className: "bg-emerald-50 text-emerald-700 border border-emerald-200 cursor-default font-bold"
         };
       case "pending":
         return {
           text: "Pending",
-          icon: <FaClock size={14} />,
-          className: "bg-white/5 text-white/50 cursor-default"
+          icon: <FaClock size={16} />,
+          className: "bg-zinc-100 text-zinc-500 border border-zinc-200 cursor-default font-bold"
         };
       default:
         return {
           text: "",
-          icon: <FiUserPlus size={18} />,
+          icon: <FiUserPlus size={16} />,
           className: isProfileComplete 
-            ? "border-white/20 text-white hover:bg-white/10 hover:border-white/40" 
-            : "border-white/10 text-white/20 cursor-not-allowed"
+            ? "bg-zinc-900 text-white hover:bg-zinc-800 border border-zinc-900 shadow-sm font-bold" 
+            : "bg-zinc-100 text-zinc-400 border border-zinc-200 cursor-not-allowed"
         };
     }
   };
@@ -110,13 +110,13 @@ const ProfileCard = ({ profile, currentUserId, matchScore, matchDetails }) => {
   };
 
   return (
-    <div className="group relative bg-white/[0.02] transition-all duration-500 rounded-[16px] p-6 border border-white/[0.05] hover:border-white/10">
+    <div className="group relative bg-zinc-50 transition-all duration-500 rounded-[16px] p-6 border border-zinc-200 hover:border-zinc-300 shadow-sm">
       <div className="flex flex-col md:flex-row gap-6 items-start">
         {/* Left Column: Persona (Desktop) */}
         <div className="hidden md:flex shrink-0 flex-col items-center gap-4 min-w-[80px]">
           <div className="relative">
-            <Link to={`/profile/${username}`} className="block w-14 h-14 rounded-full overflow-hidden bg-zinc-900 border border-white/5 group-hover:border-white/20 transition-all duration-500">
-              <div className="w-full h-full flex items-center justify-center text-2xl font-bold text-white/20 group-hover:text-white/40 transition-colors">
+            <Link to={`/profile/${username}`} className="block w-14 h-14 rounded-full overflow-hidden bg-zinc-100 border border-zinc-200 group-hover:border-zinc-400 transition-all duration-500">
+              <div className="w-full h-full flex items-center justify-center text-2xl font-bold text-zinc-700 transition-colors">
                 {username[0]?.toUpperCase()}
               </div>
             </Link>
@@ -124,7 +124,7 @@ const ProfileCard = ({ profile, currentUserId, matchScore, matchDetails }) => {
 
           <div className="flex flex-col items-center gap-3">
             {role && (
-              <span className={`px-2 py-0.5 rounded text-[8px] font-black uppercase tracking-widest border ${role === 'mentor'
+              <span className={`px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-widest border ${role === 'mentor'
                   ? 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20'
                   : 'bg-amber-500/10 text-amber-500 border-amber-500/20'
                 }`}>
@@ -139,7 +139,7 @@ const ProfileCard = ({ profile, currentUserId, matchScore, matchDetails }) => {
                     cx="24"
                     cy="24"
                     r="18"
-                    stroke="rgba(255,255,255,0.03)"
+                    stroke="#e4e4e7"
                     strokeWidth="3"
                     fill="transparent"
                   />
@@ -147,7 +147,7 @@ const ProfileCard = ({ profile, currentUserId, matchScore, matchDetails }) => {
                     cx="24"
                     cy="24"
                     r="18"
-                    stroke={matchDetails.compatibilityScore >= 80 ? "#10b981" : matchDetails.compatibilityScore >= 60 ? "#f59e0b" : "#3b82f6"}
+                    stroke={matchDetails.compatibilityScore >= 60 ? "#10b981" : matchDetails.compatibilityScore >= 20 ? "#3b82f6" : "#71717a"}
                     strokeWidth="3"
                     strokeDasharray={2 * Math.PI * 18}
                     strokeDashoffset={2 * Math.PI * 18 - (matchDetails.compatibilityScore / 100) * (2 * Math.PI * 18)}
@@ -156,66 +156,81 @@ const ProfileCard = ({ profile, currentUserId, matchScore, matchDetails }) => {
                     className="transition-all duration-1000 ease-out"
                   />
                 </svg>
-                <span className="absolute text-[9px] font-black tracking-tight text-white/95">
+                <span className="absolute text-[10px] font-black tracking-tight text-zinc-900">
                   {matchDetails.compatibilityScore}%
                 </span>
               </div>
             )}
             
             {matchScore && !matchDetails && (
-              <span className="text-[9px] font-bold text-white/30 tracking-tight">
+              <span className="text-[10px] font-bold text-zinc-600 tracking-tight">
                 {matchScore}% Match
               </span>
             )}
           </div>
         </div>
-
+ 
         {/* Content Section */}
         <div className="flex-1 space-y-4">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div className="flex items-center gap-4 w-full md:w-auto">
               {/* Mobile Avatar */}
               <div className="md:hidden shrink-0 flex flex-col items-center gap-2">
-                <Link to={`/profile/${username}`} className="block w-10 h-10 rounded-full overflow-hidden bg-zinc-900 border border-white/5">
-                  <div className="w-full h-full flex items-center justify-center text-lg font-bold text-white/40">
+                <Link to={`/profile/${username}`} className="block w-10 h-10 rounded-full overflow-hidden bg-zinc-100 border border-zinc-200">
+                  <div className="w-full h-full flex items-center justify-center text-lg font-bold text-zinc-700">
                     {username[0]?.toUpperCase()}
                   </div>
                 </Link>
                 {role && (
-                  <span className={`px-2 py-0.5 rounded text-[7px] font-black uppercase tracking-widest border ${role === 'mentor'
-                      ? 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20'
-                      : 'bg-amber-500/10 text-amber-500 border-amber-500/20'
+                  <span className={`px-2 py-0.5 rounded text-[8px] font-black uppercase tracking-widest border ${role === 'mentor'
+                      ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                      : 'bg-amber-50 text-amber-700 border-amber-200'
                     }`}>
                     {role}
                   </span>
                 )}
               </div>
-
+ 
               <div className="flex-1 min-w-0">
                 <div className="flex flex-wrap items-center gap-3">
-                  <h3 className="text-xl font-bold text-white tracking-tight truncate">
+                  <h3 className="text-xl font-bold text-zinc-900 tracking-tight truncate">
                     {name}
                   </h3>
                   {matchDetails && (
-                    <span className="md:hidden px-2 py-0.5 rounded-[4px] text-[8px] font-black tracking-widest uppercase border transition-all duration-300 bg-zinc-900 border-white/5 flex items-center gap-1.5">
+                    <span className={`md:hidden px-2 py-0.5 rounded-[4px] text-[9px] font-black tracking-widest uppercase border transition-all duration-300 flex items-center gap-1.5 ${
+                      matchDetails.compatibilityScore >= 60 
+                        ? 'bg-emerald-50 border-emerald-200 text-emerald-700' 
+                        : matchDetails.compatibilityScore >= 20 
+                          ? 'bg-blue-50 border-blue-200 text-blue-700' 
+                          : 'bg-zinc-100 border-zinc-200 text-zinc-600'
+                    }`}>
                       <span className={`inline-block w-1.5 h-1.5 rounded-full ${
-                        matchDetails.compatibilityScore >= 80 ? 'bg-emerald-500 animate-pulse' : matchDetails.compatibilityScore >= 60 ? 'bg-amber-500 animate-pulse' : 'bg-blue-500'
+                        matchDetails.compatibilityScore >= 60 ? 'bg-emerald-500 animate-pulse' : matchDetails.compatibilityScore >= 20 ? 'bg-blue-500' : 'bg-zinc-400'
                       }`} />
-                      <span className={
-                        matchDetails.compatibilityScore >= 80 ? 'text-emerald-400' : matchDetails.compatibilityScore >= 60 ? 'text-amber-400' : 'text-blue-400'
-                      }>
+                      <span>
                         {matchDetails.compatibilityScore}% Match
                       </span>
                     </span>
                   )}
                   {matchScore && !matchDetails && (
-                    <span className="md:hidden px-2 py-0.5 rounded-[4px] text-[8px] font-black tracking-widest uppercase border bg-zinc-900 border-white/5 text-zinc-400">
-                      {matchScore}% Match
+                    <span className={`md:hidden px-2 py-0.5 rounded-[4px] text-[9px] font-black tracking-widest uppercase border flex items-center gap-1.5 ${
+                      matchScore >= 60 
+                        ? 'bg-emerald-50 border-emerald-200 text-emerald-700' 
+                        : matchScore >= 20 
+                          ? 'bg-blue-50 border-blue-200 text-blue-700' 
+                          : 'bg-zinc-100 border-zinc-200 text-zinc-600'
+                    }`}>
+                      <span className={`inline-block w-1.5 h-1.5 rounded-full ${
+                        matchScore >= 60 ? 'bg-emerald-500 animate-pulse' : matchScore >= 20 ? 'bg-blue-500' : 'bg-zinc-400'
+                      }`} />
+                      <span>
+                        {matchScore}% Match
+                      </span>
                     </span>
                   )}
                 </div>
                 <div className="flex items-center gap-3 mt-1">
-                  <span className="text-zinc-500 text-xs font-bold tracking-tight lowercase">
+                  <span className="text-zinc-500 text-sm font-bold tracking-tight lowercase">
                     @{username}
                   </span>
                   <Tooltip title="View Full Profile" arrow>
@@ -223,7 +238,7 @@ const ProfileCard = ({ profile, currentUserId, matchScore, matchDetails }) => {
                       to={`/profile/${username}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-zinc-700 hover:text-white transition-all hover:scale-110 active:scale-95"
+                      className="text-zinc-500 hover:text-zinc-900 transition-all hover:scale-110 active:scale-95"
                     >
                       <FaExternalLinkAlt size={14} />
                     </Link>
@@ -246,7 +261,7 @@ const ProfileCard = ({ profile, currentUserId, matchScore, matchDetails }) => {
                   {parsedSocialLinks.github && (
                     <Tooltip title="GitHub" arrow>
                       <a href={parsedSocialLinks.github} target="_blank" rel="noopener noreferrer">
-                        <FaGithub className="text-zinc-600 hover:text-white transition-colors cursor-pointer" size={16} />
+                        <FaGithub className="text-zinc-600 hover:text-zinc-900 transition-colors cursor-pointer" size={16} />
                       </a>
                     </Tooltip>
                   )}
@@ -260,7 +275,7 @@ const ProfileCard = ({ profile, currentUserId, matchScore, matchDetails }) => {
                   {parsedSocialLinks.portfolio && (
                     <Tooltip title="Portfolio" arrow>
                       <a href={parsedSocialLinks.portfolio} target="_blank" rel="noopener noreferrer">
-                        <FaLink className="text-zinc-600 hover:text-white transition-colors cursor-pointer" size={16} />
+                        <FaLink className="text-zinc-600 hover:text-zinc-900 transition-colors cursor-pointer" size={16} />
                       </a>
                     </Tooltip>
                   )}
@@ -287,27 +302,27 @@ const ProfileCard = ({ profile, currentUserId, matchScore, matchDetails }) => {
             {/* Left Column: Core Profile Details */}
             <div className="flex-1 flex flex-col gap-3 min-w-0">
               {currentExperience && (
-                <div className="flex items-center gap-3 text-white/60">
-                  <FiBriefcase size={14} className="text-zinc-700 shrink-0" />
-                  <p className="text-[12px] font-bold tracking-tight truncate">
-                    {currentExperience.role} <span className="text-zinc-700 mx-1">at</span> <span className="text-white/90">{currentExperience.company}</span>
+                <div className="flex items-center gap-3 text-zinc-700">
+                  <FiBriefcase size={14} className="text-zinc-500 shrink-0" />
+                  <p className="text-[13px] font-bold tracking-tight truncate">
+                    {currentExperience.role} <span className="text-zinc-400 mx-1">at</span> <span className="text-zinc-900">{currentExperience.company}</span>
                   </p>
                 </div>
               )}
 
               {currentEducation && (
-                <div className="flex items-center gap-3 text-white/60">
-                  <FaGraduationCap size={14} className="text-zinc-700 shrink-0" />
-                  <p className="text-[12px] font-bold tracking-tight truncate">
-                    {currentEducation.degree} <span className="text-zinc-700 mx-1">from</span> <span className="text-white/90">{currentEducation.college}</span>
+                <div className="flex items-center gap-3 text-zinc-700">
+                  <FaGraduationCap size={14} className="text-zinc-500 shrink-0" />
+                  <p className="text-[13px] font-bold tracking-tight truncate">
+                    {currentEducation.degree} <span className="text-zinc-400 mx-1">from</span> <span className="text-zinc-900">{currentEducation.college}</span>
                   </p>
                 </div>
               )}
 
               {bio && (
-                <div className="flex items-start gap-3 text-white/60">
-                  <FiAlignLeft size={14} className="text-zinc-700 shrink-0 mt-1" />
-                  <p className="text-[12px] leading-relaxed font-medium text-zinc-400">
+                <div className="flex items-start gap-3 text-zinc-700">
+                  <FiAlignLeft size={14} className="text-zinc-500 shrink-0 mt-1" />
+                  <p className="text-[13px] leading-relaxed font-medium text-zinc-600">
                     {bio.length > 180 ? `${bio.slice(0, 177)}...` : bio}
                   </p>
                 </div>
@@ -324,14 +339,14 @@ const ProfileCard = ({ profile, currentUserId, matchScore, matchDetails }) => {
                   return (
                     <span
                       key={idx}
-                      className={`px-3 py-1 rounded-[6px] text-[8px] font-black uppercase tracking-widest border transition-all duration-300 ${
+                      className={`px-3 py-1 rounded-[6px] text-[9px] font-black uppercase tracking-widest border transition-all duration-300 ${
                         isOverlap 
-                          ? 'bg-violet-500/10 text-violet-400 border-violet-500/20 hover:bg-violet-500/20' 
+                          ? 'bg-violet-50 text-violet-700 border-violet-200 hover:bg-violet-100' 
                           : isSync
-                            ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20 hover:bg-emerald-500/20'
+                            ? 'bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100'
                             : isMentor
-                              ? 'bg-blue-500/10 text-blue-400 border-blue-500/20 hover:bg-blue-500/20'
-                              : 'bg-white/[0.02] text-white/50 border-white/[0.05]'
+                              ? 'bg-blue-50 text-blue-700 border-blue-200 hover:bg-blue-100'
+                              : 'bg-zinc-100 text-zinc-700 border-zinc-200'
                       }`}
                     >
                       {insight}
@@ -345,7 +360,7 @@ const ProfileCard = ({ profile, currentUserId, matchScore, matchDetails }) => {
           {/* Footer Section */}
           <div className="pt-2 flex flex-col md:flex-row md:items-center justify-between gap-6">
             <div className="flex items-center gap-4">
-              <div className="flex items-center gap-2 text-zinc-700">
+              <div className="flex items-center gap-2 text-zinc-400">
                 <FiTerminal size={14} />
               </div>
               <div className="flex flex-wrap gap-2">
@@ -355,10 +370,10 @@ const ProfileCard = ({ profile, currentUserId, matchScore, matchDetails }) => {
                     label={skill}
                     size="small"
                     sx={{
-                      backgroundColor: 'rgba(255, 255, 255, 0.02)',
-                      border: '1px solid rgba(255, 255, 255, 0.05)',
-                      color: '#a1a1aa',
-                      fontSize: '9px',
+                      backgroundColor: '#f4f4f5',
+                      border: '1px solid #e4e4e7',
+                      color: '#3f3f46',
+                      fontSize: '10px',
                       fontWeight: 800,
                       height: '24px',
                       textTransform: 'uppercase',
@@ -372,7 +387,7 @@ const ProfileCard = ({ profile, currentUserId, matchScore, matchDetails }) => {
                   />
                 ))}
                 {skills?.length > 3 && (
-                  <span className="px-2 py-1 text-[9px] font-bold text-zinc-600 uppercase tracking-wider">
+                  <span className="px-2 py-1 text-[10px] font-bold text-zinc-600 uppercase tracking-wider">
                     +{skills.length - 3}
                   </span>
                 )}

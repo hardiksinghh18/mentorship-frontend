@@ -170,11 +170,11 @@ const ProfileSetup = () => {
   };
 
   return (
-    <div className="min-h-screen bg-black text-white selection:bg-white selection:text-black flex items-center justify-center p-6 sm:p-12">
-      <div className="w-full max-w-4xl bg-black rounded-lg border border-white/[0.03] overflow-hidden">
+    <div className="min-h-screen bg-white text-zinc-900 flex items-center justify-center p-6 sm:p-12">
+      <div className="w-full max-w-4xl bg-zinc-50 rounded-lg border border-zinc-200 shadow-sm overflow-hidden">
         <div className="p-10 md:p-16">
           <div className="flex flex-col gap-2 mb-10">
-            <h1 className="text-xl md:text-2xl font-black text-white tracking-tighter leading-none">
+            <h1 className="text-xl md:text-2xl font-black text-zinc-900 tracking-tighter leading-none">
               Update Profile Info
             </h1>
           </div>
@@ -183,16 +183,16 @@ const ProfileSetup = () => {
             <div className="space-y-8">
               {/* Name Field */}
               <div className="space-y-3">
-                <label className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-500 ml-1">Full Name</label>
+                <label className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-600 ml-1">Full Name</label>
                 <div className="relative group">
-                  <div className="absolute inset-y-0 left-0 flex items-center pl-4 text-zinc-600 group-focus-within:text-white transition-colors">
+                  <div className="absolute inset-y-0 left-0 flex items-center pl-4 text-zinc-400 group-focus-within:text-zinc-900 transition-colors">
                     <FiUser size={18} />
                   </div>
                   <input
                     type="text"
                     name="fullName"
                     placeholder="Enter full name"
-                    className={`w-full pl-12 pr-6 py-4 bg-white/[0.02] rounded-lg border text-white placeholder:text-zinc-700 focus:border-white focus:bg-white/[0.05] transition-all outline-none font-bold ${errors.fullName ? 'border-rose-500/50' : 'border-white/[0.05]'}`}
+                    className={`w-full pl-12 pr-6 py-4 bg-zinc-100 rounded-lg border text-zinc-900 placeholder:text-zinc-400 focus:border-zinc-500 focus:bg-white transition-all outline-none font-bold ${errors.fullName ? 'border-rose-500' : 'border-zinc-300'}`}
                     value={formData.fullName}
                     onChange={handleChange}
                     required
@@ -203,14 +203,14 @@ const ProfileSetup = () => {
 
               {/* Email Field (Disabled) */}
               <div className="space-y-3 opacity-60">
-                <label className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-500 ml-1">Email Address</label>
+                <label className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-600 ml-1">Email Address</label>
                 <div className="relative group">
-                  <div className="absolute inset-y-0 left-0 flex items-center pl-4 text-zinc-600 transition-colors">
+                  <div className="absolute inset-y-0 left-0 flex items-center pl-4 text-zinc-400 transition-colors">
                     <FiMail size={18} />
                   </div>
                   <input
                     type="email"
-                    className="w-full pl-12 pr-6 py-4 bg-white/[0.01] rounded-lg border border-white/[0.03] text-zinc-400 font-bold outline-none cursor-not-allowed"
+                    className="w-full pl-12 pr-6 py-4 bg-zinc-200/60 rounded-lg border border-zinc-300 text-zinc-700 font-bold outline-none cursor-not-allowed"
                     value={user?.email || ""}
                     disabled
                     readOnly
@@ -220,9 +220,9 @@ const ProfileSetup = () => {
 
               {/* Role Select */}
               <div className="space-y-3">
-                <label className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-500 ml-1">Current Role</label>
+                <label className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-600 ml-1">Current Role</label>
                 <div className="relative group">
-                  <div className="absolute inset-y-0 left-0 flex items-center pl-4 text-zinc-600 group-focus-within:text-white transition-colors z-10 pointer-events-none">
+                  <div className="absolute inset-y-0 left-0 flex items-center pl-4 text-zinc-400 group-focus-within:text-zinc-900 transition-colors z-10 pointer-events-none">
                     <FiBriefcase size={18} />
                   </div>
                   <FormControl fullWidth>
@@ -231,36 +231,38 @@ const ProfileSetup = () => {
                       value={formData.role}
                       onChange={handleChange}
                       displayEmpty
-                      className={`w-full pl-10 pr-6 py-0 bg-white/[0.02] rounded-lg border text-white focus:border-white focus:bg-white/[0.05] transition-all outline-none font-bold ${errors.role ? 'border-rose-500/50' : 'border-white/[0.05]'}`}
+                      className={`w-full pl-10 pr-6 py-0 bg-zinc-100 rounded-lg border text-zinc-900 focus:border-zinc-500 focus:bg-white transition-all outline-none font-bold ${errors.role ? 'border-rose-500' : 'border-zinc-300'}`}
                       sx={{
                         '& .MuiSelect-select': {
                           py: 1.8,
                           pl: 6,
-                          color: 'white',
+                          color: '#18181b',
+                          fontWeight: 700,
                           backgroundColor: 'transparent'
                         },
                         '& .MuiOutlinedInput-notchedOutline': { border: 'none' },
                         '&:hover .MuiOutlinedInput-notchedOutline': { border: 'none' },
                         '&.Mui-focused .MuiOutlinedInput-notchedOutline': { border: 'none' },
-                        '& .MuiSvgIcon-root': { color: '#52525b' },
+                        '& .MuiSvgIcon-root': { color: '#71717a' },
                         borderRadius: '8px'
                       }
                       }
                       MenuProps={{
                         PaperProps: {
                           sx: {
-                            bgcolor: '#09090b',
-                            border: '1px solid rgba(255,255,255,0.05)',
+                            bgcolor: '#ffffff',
+                            border: '1px solid #e4e4e7',
                             borderRadius: '8px',
+                            boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1)',
                             mt: 1,
                             '& .MuiMenuItem-root': {
                               fontSize: '13px',
                               fontWeight: 700,
-                              color: '#71717a',
+                              color: '#27272a',
                               py: 1.5,
-                              '&:hover': { bgcolor: 'rgba(255,255,255,0.05)', color: 'white' },
-                              '&.Mui-selected': { bgcolor: 'rgba(255,255,255,0.1)', color: 'white' },
-                              '&.Mui-selected:hover': { bgcolor: 'rgba(255,255,255,0.15)' }
+                              '&:hover': { bgcolor: '#f4f4f5', color: '#000000' },
+                              '&.Mui-selected': { bgcolor: '#e4e4e7', color: '#000000' },
+                              '&.Mui-selected:hover': { bgcolor: '#d4d4d8' }
                             }
                           }
                         }
@@ -278,22 +280,22 @@ const ProfileSetup = () => {
               {/* Skills Field */}
               <div className="space-y-4">
                 <div className="space-y-3">
-                  <label className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-500 ml-1">Skills</label>
+                  <label className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-600 ml-1">Skills</label>
                   <div className="relative group">
-                    <div className="absolute inset-y-0 left-0 flex items-center pl-4 text-zinc-600 group-focus-within:text-white transition-colors">
+                    <div className="absolute inset-y-0 left-0 flex items-center pl-4 text-zinc-400 group-focus-within:text-zinc-900 transition-colors">
                       <FiTool size={18} />
                     </div>
                     <input
                       type="text"
                       placeholder="Type a skill and press Enter..."
-                      className={`w-full pl-12 pr-6 py-4 bg-white/[0.02] rounded-lg border text-white placeholder:text-zinc-700 focus:border-white focus:bg-white/[0.05] transition-all outline-none font-bold ${errors.skills ? 'border-rose-500/50' : 'border-white/[0.05]'}`}
+                      className={`w-full pl-12 pr-6 py-4 bg-zinc-100 rounded-lg border text-zinc-900 placeholder:text-zinc-400 focus:border-zinc-500 focus:bg-white transition-all outline-none font-bold ${errors.skills ? 'border-rose-500' : 'border-zinc-300'}`}
                       value={skillInput}
                       onChange={(e) => setSkillInput(e.target.value)}
                       onKeyDown={handleSkillKeyDown}
                     />
                     {skillInput.trim() && (
                       <div className="absolute right-4 inset-y-0 flex items-center">
-                        <span className="text-[8px] font-black uppercase tracking-widest text-zinc-500 bg-white/5 px-2 py-1 rounded border border-white/5">Press Enter</span>
+                        <span className="text-[8px] font-black uppercase tracking-widest text-zinc-600 bg-zinc-200 px-2 py-1 rounded border border-zinc-300">Press Enter</span>
                       </div>
                     )}
                   </div>
@@ -309,33 +311,33 @@ const ProfileSetup = () => {
                       onDelete={() => handleRemoveSkill(skill)}
                       deleteIcon={<FiX size={14} />}
                       sx={{
-                        bgcolor: 'rgba(255, 255, 255, 0.03)',
-                        color: '#d4d4d8', // zinc-300
+                        bgcolor: '#f4f4f5',
+                        color: '#27272a',
                         fontWeight: 800,
                         fontSize: '9px',
                         textTransform: 'uppercase',
                         letterSpacing: '0.1em',
                         borderRadius: '6px',
-                        border: '1px solid rgba(255, 255, 255, 0.05)',
+                        border: '1px solid #e4e4e7',
                         height: '32px',
                         '& .MuiChip-label': { px: 1.5 },
                         '& .MuiChip-deleteIcon': {
-                          color: '#52525b', // zinc-600
+                          color: '#71717a',
                           transition: 'all 0.2s',
                           ml: -0.5,
                           mr: 0.5,
-                          '&:hover': { color: '#fb7185' } // rose-400
+                          '&:hover': { color: '#e11d48' }
                         },
                         '&:hover': {
-                          bgcolor: 'rgba(255, 255, 255, 0.06)',
-                          borderColor: 'rgba(255, 255, 255, 0.1)',
-                          color: 'white'
+                          bgcolor: '#e4e4e7',
+                          borderColor: '#d4d4d8',
+                          color: '#000000'
                         }
                       }}
                     />
                   ))}
                   {formData.skills.length === 0 && !skillInput && (
-                    <p className="text-[9px] text-zinc-700 font-bold uppercase tracking-widest ml-1 italic">No skills added yet</p>
+                    <p className="text-[9px] text-zinc-400 font-bold uppercase tracking-widest ml-1 italic">No skills added yet</p>
                   )}
                 </div>
               </div>
@@ -344,24 +346,24 @@ const ProfileSetup = () => {
               <div className="space-y-6 pt-4">
                 <div className="flex items-center justify-between">
                   <div className="flex flex-col">
-                    <label className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-500 ml-1">Experience</label>
-                    <span className="text-[8px] font-black uppercase tracking-[0.1em] text-zinc-700 ml-1 mt-1">(Optional)</span>
+                    <label className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-600 ml-1">Experience</label>
+                    <span className="text-[8px] font-black uppercase tracking-[0.1em] text-zinc-400 ml-1 mt-1">(Optional)</span>
                   </div>
                   <button
                     type="button"
                     onClick={handleAddExperience}
-                    className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.1em] text-white bg-white/10 px-4 py-2 rounded-full hover:bg-white/20 transition-all"
+                    className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.1em] text-zinc-900 bg-zinc-200 border border-zinc-300 px-4 py-2 rounded-full hover:bg-zinc-300 transition-all"
                   >
                     <FiPlus size={14} /> Add Experience
                   </button>
                 </div>
 
                 {formData.experience.map((exp, index) => (
-                  <div key={index} className="p-6 bg-white/[0.02] rounded-lg border border-white/[0.05] space-y-6 relative group/edu">
+                  <div key={index} className="p-6 bg-zinc-100/60 rounded-lg border border-zinc-300 space-y-6 relative group/edu">
                     <button
                       type="button"
                       onClick={() => handleRemoveExperience(index)}
-                      className="absolute top-6 right-6 text-zinc-600 hover:text-red-500 transition-colors"
+                      className="absolute top-6 right-6 text-zinc-500 hover:text-red-500 transition-colors"
                     >
                       <FiTrash2 size={18} />
                     </button>
@@ -370,13 +372,13 @@ const ProfileSetup = () => {
                       <div className="space-y-2">
                         <label className="text-[9px] font-black uppercase tracking-[0.1em] text-zinc-600 ml-1">Job Role *</label>
                         <div className="relative">
-                          <div className="absolute inset-y-0 left-0 flex items-center pl-4 text-zinc-700">
+                          <div className="absolute inset-y-0 left-0 flex items-center pl-4 text-zinc-400">
                             <FiBriefcase size={16} />
                           </div>
                           <input
                             type="text"
                             placeholder="e.g. Software Engineer"
-                            className={`w-full pl-12 pr-6 py-3 bg-white/[0.03] rounded-lg border text-white placeholder:text-zinc-800 focus:border-white/20 transition-all outline-none text-sm font-bold ${errors[`experience.${index}.role`] ? 'border-rose-500/50' : 'border-white/[0.05]'}`}
+                            className={`w-full pl-12 pr-6 py-3 bg-white rounded-lg border text-zinc-900 placeholder:text-zinc-400 focus:border-zinc-500 transition-all outline-none text-sm font-bold ${errors[`experience.${index}.role`] ? 'border-rose-500' : 'border-zinc-300'}`}
                             value={exp.role}
                             onChange={(e) => handleExperienceChange(index, 'role', e.target.value)}
                             required
@@ -390,7 +392,7 @@ const ProfileSetup = () => {
                         <input
                           type="text"
                           placeholder="e.g. Google"
-                          className={`w-full px-6 py-3 bg-white/[0.03] rounded-lg border text-white placeholder:text-zinc-800 focus:border-white/20 transition-all outline-none text-sm font-bold ${errors[`experience.${index}.company`] ? 'border-rose-500/50' : 'border-white/[0.05]'}`}
+                          className={`w-full px-6 py-3 bg-white rounded-lg border text-zinc-900 placeholder:text-zinc-400 focus:border-zinc-500 transition-all outline-none text-sm font-bold ${errors[`experience.${index}.company`] ? 'border-rose-500' : 'border-zinc-300'}`}
                           value={exp.company}
                           onChange={(e) => handleExperienceChange(index, 'company', e.target.value)}
                           required
@@ -404,13 +406,13 @@ const ProfileSetup = () => {
                       <div className="space-y-2">
                         <label className="text-[9px] font-black uppercase tracking-[0.1em] text-zinc-600 ml-1">Location</label>
                         <div className="relative">
-                          <div className="absolute inset-y-0 left-0 flex items-center pl-4 text-zinc-700">
+                          <div className="absolute inset-y-0 left-0 flex items-center pl-4 text-zinc-400">
                             <FiMapPin size={16} />
                           </div>
                           <input
                             type="text"
                             placeholder="e.g. London, UK"
-                            className="w-full pl-12 pr-6 py-3 bg-white/[0.03] rounded-lg border border-white/[0.05] text-white placeholder:text-zinc-800 focus:border-white/20 transition-all outline-none text-sm font-bold"
+                            className="w-full pl-12 pr-6 py-3 bg-white rounded-lg border border-zinc-300 text-zinc-900 placeholder:text-zinc-400 focus:border-zinc-500 transition-all outline-none text-sm font-bold"
                             value={exp.location}
                             onChange={(e) => handleExperienceChange(index, 'location', e.target.value)}
                           />
@@ -423,24 +425,25 @@ const ProfileSetup = () => {
                           <Select
                             value={exp.employmentType}
                             onChange={(e) => handleExperienceChange(index, 'employmentType', e.target.value)}
-                            className="w-full bg-white/[0.03] rounded-lg border border-white/[0.05] text-white focus:border-white/20 transition-all outline-none text-sm font-bold"
+                            className="w-full bg-white rounded-lg border border-zinc-300 text-zinc-900 focus:border-zinc-500 transition-all outline-none text-sm font-bold"
                             sx={{
-                              '& .MuiSelect-select': { py: 1.5, px: 3, color: 'white' },
+                              '& .MuiSelect-select': { py: 1.5, px: 3, color: '#18181b', fontWeight: 700 },
                               '& .MuiOutlinedInput-notchedOutline': { border: 'none' },
-                              '& .MuiSvgIcon-root': { color: '#3f3f46' },
+                              '& .MuiSvgIcon-root': { color: '#71717a' },
                               borderRadius: '8px'
                             }}
                             MenuProps={{
                               PaperProps: {
                                 sx: {
-                                  bgcolor: '#09090b',
-                                  border: '1px solid rgba(255,255,255,0.05)',
+                                  bgcolor: '#ffffff',
+                                  border: '1px solid #e4e4e7',
                                   borderRadius: '8px',
+                                  boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1)',
                                   '& .MuiMenuItem-root': {
                                     fontSize: '12px',
                                     fontWeight: 700,
-                                    color: '#71717a',
-                                    '&:hover': { bgcolor: 'rgba(255,255,255,0.05)', color: 'white' }
+                                    color: '#27272a',
+                                    '&:hover': { bgcolor: '#f4f4f5', color: '#000000' }
                                   }
                                 }
                               }
@@ -470,12 +473,12 @@ const ProfileSetup = () => {
                               sx: {
                                 '& .MuiOutlinedInput-root': {
                                   borderRadius: '8px',
-                                  bgcolor: 'rgba(255, 255, 255, 0.03)',
-                                  '& fieldset': { border: errors[`experience.${index}.startDate`] ? '1px solid rgba(244, 63, 94, 0.5)' : '1px solid rgba(255, 255, 255, 0.05)' },
-                                  '&:hover fieldset': { borderColor: 'rgba(255, 255, 255, 0.1)' },
-                                  '&.Mui-focused fieldset': { borderColor: 'white' },
-                                  '& .MuiInputBase-input': { color: 'white', fontWeight: 700, fontSize: '13px' },
-                                  '& .MuiSvgIcon-root': { color: '#52525b' }
+                                  bgcolor: '#ffffff',
+                                  '& fieldset': { border: errors[`experience.${index}.startDate`] ? '1px solid #f43f5e' : '1px solid #d4d4d8' },
+                                  '&:hover fieldset': { borderColor: '#a1a1aa' },
+                                  '&.Mui-focused fieldset': { borderColor: '#18181b' },
+                                  '& .MuiInputBase-input': { color: '#18181b', fontWeight: 700, fontSize: '13px' },
+                                  '& .MuiSvgIcon-root': { color: '#71717a' }
                                 }
                               }
                             }
@@ -497,13 +500,13 @@ const ProfileSetup = () => {
                               sx: {
                                 '& .MuiOutlinedInput-root': {
                                   borderRadius: '8px',
-                                  bgcolor: exp.currentlyWorking ? 'rgba(255, 255, 255, 0.01)' : 'rgba(255, 255, 255, 0.03)',
-                                  opacity: exp.currentlyWorking ? 0.3 : 1,
-                                  '& fieldset': { border: errors[`experience.${index}.endDate`] ? '1px solid rgba(244, 63, 94, 0.5)' : '1px solid rgba(255, 255, 255, 0.05)' },
-                                  '&:hover fieldset': { borderColor: 'rgba(255, 255, 255, 0.1)' },
-                                  '&.Mui-focused fieldset': { borderColor: 'white' },
-                                  '& .MuiInputBase-input': { color: 'white', fontWeight: 700, fontSize: '13px' },
-                                  '& .MuiSvgIcon-root': { color: '#52525b' }
+                                  bgcolor: exp.currentlyWorking ? '#e4e4e7' : '#ffffff',
+                                  opacity: exp.currentlyWorking ? 0.5 : 1,
+                                  '& fieldset': { border: errors[`experience.${index}.endDate`] ? '1px solid #f43f5e' : '1px solid #d4d4d8' },
+                                  '&:hover fieldset': { borderColor: '#a1a1aa' },
+                                  '&.Mui-focused fieldset': { borderColor: '#18181b' },
+                                  '& .MuiInputBase-input': { color: '#18181b', fontWeight: 700, fontSize: '13px' },
+                                  '& .MuiSvgIcon-root': { color: '#71717a' }
                                 }
                               }
                             }
@@ -515,11 +518,11 @@ const ProfileSetup = () => {
                           <input
                             type="checkbox"
                             id={`curr-${index}`}
-                            className="w-4 h-4 rounded border-white/10 bg-white/5 accent-white cursor-pointer"
+                            className="w-4 h-4 rounded border-zinc-300 bg-zinc-100 accent-zinc-900 cursor-pointer"
                             checked={exp.currentlyWorking}
                             onChange={(e) => handleExperienceChange(index, 'currentlyWorking', e.target.checked)}
                           />
-                          <label htmlFor={`curr-${index}`} className="text-[9px] font-black uppercase tracking-widest text-zinc-500 cursor-pointer hover:text-white transition-colors">Currently working here</label>
+                          <label htmlFor={`curr-${index}`} className="text-[9px] font-black uppercase tracking-widest text-zinc-600 cursor-pointer hover:text-zinc-900 transition-colors">Currently working here</label>
                         </div>
                       </div>
                     </div>
@@ -527,9 +530,9 @@ const ProfileSetup = () => {
                 ))}
 
                 {formData.experience.length === 0 && (
-                  <div className="py-12 border-2 border-dashed border-white/[0.05] rounded-lg flex flex-col items-center justify-center text-zinc-700">
-                    <FiBriefcase size={32} className="mb-4 opacity-20" />
-                    <p className="text-[10px] font-black uppercase tracking-[0.2em]">No Experience Added</p>
+                  <div className="py-12 border-2 border-dashed border-zinc-300 rounded-lg flex flex-col items-center justify-center text-zinc-500">
+                    <FiBriefcase size={32} className="mb-4 opacity-40 text-zinc-400" />
+                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-500">No Experience Added</p>
                   </div>
                 )}
               </div>
@@ -538,24 +541,24 @@ const ProfileSetup = () => {
               <div className="space-y-6 pt-4">
                 <div className="flex items-center justify-between">
                   <div className="flex flex-col">
-                    <label className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-500 ml-1">Education</label>
-                    <span className="text-[8px] font-black uppercase tracking-[0.1em] text-zinc-700 ml-1 mt-1">(Optional)</span>
+                    <label className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-600 ml-1">Education</label>
+                    <span className="text-[8px] font-black uppercase tracking-[0.1em] text-zinc-400 ml-1 mt-1">(Optional)</span>
                   </div>
                   <button
                     type="button"
                     onClick={handleAddEducation}
-                    className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.1em] text-white bg-white/10 px-4 py-2 rounded-full hover:bg-white/20 transition-all"
+                    className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.1em] text-zinc-900 bg-zinc-200 border border-zinc-300 px-4 py-2 rounded-full hover:bg-zinc-300 transition-all"
                   >
                     <FiPlus size={14} /> Add Education
                   </button>
                 </div>
 
                 {formData.education.map((edu, index) => (
-                  <div key={index} className="p-6 bg-white/[0.02] rounded-lg border border-white/[0.05] space-y-6 relative group/edu">
+                  <div key={index} className="p-6 bg-zinc-100/60 rounded-lg border border-zinc-300 space-y-6 relative group/edu">
                     <button
                       type="button"
                       onClick={() => handleRemoveEducation(index)}
-                      className="absolute top-6 right-6 text-zinc-600 hover:text-red-500 transition-colors"
+                      className="absolute top-6 right-6 text-zinc-500 hover:text-red-500 transition-colors"
                     >
                       <FiTrash2 size={18} />
                     </button>
@@ -564,13 +567,13 @@ const ProfileSetup = () => {
                       <div className="space-y-2">
                         <label className="text-[9px] font-black uppercase tracking-[0.1em] text-zinc-600 ml-1">Degree *</label>
                         <div className="relative">
-                          <div className="absolute inset-y-0 left-0 flex items-center pl-4 text-zinc-700">
+                          <div className="absolute inset-y-0 left-0 flex items-center pl-4 text-zinc-400">
                             <FiBookOpen size={16} />
                           </div>
                           <input
                             type="text"
                             placeholder="e.g. B.Tech"
-                            className={`w-full pl-12 pr-6 py-3 bg-white/[0.03] rounded-lg border text-white placeholder:text-zinc-800 focus:border-white/20 transition-all outline-none text-sm font-bold ${errors[`education.${index}.degree`] ? 'border-rose-500/50' : 'border-white/[0.05]'}`}
+                            className={`w-full pl-12 pr-6 py-3 bg-white rounded-lg border text-zinc-900 placeholder:text-zinc-400 focus:border-zinc-500 transition-all outline-none text-sm font-bold ${errors[`education.${index}.degree`] ? 'border-rose-500' : 'border-zinc-300'}`}
                             value={edu.degree}
                             onChange={(e) => handleEducationChange(index, 'degree', e.target.value)}
                             required
@@ -584,7 +587,7 @@ const ProfileSetup = () => {
                         <input
                           type="text"
                           placeholder="e.g. Computer Science"
-                          className="w-full px-6 py-3 bg-white/[0.03] rounded-lg border border-white/[0.05] text-white placeholder:text-zinc-800 focus:border-white/20 transition-all outline-none text-sm font-bold"
+                          className="w-full px-6 py-3 bg-white rounded-lg border border-zinc-300 text-zinc-900 placeholder:text-zinc-400 focus:border-zinc-500 transition-all outline-none text-sm font-bold"
                           value={edu.field}
                           onChange={(e) => handleEducationChange(index, 'field', e.target.value)}
                         />
@@ -596,7 +599,7 @@ const ProfileSetup = () => {
                       <input
                         type="text"
                         placeholder="Enter college name"
-                        className={`w-full px-6 py-3 bg-white/[0.03] rounded-lg border text-white placeholder:text-zinc-800 focus:border-white/20 transition-all outline-none text-sm font-bold ${errors[`education.${index}.college`] ? 'border-rose-500/50' : 'border-white/[0.05]'}`}
+                        className={`w-full px-6 py-3 bg-white rounded-lg border text-zinc-900 placeholder:text-zinc-400 focus:border-zinc-500 transition-all outline-none text-sm font-bold ${errors[`education.${index}.college`] ? 'border-rose-500' : 'border-zinc-300'}`}
                         value={edu.college}
                         onChange={(e) => handleEducationChange(index, 'college', e.target.value)}
                         required
@@ -618,12 +621,12 @@ const ProfileSetup = () => {
                               sx: {
                                 '& .MuiOutlinedInput-root': {
                                   borderRadius: '8px',
-                                  bgcolor: 'rgba(255, 255, 255, 0.03)',
-                                  '& fieldset': { border: errors[`education.${index}.startYear`] ? '1px solid rgba(244, 63, 94, 0.5)' : '1px solid rgba(255, 255, 255, 0.05)' },
-                                  '&:hover fieldset': { borderColor: 'rgba(255, 255, 255, 0.1)' },
-                                  '&.Mui-focused fieldset': { borderColor: 'white' },
-                                  '& .MuiInputBase-input': { color: 'white', fontWeight: 700, fontSize: '13px' },
-                                  '& .MuiSvgIcon-root': { color: '#52525b' }
+                                  bgcolor: '#ffffff',
+                                  '& fieldset': { border: errors[`education.${index}.startYear`] ? '1px solid #f43f5e' : '1px solid #d4d4d8' },
+                                  '&:hover fieldset': { borderColor: '#a1a1aa' },
+                                  '&.Mui-focused fieldset': { borderColor: '#18181b' },
+                                  '& .MuiInputBase-input': { color: '#18181b', fontWeight: 700, fontSize: '13px' },
+                                  '& .MuiSvgIcon-root': { color: '#71717a' }
                                 }
                               }
                             }
@@ -644,12 +647,12 @@ const ProfileSetup = () => {
                               sx: {
                                 '& .MuiOutlinedInput-root': {
                                   borderRadius: '8px',
-                                  bgcolor: 'rgba(255, 255, 255, 0.03)',
-                                  '& fieldset': { border: errors[`education.${index}.endYear`] ? '1px solid rgba(244, 63, 94, 0.5)' : '1px solid rgba(255, 255, 255, 0.05)' },
-                                  '&:hover fieldset': { borderColor: 'rgba(255, 255, 255, 0.1)' },
-                                  '&.Mui-focused fieldset': { borderColor: 'white' },
-                                  '& .MuiInputBase-input': { color: 'white', fontWeight: 700, fontSize: '13px' },
-                                  '& .MuiSvgIcon-root': { color: '#52525b' }
+                                  bgcolor: '#ffffff',
+                                  '& fieldset': { border: errors[`education.${index}.endYear`] ? '1px solid #f43f5e' : '1px solid #d4d4d8' },
+                                  '&:hover fieldset': { borderColor: '#a1a1aa' },
+                                  '&.Mui-focused fieldset': { borderColor: '#18181b' },
+                                  '& .MuiInputBase-input': { color: '#18181b', fontWeight: 700, fontSize: '13px' },
+                                  '& .MuiSvgIcon-root': { color: '#71717a' }
                                 }
                               }
                             }
@@ -662,26 +665,26 @@ const ProfileSetup = () => {
                 ))}
 
                 {formData.education.length === 0 && (
-                  <div className="py-12 border-2 border-dashed border-white/[0.05] rounded-lg flex flex-col items-center justify-center text-zinc-700">
-                    <FiBookOpen size={32} className="mb-4 opacity-20" />
-                    <p className="text-[10px] font-black uppercase tracking-[0.2em]">No Education Added</p>
+                  <div className="py-12 border-2 border-dashed border-zinc-300 rounded-lg flex flex-col items-center justify-center text-zinc-500">
+                    <FiBookOpen size={32} className="mb-4 opacity-40 text-zinc-400" />
+                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-500">No Education Added</p>
                   </div>
                 )}
               </div>
 
               {/* Social Links Section */}
               <div className="space-y-6 pt-4">
-                <label className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-500 ml-1">Social Presence</label>
+                <label className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-600 ml-1">Social Presence</label>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {/* LinkedIn */}
                   <div className="relative group">
-                    <div className="absolute inset-y-0 left-0 flex items-center pl-4 text-zinc-600 group-focus-within:text-[#0077b5] transition-colors">
+                    <div className="absolute inset-y-0 left-0 flex items-center pl-4 text-zinc-400 group-focus-within:text-[#0077b5] transition-colors">
                       <FiLinkedin size={18} />
                     </div>
                     <input
                       type="url"
                       placeholder="LinkedIn URL"
-                      className={`w-full pl-12 pr-6 py-4 bg-white/[0.02] rounded-lg border text-white placeholder:text-zinc-700 focus:border-white focus:bg-white/[0.05] transition-all outline-none font-bold ${errors['socialLinks.linkedin'] ? 'border-rose-500/50' : 'border-white/[0.05]'}`}
+                      className={`w-full pl-12 pr-6 py-4 bg-zinc-100 rounded-lg border text-zinc-900 placeholder:text-zinc-400 focus:border-zinc-500 focus:bg-white transition-all outline-none font-bold ${errors['socialLinks.linkedin'] ? 'border-rose-500' : 'border-zinc-300'}`}
                       value={formData.socialLinks.linkedin}
                       onChange={(e) => {
                         setFormData({
@@ -696,13 +699,13 @@ const ProfileSetup = () => {
 
                   {/* GitHub */}
                   <div className="relative group">
-                    <div className="absolute inset-y-0 left-0 flex items-center pl-4 text-zinc-600 group-focus-within:text-white transition-colors">
+                    <div className="absolute inset-y-0 left-0 flex items-center pl-4 text-zinc-400 group-focus-within:text-zinc-900 transition-colors">
                       <FiGithub size={18} />
                     </div>
                     <input
                       type="url"
                       placeholder="GitHub URL"
-                      className={`w-full pl-12 pr-6 py-4 bg-white/[0.02] rounded-lg border text-white placeholder:text-zinc-700 focus:border-white focus:bg-white/[0.05] transition-all outline-none font-bold ${errors['socialLinks.github'] ? 'border-rose-500/50' : 'border-white/[0.05]'}`}
+                      className={`w-full pl-12 pr-6 py-4 bg-zinc-100 rounded-lg border text-zinc-900 placeholder:text-zinc-400 focus:border-zinc-500 focus:bg-white transition-all outline-none font-bold ${errors['socialLinks.github'] ? 'border-rose-500' : 'border-zinc-300'}`}
                       value={formData.socialLinks.github}
                       onChange={(e) => {
                         setFormData({
@@ -717,13 +720,13 @@ const ProfileSetup = () => {
 
                   {/* Twitter */}
                   <div className="relative group">
-                    <div className="absolute inset-y-0 left-0 flex items-center pl-4 text-zinc-600 group-focus-within:text-[#1DA1F2] transition-colors">
+                    <div className="absolute inset-y-0 left-0 flex items-center pl-4 text-zinc-400 group-focus-within:text-[#1DA1F2] transition-colors">
                       <FiTwitter size={18} />
                     </div>
                     <input
                       type="url"
                       placeholder="Twitter (X) URL"
-                      className={`w-full pl-12 pr-6 py-4 bg-white/[0.02] rounded-lg border text-white placeholder:text-zinc-700 focus:border-white focus:bg-white/[0.05] transition-all outline-none font-bold ${errors['socialLinks.twitter'] ? 'border-rose-500/50' : 'border-white/[0.05]'}`}
+                      className={`w-full pl-12 pr-6 py-4 bg-zinc-100 rounded-lg border text-zinc-900 placeholder:text-zinc-400 focus:border-zinc-500 focus:bg-white transition-all outline-none font-bold ${errors['socialLinks.twitter'] ? 'border-rose-500' : 'border-zinc-300'}`}
                       value={formData.socialLinks.twitter}
                       onChange={(e) => {
                         setFormData({
@@ -738,13 +741,13 @@ const ProfileSetup = () => {
 
                   {/* Portfolio */}
                   <div className="relative group">
-                    <div className="absolute inset-y-0 left-0 flex items-center pl-4 text-zinc-600 group-focus-within:text-white transition-colors">
+                    <div className="absolute inset-y-0 left-0 flex items-center pl-4 text-zinc-400 group-focus-within:text-zinc-900 transition-colors">
                       <FiLink size={18} />
                     </div>
                     <input
                       type="url"
                       placeholder="Portfolio / Other Link"
-                      className={`w-full pl-12 pr-6 py-4 bg-white/[0.02] rounded-lg border text-white placeholder:text-zinc-700 focus:border-white focus:bg-white/[0.05] transition-all outline-none font-bold ${errors['socialLinks.portfolio'] ? 'border-rose-500/50' : 'border-white/[0.05]'}`}
+                      className={`w-full pl-12 pr-6 py-4 bg-zinc-100 rounded-lg border text-zinc-900 placeholder:text-zinc-400 focus:border-zinc-500 focus:bg-white transition-all outline-none font-bold ${errors['socialLinks.portfolio'] ? 'border-rose-500' : 'border-zinc-300'}`}
                       value={formData.socialLinks.portfolio}
                       onChange={(e) => {
                         setFormData({
@@ -759,19 +762,17 @@ const ProfileSetup = () => {
                 </div>
               </div>
 
-
-
               {/* Bio Textarea */}
               <div className="space-y-3">
-                <label className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-500 ml-1">Bio</label>
+                <label className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-600 ml-1">Bio</label>
                 <div className="relative group">
-                  <div className="absolute top-4 left-4 text-zinc-600 group-focus-within:text-white transition-colors">
+                  <div className="absolute top-4 left-4 text-zinc-400 group-focus-within:text-zinc-900 transition-colors">
                     <FiEdit size={18} />
                   </div>
                   <textarea
                     name="bio"
                     placeholder="Tell us about your journey..."
-                    className={`w-full pl-12 pr-6 py-4 bg-white/[0.02] rounded-lg border text-white placeholder:text-zinc-700 focus:border-white focus:bg-white/[0.05] transition-all outline-none font-bold resize-none min-h-[160px] ${errors.bio ? 'border-rose-500/50' : 'border-white/[0.05]'}`}
+                    className={`w-full pl-12 pr-6 py-4 bg-zinc-100 rounded-lg border text-zinc-900 placeholder:text-zinc-400 focus:border-zinc-500 focus:bg-white transition-all outline-none font-bold resize-none min-h-[160px] ${errors.bio ? 'border-rose-500' : 'border-zinc-300'}`}
                     value={formData.bio}
                     onChange={handleChange}
                     required
@@ -786,7 +787,7 @@ const ProfileSetup = () => {
               <button
                 type="button"
                 onClick={() => navigate(-1)}
-                className="flex-1 py-2.5 bg-white/[0.03] border border-white/5 text-zinc-500 text-[11px] font-black tracking-widest rounded-lg hover:text-white hover:bg-white/10 transition-all"
+                className="flex-1 py-3 bg-zinc-100 border border-zinc-300 text-zinc-700 text-[11px] font-black tracking-widest rounded-lg hover:bg-zinc-200 hover:text-zinc-900 transition-all"
               >
                 Cancel
               </button>
@@ -800,7 +801,9 @@ const ProfileSetup = () => {
                   fontSize: '11px',
                   fontFamily: 'inherit',
                   textTransform: 'none',
-                  borderRadius: '8px'
+                  borderRadius: '8px',
+                  bgcolor: '#18181b',
+                  '&:hover': { bgcolor: '#27272a' }
                 }}
               >
                 Save Changes

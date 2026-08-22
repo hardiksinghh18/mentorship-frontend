@@ -8,7 +8,7 @@ const ProfileCarousel = ({
     title,
     subtitle,
     icon: Icon,
-    iconBgClass = "bg-white/5 border border-white/10 text-zinc-400",
+    iconBgClass = "bg-zinc-100 border border-zinc-200 text-zinc-600",
     items = [],
     loading = false,
     ctaLink = "/discover",
@@ -16,8 +16,8 @@ const ProfileCarousel = ({
     ctaDesc = "Browse through our complete community of expert mentors and ambitious mentees.",
     ctaActionLabel = "Show All Profiles",
     ctaIcon: CtaIcon,
-    ctaBgClass = "bg-white/[0.02] border border-white/5 hover:border-white/15",
-    ctaLabelColorClass = "text-zinc-400 group-hover:text-white"
+    ctaBgClass = "bg-zinc-50 border border-zinc-200 hover:border-zinc-300 shadow-sm",
+    ctaLabelColorClass = "text-zinc-500 group-hover:text-zinc-900"
 }) => {
     const containerRef = useRef(null);
 
@@ -45,8 +45,8 @@ const ProfileCarousel = ({
                             {Icon && <Icon className="w-4 h-4" />}
                         </div>
                         <div>
-                            <h3 className="text-xs font-black uppercase tracking-widest text-zinc-400">{title}</h3>
-                            <p className="text-zinc-500 text-[10px] font-medium mt-0.5">{subtitle}</p>
+                            <h3 className="text-sm font-black uppercase tracking-widest text-zinc-400">{title}</h3>
+                            <p className="text-zinc-500 text-xs font-medium mt-0.5">{subtitle}</p>
                         </div>
                     </div>
                 </div>
@@ -74,13 +74,13 @@ const ProfileCarousel = ({
                 <div className="flex items-center gap-2">
                     <button 
                         onClick={() => scroll('left')}
-                        className="w-8 h-8 rounded-full bg-white/[0.02] border border-white/5 flex items-center justify-center hover:bg-white/[0.05] active:scale-95 transition-all text-zinc-400 hover:text-white"
+                        className="w-8 h-8 rounded-full bg-zinc-100 border border-zinc-200 flex items-center justify-center hover:bg-zinc-200 active:scale-95 transition-all text-zinc-500 hover:text-zinc-900"
                     >
                         <FiChevronLeft className="w-4 h-4" />
                     </button>
                     <button 
                         onClick={() => scroll('right')}
-                        className="w-8 h-8 rounded-full bg-white/[0.02] border border-white/5 flex items-center justify-center hover:bg-white/[0.05] active:scale-95 transition-all text-zinc-400 hover:text-white"
+                        className="w-8 h-8 rounded-full bg-zinc-100 border border-zinc-200 flex items-center justify-center hover:bg-zinc-200 active:scale-95 transition-all text-zinc-500 hover:text-zinc-900"
                     >
                         <FiChevronRight className="w-4 h-4" />
                     </button>
@@ -115,40 +115,40 @@ const ProfileCarousel = ({
 
                     return (
                         <div key={candidate.id} className="w-[300px] shrink-0 snap-start">
-                            <div className={`group relative bg-zinc-950/40 border p-5 transition-all duration-300 flex flex-col justify-between h-[250px] rounded-2xl ${
+                            <div className={`group relative bg-zinc-50 border border-zinc-200 hover:border-zinc-300 p-5 transition-all duration-300 flex flex-col justify-between h-[250px] rounded-2xl shadow-sm ${
                                 isAiMatch 
-                                    ? 'border-white/5 hover:border-violet-500/20' 
-                                    : 'border-white/5 hover:border-white/15'
+                                    ? 'hover:border-violet-400' 
+                                    : 'hover:border-zinc-400'
                             }`}>
                                 
                                 {isAiMatch && score !== null && (
-                                    <div className="absolute top-5 right-5">
-                                        <span className={`px-2 py-0.5 rounded-[4px] text-[7px] font-black tracking-widest uppercase border ${
-                                            score >= 80 
-                                                ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' 
-                                                : score >= 60 
-                                                    ? 'bg-amber-500/10 text-amber-400 border-amber-500/20' 
-                                                    : 'bg-blue-500/10 text-blue-400 border-blue-500/20'
-                                        }`}>
-                                            {score}% Match
-                                        </span>
-                                    </div>
-                                )}
+                                     <div className="absolute top-5 right-5">
+                                         <span className={`px-2 py-0.5 rounded-[4px] text-[8px] font-black tracking-widest uppercase border ${
+                                             score >= 60 
+                                                 ? 'bg-emerald-50 text-emerald-700 border-emerald-200' 
+                                                 : score >= 20 
+                                                     ? 'bg-blue-50 text-blue-700 border-blue-200' 
+                                                     : 'bg-zinc-100 text-zinc-600 border-zinc-200'
+                                         }`}>
+                                             {score}% Match
+                                         </span>
+                                     </div>
+                                 )}
 
                                 <div className="space-y-3">
                                     {/* Header */}
                                     <div className="flex items-center gap-3">
-                                        <div className="w-10 h-10 rounded-full bg-white/[0.02] border border-white/5 flex items-center justify-center text-sm font-bold text-white/50">
+                                        <div className="w-10 h-10 rounded-full bg-zinc-100 border border-zinc-200 flex items-center justify-center text-sm font-bold text-zinc-700">
                                             {candidate.fullName ? candidate.fullName[0].toUpperCase() : candidate.username[0].toUpperCase()}
                                         </div>
                                         <div>
-                                            <h4 className={`text-xs font-bold text-white tracking-tight transition-colors truncate max-w-[120px] ${
-                                                isAiMatch ? 'group-hover:text-violet-400' : 'group-hover:text-white'
+                                            <h4 className={`text-sm font-bold text-zinc-900 tracking-tight transition-colors truncate max-w-[160px] ${
+                                                isAiMatch ? 'group-hover:text-violet-600' : 'group-hover:text-zinc-900'
                                             }`}>
                                                 {candidate.fullName || candidate.username}
                                             </h4>
-                                            <span className={`inline-block px-1.5 py-0.5 rounded text-[6px] font-black uppercase tracking-widest border mt-0.5 border-white/5 bg-white/[0.02] ${
-                                                candidate.role === 'mentor' ? 'text-emerald-400' : 'text-amber-400'
+                                            <span className={`inline-block px-1.5 py-0.5 rounded text-[7px] font-black uppercase tracking-widest border mt-0.5 border-zinc-200 bg-zinc-100 ${
+                                                candidate.role === 'mentor' ? 'text-emerald-600' : 'text-amber-600'
                                             }`}>
                                                 {candidate.role}
                                             </span>
@@ -156,7 +156,7 @@ const ProfileCarousel = ({
                                     </div>
 
                                     {/* Bio */}
-                                    <p className="text-zinc-500 text-[10px] leading-relaxed line-clamp-2 font-medium">
+                                    <p className="text-zinc-500 text-xs leading-relaxed line-clamp-2 font-medium">
                                         {candidate.bio || "No biography provided."}
                                     </p>
 
@@ -165,14 +165,14 @@ const ProfileCarousel = ({
                                         {/* Row 1: Skills (directly below bio, explicitly indicated!) */}
                                         {skills && skills.length > 0 && (
                                             <div className="flex gap-1.5 items-start">
-                                                <span className="text-[7px] font-black uppercase tracking-widest text-zinc-500 shrink-0 mt-0.5 select-none">
+                                                <span className="text-[8px] font-black uppercase tracking-widest text-zinc-500 shrink-0 mt-0.5 select-none">
                                                     Skills:
                                                 </span>
                                                 <div className="flex flex-wrap gap-1">
                                                     {skills.slice(0, 3).map((skillItem, idx) => (
                                                         <span 
                                                             key={`skill-${idx}`} 
-                                                            className="px-1.5 py-0.5 bg-white/[0.02] border border-white/5 rounded-[4px] text-[7px] font-black uppercase tracking-widest text-zinc-400 hover:border-white/15 transition-all"
+                                                            className="px-1.5 py-0.5 bg-zinc-100 border border-zinc-200 rounded-[4px] text-[8px] font-bold uppercase tracking-wider text-zinc-500 hover:border-zinc-300 transition-all"
                                                         >
                                                             {skillItem}
                                                         </span>
@@ -193,7 +193,7 @@ const ProfileCarousel = ({
                                                         return (
                                                             <span
                                                                 key={`insight-${idx}`}
-                                                                className={`px-1.5 py-0.5 rounded-[4px] text-[7px] font-black uppercase tracking-widest border transition-all duration-300 ${
+                                                                className={`px-1.5 py-0.5 rounded-[4px] text-[8px] font-black uppercase tracking-widest border transition-all duration-300 ${
                                                                     isOverlap 
                                                                         ? 'bg-violet-500/10 text-violet-400 border-violet-500/20 hover:bg-violet-500/20' 
                                                                         : isSync
@@ -214,10 +214,10 @@ const ProfileCarousel = ({
                                 </div>
 
                                 {/* Footer (View Profile text adjacent to arrow icon on right end) */}
-                                <div className="pt-3 border-t border-white/5 flex justify-end">
+                                <div className="pt-3 border-t border-zinc-200 flex justify-end">
                                     <Link 
                                         to={`/profile/${candidate.username}`}
-                                        className="flex items-center gap-1 text-[8px] font-black uppercase tracking-widest text-zinc-400 hover:text-white transition-colors"
+                                        className="flex items-center gap-1 text-[9px] font-black uppercase tracking-widest text-zinc-500 hover:text-zinc-900 transition-colors"
                                     >
                                         <span>View Profile</span>
                                         <FiChevronRight className="w-3 h-3 transition-transform group-hover:translate-x-0.5" />
@@ -238,15 +238,15 @@ const ProfileCarousel = ({
                             <div className="w-9 h-9 rounded-full bg-white/5 flex items-center justify-center border border-white/10">
                                 {CtaIcon && <CtaIcon className="w-4 h-4 text-zinc-400" />}
                             </div>
-                            <h4 className="text-sm font-black tracking-tight text-white leading-tight mt-1">
+                            <h4 className="text-sm font-black tracking-tight text-zinc-900 leading-tight mt-1">
                                 {ctaTitle}
                             </h4>
-                            <p className="text-zinc-500 text-[10px] leading-relaxed font-medium line-clamp-2">
+                            <p className="text-zinc-500 text-xs leading-relaxed font-medium line-clamp-2">
                                 {ctaDesc}
                             </p>
                         </div>
 
-                        <div className={`flex items-center justify-between text-[8px] font-black uppercase tracking-widest transition-colors pt-3 border-t border-white/5 ${ctaLabelColorClass}`}>
+                        <div className={`flex items-center justify-between text-[9px] font-black uppercase tracking-widest transition-colors pt-3 border-t border-zinc-200 ${ctaLabelColorClass}`}>
                             <span>{ctaActionLabel}</span>
                             <FiArrowRight className="w-3 h-3 group-hover:translate-x-1.5 transition-transform" />
                         </div>
