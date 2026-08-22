@@ -1,9 +1,7 @@
-import React, { useEffect, useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import React, { useEffect } from "react";
+import { useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
-import axios from "axios";
 import { toast } from "react-toastify";
-import { setLoggedIn, setLoggedOut } from "../redux/actions/authActions";
 import ProfileInfo from "../components/sections/ProfileInfo";
 import Notifications from "../components/sections/Notifications";
 import ProfileLoader from "../components/loaders/ProfileLoader";
@@ -17,7 +15,6 @@ import {
 const Profile = () => {
     const { isLoggedIn, user } = useSelector((state) => state.auth);
     const { username } = useParams();
-    const dispatch = useDispatch();
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -36,12 +33,6 @@ const Profile = () => {
 
     const [sendRequest] = useSendRequestMutation();
     const [respondToRequest] = useRespondToRequestMutation();
-
-    const handleLogout = () => {
-        dispatch(setLoggedOut());
-        toast.success("Logged out successfully");
-        navigate("/login");
-    };
 
     const handleRequest = async (receiverId, senderId, status) => {
         try {

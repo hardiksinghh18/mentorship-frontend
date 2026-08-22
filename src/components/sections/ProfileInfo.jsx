@@ -1,5 +1,5 @@
 import React from 'react';
-import { FiBookOpen, FiSettings, FiZap, FiCheck, FiUser, FiMapPin, FiLinkedin, FiGithub, FiTwitter, FiLink, FiUserPlus, FiClock } from 'react-icons/fi';
+import { FiBookOpen, FiSettings, FiCheck, FiUser, FiLinkedin, FiGithub, FiTwitter, FiLink, FiUserPlus, FiClock } from 'react-icons/fi';
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
 import relativeTime from 'dayjs/plugin/relativeTime';
