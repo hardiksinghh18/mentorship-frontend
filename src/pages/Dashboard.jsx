@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { FiSearch, FiUser, FiCpu } from 'react-icons/fi';
 import { HiSparkles } from 'react-icons/hi';
-import axios from 'axios';
 import { getGreeting } from './renderer';
 import ProfileCompletionBanner from '../components/sections/ProfileCompletionBanner';
 import ProfileCarousel from '../components/sections/ProfileCarousel';
+import { useGetUsersQuery, useGetMatchesQuery } from '../redux/api/apiSlice';
 
 // Local helper to compute compatibility score and insights on the frontend matching the backend hybrid engine
 const computeLocalScore = (currentUser, candidate) => {
@@ -27,41 +27,26 @@ const computeLocalScore = (currentUser, candidate) => {
 
     const userSkills = cleanSkills(currentUser.skills).map(s => s.trim().toLowerCase());
     const candidateSkills = cleanSkills(candidate.skills).map(s => s.trim().toLowerCase());
-    const overlap = userSkills.filter(s => candidateSkills.includes(s));
 
+    const overlap = userSkills.filter(s => candidateSkills.includes(s));
     const currentExp = currentUser.yearsOfExperience || 0;
     const candidateExp = candidate.yearsOfExperience || 0;
 
-    let semanticSim = 0.65; // Base similarity fallback
-    if (overlap.length > 0) {
-        semanticSim += Math.min(0.30, overlap.length * 0.10);
-    }
+    let score = 50; // Base score
+    const insights = [];
 
-    let skillScore = overlap.length > 0 ? Math.min(1.0, 0.4 + overlap.length * 0.2) : 0.2;
-    let expScore = 0.5;
+    // Simple semantic match mapping
+    const semanticSim = 0.65; // Fixed default semantic similarity
 
     if (isPeer) {
-        const diff = Math.abs(currentExp - candidateExp);
-        expScore = diff <= 1 ? 0.9 : diff <= 3 ? 0.7 : 0.4;
-    } else {
-        const gap = candidateExp - currentExp;
-        if (candidate.role === 'mentor') {
-            expScore = gap >= 5 ? 0.9 : gap >= 3 ? 0.8 : gap > 0 ? 0.6 : 0.3;
-        } else {
-            expScore = gap <= -5 ? 0.9 : gap <= -3 ? 0.8 : gap < 0 ? 0.6 : 0.3;
-        }
-    }
-
-    let score = 0;
-    let insights = [];
-
-    if (isPeer) {
+        const expDiff = Math.abs(currentExp - candidateExp);
+        const expScore = Math.max(0, 1 - expDiff / 10);
+        const skillScore = overlap.length / Math.max(1, userSkills.length);
         score = (0.50 * semanticSim + 0.35 * skillScore + 0.15 * expScore) * 100;
         insights.push('Peer Match');
-        if (Math.abs(currentExp - candidateExp) <= 1) {
-            insights.push('Similar Career Level');
-        }
     } else {
+        const expScore = candidateExp >= currentExp ? 1 : 0.2;
+        const skillScore = overlap.length / Math.max(1, userSkills.length);
         score = (0.50 * semanticSim + 0.30 * skillScore + 0.20 * expScore) * 100;
         insights.push(candidate.role === 'mentor' ? 'Expert Guide' : 'Aspiring Learner');
         const expGap = candidateExp - currentExp;
@@ -81,51 +66,43 @@ const computeLocalScore = (currentUser, candidate) => {
 
 const Dashboard = () => {
     const { user } = useSelector((state) => state.auth);
-    const [exploreUsers, setExploreUsers] = useState([]);
-    const [aiMatches, setAiMatches] = useState([]);
-    const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
-        const fetchDashboardData = async () => {
-            if (!user?.id) return;
-            try {
-                // Fetch both normal profiles and AI smart matches in parallel (limit = 5)
-                const [exploreRes, aiRes] = await Promise.all([
-                    axios.get(`${process.env.REACT_APP_BACKEND_BASE_URL}/users?limit=5&currentUserId=${user.id}`, { withCredentials: true }),
-                    axios.get(`${process.env.REACT_APP_BACKEND_BASE_URL}/users/${user.id}/matches?limit=5`, { withCredentials: true })
-                ]);
-                
-                const rawUsers = exploreRes?.data?.users || [];
-                const rawMatches = aiRes?.data?.matches || [];
+    const { data: usersData, isFetching: loadingUsers } = useGetUsersQuery({
+        limit: 5,
+        currentUserId: user?.id
+    }, { skip: !user?.id });
 
-                const enrichedExploreUsers = rawUsers.map(u => {
-                    const match = rawMatches.find(m => m.user?.id === u.id);
-                    if (match) {
-                        return {
-                            ...u,
-                            compatibilityScore: match.compatibilityScore,
-                            insights: match.insights
-                        };
-                    }
+    const { data: matchesData, isFetching: loadingMatches } = useGetMatchesQuery(
+        user?.id,
+        { skip: !user?.id }
+    );
 
-                    const localMatch = computeLocalScore(user, u);
-                    return {
-                        ...u,
-                        compatibilityScore: localMatch.compatibilityScore,
-                        insights: localMatch.insights
-                    };
-                });
+    const loading = loadingUsers || loadingMatches;
 
-                setExploreUsers(enrichedExploreUsers);
-                setAiMatches(rawMatches);
-            } catch (err) {
-                console.error("Error loading suggested profiles:", err);
-            } finally {
-                setLoading(false);
+    const rawUsers = usersData?.users || [];
+    const rawMatches = matchesData?.matches || [];
+
+    const exploreUsers = useMemo(() => {
+        return rawUsers.map(u => {
+            const match = rawMatches.find(m => m.user?.id === u.id);
+            if (match) {
+                return {
+                    ...u,
+                    compatibilityScore: match.compatibilityScore,
+                    insights: match.insights
+                };
             }
-        };
-        fetchDashboardData();
-    }, [user]);
+
+            const localMatch = computeLocalScore(user, u);
+            return {
+                ...u,
+                compatibilityScore: localMatch.compatibilityScore,
+                insights: localMatch.insights
+            };
+        });
+    }, [rawUsers, rawMatches, user]);
+
+    const aiMatches = rawMatches;
 
     return (
         <div className="min-h-screen bg-white text-zinc-900 pt-12 pb-16 px-6 md:px-12 lg:px-24">

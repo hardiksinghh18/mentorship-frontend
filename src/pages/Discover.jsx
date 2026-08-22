@@ -10,6 +10,7 @@ import { HiSparkles } from 'react-icons/hi';
 import ProfileCompletionBanner from "../components/sections/ProfileCompletionBanner";
 import FilterSidebar from "../components/sections/FilterSidebar";
 import { DEFAULT_FILTERS } from "../utils/filterConstants";
+import { useGetUsersQuery, useGetMatchesQuery } from "../redux/api/apiSlice";
 
 const CardSkeleton = () => (
   <div className="bg-zinc-50 border border-zinc-200 rounded-[16px] p-6 flex flex-col md:flex-row gap-6 animate-pulse shadow-sm">
@@ -81,16 +82,6 @@ const Discover = () => {
   const [activeTab, setActiveTab] = useState(() => {
     return new URLSearchParams(window.location.search).get("tab") === "ai-match" ? "ai-match" : "explore";
   });
-  const [users, setUsers] = useState([]);
-  const [loadingProfiles, setLoadingProfiles] = useState(false);
-  const [error, setError] = useState(null);
-
-  // AI Compatibility Engine states
-  const [matchUsers, setMatchUsers] = useState([]);
-  const [loadingMatches, setLoadingMatches] = useState(false);
-  const [matchesError, setMatchesError] = useState(null);
-  const [hasLoadedMatches, setHasLoadedMatches] = useState(false);
-
   const [filters, setFilters] = useState({ ...DEFAULT_FILTERS });
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const activeFiltersCount = [
@@ -103,11 +94,61 @@ const Discover = () => {
 
   const [debouncedFilters, setDebouncedFilters] = useState(filters);
   const [page, setPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
-  const [hasMore, setHasMore] = useState(true);
 
   const { user, isLoggedIn } = useSelector((state) => state.auth);
   const navigate = useNavigate();
+
+  const { data: usersData, error: usersError, isFetching: loadingProfiles, refetch: refetchUsers } = useGetUsersQuery({
+    page,
+    limit: 10,
+    currentUserId: user?.id,
+    ...debouncedFilters
+  }, { skip: !isLoggedIn });
+
+  const { data: matchesData, error: matchesError, isFetching: loadingMatches, refetch: refetchMatches } = useGetMatchesQuery(
+    user?.id,
+    { skip: activeTab !== "ai-match" || !isLoggedIn || !user?.id }
+  );
+
+  const users = (usersData?.users || []).map((u) => ({
+    id: u?.id || "Unknown ID",
+    username: u?.username,
+    name: u?.fullName || u?.username || "Anonymous",
+    role: u?.role,
+    bio: u?.bio,
+    skills: Array.isArray(u?.skills) ? u.skills : [],
+    receivedRequests: u?.receivedRequests,
+    sentRequests: u?.sentRequests,
+    experience: u?.experience,
+    socialLinks: u?.socialLinks,
+    education: u?.education,
+    matchDetails: u?.matchDetails
+  }));
+
+  const totalPages = usersData?.totalPages || 1;
+  const hasMore = usersData?.hasMore || false;
+
+  const matchUsers = (matchesData?.matches || []).map((m) => {
+    const u = m.user;
+    return {
+      compatibilityScore: m.compatibilityScore,
+      matchType: m.matchType,
+      insights: m.insights,
+      profile: {
+        id: u?.id || "Unknown ID",
+        username: u?.username,
+        name: u?.fullName || u?.username || "Anonymous",
+        role: u?.role,
+        bio: u?.bio,
+        skills: Array.isArray(u?.skills) ? u.skills : [],
+        receivedRequests: u?.receivedRequests || [],
+        sentRequests: u?.sentRequests || [],
+        experience: u?.experience,
+        socialLinks: u?.socialLinks,
+        education: u?.education
+      }
+    };
+  });
 
   // Debounce logic
   useEffect(() => {
@@ -136,101 +177,6 @@ const Discover = () => {
     return range;
   };
 
-  const fetchUsers = async (pageNumber) => {
-    try {
-      setError(null); // Clear previous errors on retry/new fetch
-      setLoadingProfiles(true);
-
-      const params = new URLSearchParams({
-        page: pageNumber,
-        limit: 10,
-        currentUserId: user?.id,
-        ...debouncedFilters,
-      });
-
-      const response = await axios.get(
-        `${process.env.REACT_APP_BACKEND_BASE_URL}/users?${params.toString()}`,
-        { withCredentials: true }
-      );
-
-      const newUsers = response?.data.users || [];
-      const normalizedUsers = newUsers.map((u) => ({
-        id: u?.id || "Unknown ID",
-        username: u?.username,
-        name: u?.fullName || u?.username || "Anonymous",
-        role: u?.role,
-        bio: u?.bio,
-        skills: Array.isArray(u?.skills) ? u.skills : [],
-        receivedRequests: u?.receivedRequests,
-        sentRequests: u?.sentRequests,
-        experience: u?.experience,
-        socialLinks: u?.socialLinks,
-        education: u?.education,
-        matchDetails: u?.matchDetails
-      }));
-
-      setUsers(normalizedUsers);
-      setTotalPages(response?.data.totalPages || 1);
-      setHasMore(response?.data.hasMore);
-      setError(null);
-    } catch (error) {
-      console.error("Error fetching user profiles:", error);
-      setError("Failed to load user profiles. Please try again later.");
-    } finally {
-      setLoadingProfiles(false);
-    }
-  };
-
-  const fetchAIMatches = async () => {
-    if (!user?.id) return;
-    try {
-      setLoadingMatches(true);
-      setMatchesError(null);
-      const response = await axios.get(
-        `${process.env.REACT_APP_BACKEND_BASE_URL}/users/${user.id}/matches`,
-        { withCredentials: true }
-      );
-
-      const fetchedMatches = response?.data?.matches || [];
-      const normalizedMatches = fetchedMatches.map((m) => {
-        const u = m.user;
-        return {
-          compatibilityScore: m.compatibilityScore,
-          matchType: m.matchType,
-          insights: m.insights,
-          profile: {
-            id: u?.id || "Unknown ID",
-            username: u?.username,
-            name: u?.fullName || u?.username || "Anonymous",
-            role: u?.role,
-            bio: u?.bio,
-            skills: Array.isArray(u?.skills) ? u.skills : [],
-            receivedRequests: u?.receivedRequests || [],
-            sentRequests: u?.sentRequests || [],
-            experience: u?.experience,
-            socialLinks: u?.socialLinks,
-            education: u?.education
-          }
-        };
-      });
-
-      setMatchUsers(normalizedMatches);
-      setHasLoadedMatches(true);
-    } catch (error) {
-      console.error("Error fetching AI matches:", error);
-      setMatchesError("Failed to load smart compatibility matches. Complete your profile details (Role, Bio, Skills, and Experience) to let the AI process calculations.");
-      setHasLoadedMatches(false);
-    } finally {
-      setLoadingMatches(false);
-    }
-  };
-
-  useEffect(() => {
-    if (activeTab === "ai-match" && isLoggedIn && !hasLoadedMatches && !loadingMatches) {
-      fetchAIMatches();
-    }
-  }, [activeTab, isLoggedIn, hasLoadedMatches, loadingMatches]);
-
   const handleSendRequest = async (receiverId, senderId) => {
     try {
       const response = await axios.post(
@@ -247,23 +193,16 @@ const Discover = () => {
     setFilters({ ...filters, [e.target.name]: e.target.value });
   };
 
-  // Load pages when filter or page changes
-  useEffect(() => {
-    if (isLoggedIn) {
-      fetchUsers(page);
-    }
-  }, [page, debouncedFilters, isLoggedIn]);
-
   // Initial load logic moved into the grid render to allow sidebar to remain visible
 
-  if (error && users.length === 0) {
+  if (usersError && users.length === 0) {
     return (
       <div className="flex items-center justify-center h-screen bg-white">
         <div className="text-center">
           <h2 className="text-xl font-bold text-zinc-900">Error</h2>
-          <p className="text-zinc-500 mt-2">{error}</p>
+          <p className="text-zinc-500 mt-2">Failed to load user profiles.</p>
           <button
-            onClick={() => fetchUsers(1, true)}
+            onClick={() => refetchUsers()}
             className="mt-6 px-6 py-2 bg-zinc-900 text-white font-bold rounded-full uppercase text-[10px] tracking-widest"
           >
             Retry
@@ -310,7 +249,7 @@ const Discover = () => {
                   placeholder="Search members by name..."
                   value={filters.name}
                   onChange={handleFilterChange}
-                  className="w-full pl-11 pr-4 py-2.5 bg-zinc-100 border border-zinc-300 rounded-xl text-xs font-bold text-zinc-900 placeholder:text-zinc-400 focus:border-zinc-500 focus:bg-white transition-all outline-none shadow-sm"
+                  className="w-full pl-11 pr-4 h-10 bg-zinc-100 border border-zinc-200 rounded-xl text-xs font-bold text-zinc-900 placeholder:text-zinc-400 focus:border-zinc-400 focus:bg-white transition-all outline-none shadow-sm"
                 />
               </div>
             ) : (
@@ -320,24 +259,38 @@ const Discover = () => {
             {/* Right: Tabs switcher and Filter button */}
             <div className="flex flex-wrap items-center gap-4 w-full md:w-auto justify-between md:justify-end">
               {/* Tab Switcher */}
-              <div className="flex items-center gap-1.5 bg-zinc-100 border border-zinc-200 p-1 rounded-full w-fit backdrop-blur-md shadow-sm">
+              <div className="relative flex items-center gap-1.5 bg-zinc-100 border border-zinc-200 p-1 rounded-xl w-fit backdrop-blur-md shadow-sm h-10 overflow-hidden select-none">
+                {/* Sliding Background Indicator */}
+                <div 
+                  className={`absolute top-1 bottom-1 left-1 w-36 rounded-lg transition-all duration-300 ease-out shadow-sm ${
+                    activeTab === 'explore' 
+                      ? 'bg-zinc-900 translate-x-0' 
+                      : 'bg-gradient-to-r from-violet-600 via-fuchsia-600 to-violet-600 translate-x-[150px]'
+                  }`}
+                />
+
                 <button
                   onClick={() => setActiveTab("explore")}
-                  className={`px-5 py-2.5 rounded-full text-[10px] font-black tracking-widest transition-all duration-300 flex items-center gap-2 ${activeTab === "explore"
-                    ? "bg-zinc-900 text-white shadow-md font-black"
-                    : "text-zinc-500 hover:text-zinc-900 hover:bg-zinc-200/50"
-                    }`}
+                  className={`relative w-36 h-8 rounded-lg text-[10px] font-black tracking-widest transition-all duration-300 flex items-center justify-center gap-2 z-10 outline-none ${
+                    activeTab === "explore"
+                      ? "text-white"
+                      : "text-zinc-500 hover:text-zinc-900"
+                  }`}
                 >
                   <span>Explore</span>
                 </button>
+                
                 <button
                   onClick={() => setActiveTab("ai-match")}
-                  className={`relative flex items-center gap-2 px-5 py-2.5 rounded-full text-[10px] font-black tracking-widest transition-all duration-300 border ${activeTab === "ai-match"
-                    ? "bg-gradient-to-r from-violet-600 via-fuchsia-600 to-violet-600 text-white border-violet-500/20 shadow-md shadow-violet-500/20"
-                    : "text-zinc-500 hover:text-zinc-900 border-transparent hover:bg-zinc-200/50"
-                    }`}
+                  className={`relative w-36 h-8 rounded-lg text-[10px] font-black tracking-widest transition-all duration-300 flex items-center justify-center gap-2 z-10 outline-none ${
+                    activeTab === "ai-match"
+                      ? "text-white"
+                      : "text-zinc-500 hover:text-zinc-900"
+                  }`}
                 >
-                  <HiSparkles className={`w-3.5 h-3.5 transition-colors duration-300 ${activeTab === 'ai-match' ? 'text-white animate-pulse' : 'text-violet-400'}`} />
+                  <HiSparkles className={`w-3.5 h-3.5 transition-colors duration-300 ${
+                    activeTab === 'ai-match' ? 'text-white' : 'text-violet-400'
+                  }`} />
                   <span>AI Smart Match</span>
                 </button>
               </div>
@@ -346,7 +299,7 @@ const Discover = () => {
               <button
                 onClick={() => setIsSidebarOpen(true)}
                 disabled={activeTab !== "explore"}
-                className="flex items-center gap-2 px-4 py-2.5 bg-zinc-100 hover:bg-zinc-200 disabled:hover:bg-zinc-100 border border-zinc-200 rounded-xl text-xs font-black uppercase tracking-wider text-zinc-700 disabled:text-zinc-400 disabled:opacity-40 disabled:cursor-not-allowed transition-all select-none shadow-sm cursor-pointer"
+                className="flex items-center gap-2 px-4 h-10 bg-zinc-100 hover:bg-zinc-200 disabled:hover:bg-zinc-100 border border-zinc-200 rounded-xl text-xs font-black uppercase tracking-wider text-zinc-700 disabled:text-zinc-400 disabled:opacity-40 disabled:cursor-not-allowed transition-all select-none shadow-sm cursor-pointer"
               >
                 <FiFilter className="w-3.5 h-3.5" />
                 <span className="hidden sm:inline">Filter</span>
@@ -426,7 +379,7 @@ const Discover = () => {
                     <p className="text-zinc-600 text-xs leading-relaxed">{matchesError}</p>
                   </div>
                   <button
-                    onClick={fetchAIMatches}
+                    onClick={() => refetchMatches()}
                     className="px-8 py-2.5 bg-zinc-900 text-white text-[10px] font-black uppercase tracking-widest rounded-full hover:bg-zinc-800 transition-all cursor-pointer shadow-sm"
                   >
                     Retry Calculation

@@ -1,17 +1,16 @@
-import { createStore, applyMiddleware } from 'redux';
-import { thunk } from 'redux-thunk';
-
-import { combineReducers } from 'redux';
+import { configureStore } from '@reduxjs/toolkit';
 import { authReducer } from './reducers/authReducer';
 import uiReducer from './reducers/uiReducer';
+import apiSlice from './api/apiSlice';
 
-// Combine reducers (add more as needed)
-const rootReducer = combineReducers({
-  auth: authReducer,
-  ui: uiReducer,
+const store = configureStore({
+  reducer: {
+    auth: authReducer,
+    ui: uiReducer,
+    [apiSlice.reducerPath]: apiSlice.reducer,
+  },
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware().concat(apiSlice.middleware),
 });
-
-// Create Redux store with middleware
-const store = createStore(rootReducer, applyMiddleware(thunk));
 
 export default store;

@@ -1,6 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
 import io from "socket.io-client";
-import axios from "axios";
 import { useSelector, useDispatch } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { FaPaperPlane } from "react-icons/fa";
@@ -8,28 +7,46 @@ import { IoArrowBack } from "react-icons/io5";
 import { BiSearch } from "react-icons/bi";
 import { FiMessageSquare } from "react-icons/fi";
 import ChatLoader from "../components/loaders/ChatLoader";
-import { setHideMobileNav } from "../redux/actions/uiActions";
 import GlobalLoader from "../components/loaders/GlobalLoader";
+import { setHideMobileNav } from "../redux/actions/uiActions";
+import { useGetRequestsQuery, useGetUserByIdQuery, useGetChatMessagesQuery, useSendChatMessageMutation } from "../redux/api/apiSlice";
 
 const ChatSection = () => {
   const dispatch = useDispatch();
   const { user, isLoggedIn, isChecking } = useSelector((state) => state.auth);
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState([]);
-  const [allChats, setAllChats] = useState([]);
-  const [filteredChats, setFilteredChats] = useState([]);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [receiver, setReceiver] = useState(null);
   const [currentId, setCurrentId] = useState("");
   const [isChatOpen, setIsChatOpen] = useState(false);
-  const [loadingChats, setLoadingChats] = useState(true);
-  const [loadingMessages, setLoadingMessages] = useState(true);
   const navigate = useNavigate();
   const messagesEndRef = useRef(null);
   const socketRef = useRef(null);
 
   const [isReceiverTyping, setIsReceiverTyping] = useState(false);
   const typingTimeoutRef = useRef(null);
+
+  const { data: requestsData, isFetching: loadingChats } = useGetRequestsQuery(user?.username, {
+    skip: !isLoggedIn || !user?.username
+  });
+
+  const { data: receiverData } = useGetUserByIdQuery(currentId, {
+    skip: !currentId
+  });
+
+  const { data: chatMessagesData, isFetching: loadingMessages } = useGetChatMessagesQuery({
+    senderId: user?.id,
+    receiverId: currentId
+  }, {
+    skip: !user?.id || !currentId
+  });
+
+  const [sendChatMessage] = useSendChatMessageMutation();
+
+  const receiver = receiverData?.user || null;
+
+  const allChats = React.useMemo(() => {
+    return (requestsData?.requests || []).filter(request => request.status === "accepted");
+  }, [requestsData]);
 
   useEffect(() => {
     if (!isLoggedIn || !user?.id) return;
@@ -82,53 +99,20 @@ const ChatSection = () => {
     }
   };
 
-  const fetchMessages = async () => {
-    setLoadingMessages(true);
-    try {
-      const response = await axios.get(`${process.env.REACT_APP_BACKEND_BASE_URL}/api/chat/${user?.id}/${currentId}`);
-      setMessages(response.data);
-    } catch (error) {
-      console.error("Error fetching messages:", error);
-    }
-    setLoadingMessages(false);
-  };
-
-  const fetchUserDetails = async () => {
-    try {
-      const response = await axios.get(`${process.env.REACT_APP_BACKEND_BASE_URL}/user/${currentId}`);
-      setReceiver(response?.data.user);
-    } catch (error) {
-      console.error("Error fetching user details:", error);
-    }
-  };
-
-  const fetchChats = async () => {
-    setLoadingChats(true);
-    try {
-      const response = await axios.get(`${process.env.REACT_APP_BACKEND_BASE_URL}/api/connections/requests/${user?.username}`);
-      let connections = response?.data.requests.filter(request => request.status === "accepted");
-
-      setAllChats(connections);
-      setFilteredChats(connections);
-    } catch (error) {
-      console.error("Error fetching chats", error);
-    }
-    setLoadingChats(false);
-  };
-
   useEffect(() => {
-    if (isLoggedIn && user?.id) {
-      fetchChats();
+    if (chatMessagesData) {
+      setMessages(chatMessagesData);
     }
-  }, [isLoggedIn, user?.id]);
+  }, [chatMessagesData]);
 
   useEffect(() => {
     if (currentId) {
-      fetchMessages();
-      fetchUserDetails();
       setIsReceiverTyping(false);
     }
   }, [currentId]);
+
+  const [filteredChats, setFilteredChats] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
     if (!searchTerm) {
@@ -157,7 +141,7 @@ const ChatSection = () => {
         socketRef.current.emit("sendMessage", chatMessage);
         socketRef.current.emit("stopTyping", { senderId: user?.id, receiverId: currentId });
 
-        await axios.post(`${process.env.REACT_APP_BACKEND_BASE_URL}/api/chat/send`, chatMessage);
+        await sendChatMessage(chatMessage).unwrap();
         setMessages((prev) => [...prev, chatMessage]);
         setMessage("");
 
