@@ -1,119 +1,43 @@
-import React, { useEffect, useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import React, { useEffect } from "react";
+import { useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
-import axios from "axios";
 import { toast } from "react-toastify";
-import { setLoggedIn, setLoggedOut } from "../redux/actions/authActions";
 import ProfileInfo from "../components/sections/ProfileInfo";
 import Notifications from "../components/sections/Notifications";
 import ProfileLoader from "../components/loaders/ProfileLoader";
+import {
+    useGetProfileQuery,
+    useGetRequestsQuery,
+    useSendRequestMutation,
+    useRespondToRequestMutation,
+} from "../redux/api/apiSlice";
 
 const Profile = () => {
     const { isLoggedIn, user } = useSelector((state) => state.auth);
     const { username } = useParams();
-    const dispatch = useDispatch();
     const navigate = useNavigate();
 
-    const [authLoading, setAuthLoading] = useState(true);
-    const [profile, setProfile] = useState(null);
-    const [loadingProfile, setLoadingProfile] = useState(false);
-    const [error, setError] = useState(null);
-    const [requests, setRequests] = useState(null);
-
-    const verifyAuth = async () => {
-        try {
-            const response = await axios.get(
-                `${process.env.REACT_APP_BACKEND_BASE_URL}/auth/verify-tokens`,
-                { withCredentials: true }
-            );
-            if (response.data.loggedIn) {
-                dispatch(setLoggedIn());
-            } else {
-                dispatch(setLoggedOut());
-                navigate("/login");
-            }
-        } catch (error) {
-            dispatch(setLoggedOut());
+    useEffect(() => {
+        if (!isLoggedIn) {
             navigate("/login");
-        } finally {
-            setAuthLoading(false);
         }
-    };
+    }, [isLoggedIn, navigate]);
 
-    const fetchUserProfile = async () => {
-        try {
-            setLoadingProfile(true);
-            const response = await axios.get(
-                `${process.env.REACT_APP_BACKEND_BASE_URL}/users/${username}`,
-                { withCredentials: true }
-            );
-            if (response.data) {
-                const userData = response.data.user;
-                setProfile({
-                    id: userData.id,
-                    fullName: userData.fullName || userData.username || "Guest",
-                    username: userData.username || "Not provided",
-                    role: userData.role || "Not specified",
-                    bio: userData.bio || "No bio available.",
-                    skills: Array.isArray(userData.skills) ? userData.skills : (userData.skills ? userData.skills.split(",").map(s => s.trim()) : []),
-                    education: Array.isArray(userData.education) ? userData.education : [],
-                    experience: Array.isArray(userData.experience) ? userData.experience : [],
-                    email: userData.email || "Not provided",
-                    receivedRequests: userData.receivedRequests,
-                    sentRequests: userData.sentRequests,
-                    socialLinks: userData.socialLinks,
-                });
-            } else {
-                setError("User not found.");
-            }
-        } catch (error) {
-            setError("Failed to load profile. Please try again later.");
-        } finally {
-            setLoadingProfile(false);
-        }
-    };
+    const { data: profileData, error: profileError, isLoading: loadingProfile } = useGetProfileQuery(username, {
+        skip: !isLoggedIn || !username
+    });
 
-    const handleLogout = () => {
-        dispatch(setLoggedOut());
-        toast.success("Logged out successfully");
-        navigate("/login");
-    };
+    const { data: requestsData } = useGetRequestsQuery(username, {
+        skip: !isLoggedIn || !username
+    });
 
-    useEffect(() => {
-        verifyAuth();
-    }, [dispatch, navigate]);
-
-    useEffect(() => {
-        if (isLoggedIn && username) {
-            fetchUserProfile();
-        }
-    }, [isLoggedIn, username]);
-
-    const fetchRequests = async () => {
-        try {
-            const response = await axios.get(`${process.env.REACT_APP_BACKEND_BASE_URL}/api/connections/requests/${username}`);
-            setRequests(response?.data.requests);
-        } catch (error) {
-            console.error('Error fetching requests', error);
-        }
-    };
-
-    useEffect(() => {
-        fetchRequests();
-    }, [user]);
+    const [sendRequest] = useSendRequestMutation();
+    const [respondToRequest] = useRespondToRequestMutation();
 
     const handleRequest = async (receiverId, senderId, status) => {
         try {
-            const response = await axios.put(
-                `${process.env.REACT_APP_BACKEND_BASE_URL}/api/connections/requests/handleRequest`,
-                { receiverId, senderId, status },
-                { withCredentials: true }
-            );
-            if (response.data.success) {
-                setRequests((prev) => prev?.filter((r) => r.id !== senderId));
-                fetchRequests();
-                toast.success(`Request ${status}`);
-            }
+            await respondToRequest({ receiverId, senderId, status }).unwrap();
+            toast.success(`Request ${status}`);
         } catch (error) {
             toast.error('Failed to handle request.');
         }
@@ -121,20 +45,37 @@ const Profile = () => {
 
     const handleSendRequest = async (receiverId, senderId) => {
         try {
-            const response = await axios.post(`${process.env.REACT_APP_BACKEND_BASE_URL}/api/connections/send`, { receiverId, senderId });
-            toast.success(response?.data.message);
+            const response = await sendRequest({ receiverId, senderId }).unwrap();
+            toast.success(response?.message || "Request sent successfully");
         } catch (error) {
-            toast.error(error.response?.data?.message || "Error sending request");
+            toast.error(error.data?.message || "Error sending request");
         }
     };
 
+    const userData = profileData?.user;
+    const profile = userData ? {
+        id: userData.id,
+        fullName: userData.fullName || userData.username || "Guest",
+        username: userData.username || "Not provided",
+        role: userData.role || "Not specified",
+        bio: userData.bio || "No bio available.",
+        skills: Array.isArray(userData.skills) ? userData.skills : (userData.skills ? userData.skills.split(",").map(s => s.trim()) : []),
+        education: Array.isArray(userData.education) ? userData.education : [],
+        experience: Array.isArray(userData.experience) ? userData.experience : [],
+        email: userData.email || "Not provided",
+        receivedRequests: userData.receivedRequests,
+        sentRequests: userData.sentRequests,
+        socialLinks: userData.socialLinks,
+    } : null;
+
+    const requests = requestsData?.requests || [];
     const isOwnProfile = user?.email === profile?.email;
 
-    if (authLoading || loadingProfile) return <ProfileLoader />;
-    if (error) return <div className="h-screen bg-white text-zinc-900 flex items-center justify-center">{error}</div>;
+    if (loadingProfile) return <ProfileLoader />;
+    if (profileError) return <div className="h-screen bg-white text-zinc-900 flex items-center justify-center">Failed to load profile. Please try again later.</div>;
 
-    const pendingRequests = requests?.filter(r => r.status === 'pending');
-    const acceptedRequestsCount = requests?.filter(r => r.status === 'accepted').length || 0;
+    const pendingRequests = requests.filter(r => r.status === 'pending');
+    const acceptedRequestsCount = requests.filter(r => r.status === 'accepted').length || 0;
 
     return (
         <div className="min-h-screen bg-white text-zinc-900 pt-8 pb-20 md:pb-12">

@@ -1,30 +1,20 @@
-import React, { useEffect, useState } from 'react';
+import React, { useMemo } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import axios from 'axios';
-import { FiArrowLeft, FiUser, FiMapPin } from 'react-icons/fi';
+import { FiArrowLeft, FiUser } from 'react-icons/fi';
 import ProfileLoader from '../components/loaders/ProfileLoader';
+import { useGetRequestsQuery } from '../redux/api/apiSlice';
 
 const UserConnections = () => {
     const { username } = useParams();
     const navigate = useNavigate();
-    const [connections, setConnections] = useState([]);
-    const [loading, setLoading] = useState(true);
 
-    const fetchConnections = async () => {
-        try {
-            const response = await axios.get(`${process.env.REACT_APP_BACKEND_BASE_URL}/api/connections/requests/${username}`);
-            const accepted = response?.data.requests.filter(r => r.status === 'accepted');
-            setConnections(accepted);
-        } catch (error) {
-            console.error('Error fetching connections:', error);
-        } finally {
-            setLoading(false);
-        }
-    };
+    const { data: requestsData, isLoading: loading } = useGetRequestsQuery(username, {
+        skip: !username
+    });
 
-    useEffect(() => {
-        fetchConnections();
-    }, [username]);
+    const connections = useMemo(() => {
+        return (requestsData?.requests || []).filter(r => r.status === 'accepted');
+    }, [requestsData]);
 
     if (loading) return <ProfileLoader />;
 

@@ -1,5 +1,5 @@
 import React from 'react';
-import { FiBookOpen, FiSettings, FiZap, FiCheck, FiUser, FiMapPin, FiLinkedin, FiGithub, FiTwitter, FiLink, FiUserPlus, FiClock } from 'react-icons/fi';
+import { FiBookOpen, FiSettings, FiCheck, FiUser, FiLinkedin, FiGithub, FiTwitter, FiLink, FiUserPlus, FiClock } from 'react-icons/fi';
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
 import relativeTime from 'dayjs/plugin/relativeTime';
@@ -67,6 +67,19 @@ const ProfileInfo = ({ profile, isOwnProfile, onSendRequest, currentUserId, conn
 
         {/* Identity & Actions Container */}
         <div className="px-8 md:px-12 -mt-10 relative">
+            {/* Actions (Only for Own Profile Settings) */}
+            {isOwnProfile && (
+                <div className="absolute top-14 right-8 md:right-12 z-20">
+                    <Link 
+                        to="/profile/setup"
+                        className="w-10 h-10 flex items-center justify-center bg-zinc-100 text-zinc-700 border border-zinc-200 rounded-xl hover:bg-zinc-200 hover:text-zinc-900 shadow-sm transition-all group"
+                        title="Edit Profile"
+                    >
+                        <FiSettings size={18} className="group-hover:rotate-90 transition-transform duration-500" />
+                    </Link>
+                </div>
+            )}
+
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-8">
                 {/* Avatar & Name */}
                 <div className="flex-1 space-y-4">
@@ -84,7 +97,7 @@ const ProfileInfo = ({ profile, isOwnProfile, onSendRequest, currentUserId, conn
                                 <p className="text-sm font-bold text-zinc-500 tracking-tight lowercase">
                                     @{profile?.username}
                                 </p>
-                                <span className={`px-2 py-0.5 rounded text-[8px] font-black uppercase tracking-widest border ${
+                                <span className={`px-2 py-0.5 rounded text-[8px] font-black uppercase tracking-widest border mt-0.5 ${
                                     profile?.role === 'mentor' 
                                         ? 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20' 
                                         : 'bg-amber-500/10 text-amber-500 border-amber-500/20'
@@ -195,19 +208,6 @@ const ProfileInfo = ({ profile, isOwnProfile, onSendRequest, currentUserId, conn
                         </div>
                     </div>
                 </div>
-
-                {/* Actions (Only for Own Profile Settings) */}
-                {isOwnProfile && (
-                    <div className="flex items-center gap-3 md:pb-4">
-                        <Link 
-                            to="/profile/setup"
-                            className="w-10 h-10 md:w-12 md:h-12 flex items-center justify-center bg-zinc-100 text-zinc-700 border border-zinc-200 rounded-2xl hover:bg-zinc-200 hover:text-zinc-900 transition-all group"
-                            title="Edit Profile"
-                        >
-                            <FiSettings size={18} className="group-hover:rotate-90 transition-transform duration-500" />
-                        </Link>
-                    </div>
-                )}
                 </div>
             </div>
         </div>
@@ -275,19 +275,19 @@ const ProfileInfo = ({ profile, isOwnProfile, onSendRequest, currentUserId, conn
         {/* Education Section */}
         {profile?.education?.length > 0 && (
           <section className="space-y-10">
-            <h2 className="text-xl font-bold text-white tracking-tight block">Education</h2>
+            <h2 className="text-xl font-bold text-zinc-900 tracking-tight block">Education</h2>
             <div className="space-y-8">
               {profile.education.map((edu, index) => (
                 <div key={index} className="flex gap-6 group/edu">
-                  <div className="flex-shrink-0 w-14 h-14 bg-white/[0.03] border border-white/5 rounded-2xl flex items-center justify-center text-zinc-600 group-hover/edu:text-white group-hover/edu:bg-white/[0.05] transition-all duration-500">
+                  <div className="flex-shrink-0 w-14 h-14 bg-zinc-100 border border-zinc-200 rounded-2xl flex items-center justify-center text-zinc-700 group-hover/edu:bg-zinc-200 transition-all duration-500">
                     <FiBookOpen size={24} />
                   </div>
                   <div className="space-y-1">
-                    <h3 className="text-sm font-black text-white tracking-tight leading-none">
+                    <h3 className="text-sm font-black text-zinc-900 tracking-tight leading-none">
                       {edu.degree} {edu.field ? `in ${edu.field}` : ''}
                     </h3>
                     <p className="text-zinc-500 font-bold text-sm tracking-tight">{edu.college}</p>
-                    <div className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-600 pt-1">
+                    <div className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400 pt-1">
                       {edu.startYear ? dayjs(edu.startYear).format('YYYY') : 'N/A'} — {edu.endYear ? dayjs(edu.endYear).format('YYYY') : 'Present'}
                     </div>
                   </div>

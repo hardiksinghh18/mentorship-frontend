@@ -190,12 +190,23 @@ const ProfileCard = ({ profile, currentUserId, matchScore, matchDetails }) => {
                   </span>
                 )}
               </div>
- 
               <div className="flex-1 min-w-0">
                 <div className="flex flex-wrap items-center gap-3">
-                  <h3 className="text-xl font-bold text-zinc-900 tracking-tight truncate">
-                    {name}
-                  </h3>
+                  <div className="flex items-center gap-2 min-w-0">
+                    <h3 className="text-xl font-bold text-zinc-900 tracking-tight truncate">
+                      {name}
+                    </h3>
+                    <Tooltip title="View Full Profile" arrow>
+                      <Link
+                        to={`/profile/${username}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-zinc-400 hover:text-zinc-900 transition-all hover:scale-110 active:scale-95 shrink-0"
+                      >
+                        <FaExternalLinkAlt size={13} />
+                      </Link>
+                    </Tooltip>
+                  </div>
                   {matchDetails && (
                     <span className={`md:hidden px-2 py-0.5 rounded-[4px] text-[9px] font-black tracking-widest uppercase border transition-all duration-300 flex items-center gap-1.5 ${
                       matchDetails.compatibilityScore >= 60 
@@ -233,16 +244,6 @@ const ProfileCard = ({ profile, currentUserId, matchScore, matchDetails }) => {
                   <span className="text-zinc-500 text-sm font-bold tracking-tight lowercase">
                     @{username}
                   </span>
-                  <Tooltip title="View Full Profile" arrow>
-                    <Link
-                      to={`/profile/${username}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-zinc-500 hover:text-zinc-900 transition-all hover:scale-110 active:scale-95"
-                    >
-                      <FaExternalLinkAlt size={14} />
-                    </Link>
-                  </Tooltip>
                 </div>
 
               </div>

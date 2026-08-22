@@ -1,6 +1,6 @@
 import './App.css';
 import { Route, Routes } from 'react-router-dom';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { setLoggedIn, setLoggedOut } from './redux/actions/authActions';
 import axios from 'axios';
@@ -35,27 +35,23 @@ function App() {
   const dispatch = useDispatch();
   const { isLoggedIn } = useSelector((state) => state.auth);
   const [loading, setLoading] = useState(true);
+  const hasInitialized = useRef(false);
 
-  const verifyTokens = async () => {
-    try {
-      const response = await axios.get(`${process.env.REACT_APP_BACKEND_BASE_URL}/auth/verify-tokens`, { withCredentials: true });
-     
-      if (response.data.loggedIn) {
-        dispatch(setLoggedIn());
-      } else {
-        dispatch(setLoggedOut());
-      }
-    } catch (error) {
-      console.error('Error verifying tokens:', error);
-      dispatch(setLoggedOut());
-    } finally {
-      setLoading(false);
-    }
-  };
-  
   useEffect(() => {
-    verifyTokens();
-  }, [dispatch, isLoggedIn]);
+    if (hasInitialized.current) return;
+    hasInitialized.current = true;
+
+    const initializeAuth = async () => {
+      try {
+        await dispatch(setLoggedIn());
+      } catch (error) {
+        console.error('Error verifying session:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    initializeAuth();
+  }, [dispatch]);
 
   if (loading) {
     return <GlobalLoader />;
