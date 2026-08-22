@@ -1,17 +1,18 @@
 import { createTheme } from '@mui/material/styles';
 
-const darkTheme = createTheme({
+const lightTheme = createTheme({
   palette: {
-    mode: 'dark',
+    mode: 'light',
     primary: {
-      main: '#ffffff',
+      main: '#000000',
     },
     background: {
-      default: 'transparent',
-      paper: '#0a0a0a',
+      default: '#ffffff',
+      paper: '#ffffff',
     },
     text: {
-      primary: '#ffffff',
+      primary: '#000000',
+      secondary: '#52525b',
     },
   },
   typography: {
@@ -23,15 +24,15 @@ const darkTheme = createTheme({
         root: {
           '& .MuiOutlinedInput-root': {
             borderRadius: '16px',
-            backgroundColor: 'rgba(255, 255, 255, 0.02)',
+            backgroundColor: 'rgba(0, 0, 0, 0.02)',
             '& fieldset': {
-              borderColor: 'rgba(255, 255, 255, 0.05)',
+              borderColor: 'rgba(0, 0, 0, 0.1)',
             },
             '&:hover fieldset': {
-              borderColor: 'rgba(255, 255, 255, 0.2)',
+              borderColor: 'rgba(0, 0, 0, 0.3)',
             },
             '&.Mui-focused fieldset': {
-              borderColor: '#ffffff',
+              borderColor: '#000000',
             },
           },
         },
@@ -51,13 +52,13 @@ const darkTheme = createTheme({
       styleOverrides: {
         root: {
           borderRadius: '8px',
-          backgroundColor: '#ffffff',
-          color: '#000000',
+          backgroundColor: '#000000',
+          color: '#ffffff',
           '&:hover': {
-            backgroundColor: '#e0e0e0',
+            backgroundColor: '#333333',
           },
           '& .MuiLoadingButton-loadingIndicator': {
-            color: '#000000',
+            color: '#ffffff',
           },
         }
       }
@@ -65,4 +66,5 @@ const darkTheme = createTheme({
   },
 });
 
-export default darkTheme;
+export const getTheme = () => lightTheme;
+export default lightTheme;

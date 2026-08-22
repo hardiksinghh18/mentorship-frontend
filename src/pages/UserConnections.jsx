@@ -29,11 +29,11 @@ const UserConnections = () => {
     if (loading) return <ProfileLoader />;
 
     return (
-        <div className="min-h-screen bg-black text-white pt-28 pb-12">
+        <div className="min-h-screen bg-white text-zinc-900 pt-28 pb-12">
             <div className="max-w-3xl mx-auto px-6">
                 <button 
                     onClick={() => navigate(-1)}
-                    className="flex items-center gap-2 text-zinc-500 hover:text-white transition-colors mb-12 group"
+                    className="flex items-center gap-2 text-zinc-500 hover:text-zinc-900 transition-colors mb-12 group"
                 >
                     <FiArrowLeft className="group-hover:-translate-x-1 transition-transform" />
                     <span className="text-[11px] font-black uppercase tracking-widest">Back to Profile</span>
@@ -41,10 +41,10 @@ const UserConnections = () => {
 
                 <div className="flex justify-between items-end mb-12">
                     <div>
-                        <h1 className="text-4xl font-black text-white tracking-tighter mb-2">Network</h1>
+                        <h1 className="text-4xl font-black text-zinc-900 tracking-tighter mb-2">Network</h1>
                         <p className="text-zinc-500 font-medium tracking-tight">Connections for @{username}</p>
                     </div>
-                    <span className="px-4 py-2 bg-white/5 border border-white/5 rounded-xl text-zinc-400 text-xs font-bold uppercase tracking-widest">
+                    <span className="px-4 py-2 bg-zinc-100 border border-zinc-200 rounded-xl text-zinc-700 text-xs font-bold uppercase tracking-widest">
                         {connections.length} Total
                     </span>
                 </div>
@@ -55,14 +55,14 @@ const UserConnections = () => {
                             <Link
                                 key={conn.id}
                                 to={`/profile/${conn.sender.username}`}
-                                className="group flex items-center justify-between p-6 rounded-lg bg-white/[0.02] border border-white/[0.03] hover:border-white/10 transition-all"
+                                className="group flex items-center justify-between p-6 rounded-lg bg-zinc-50 border border-zinc-200 hover:border-zinc-300 shadow-sm transition-all"
                             >
                                 <div className="flex items-center gap-6">
-                                    <div className="w-12 h-12 bg-zinc-900 rounded-full flex items-center justify-center text-zinc-600 text-2xl font-black group-hover:bg-white group-hover:text-black transition-all duration-500">
+                                    <div className="w-12 h-12 bg-zinc-100 border border-zinc-200 rounded-full flex items-center justify-center text-zinc-700 text-2xl font-black group-hover:bg-zinc-200 transition-all duration-500">
                                         {conn.sender.username?.[0]?.toUpperCase()}
                                     </div>
                                     <div className="space-y-1">
-                                        <h3 className="text-lg font-black text-white tracking-tight leading-none group-hover:text-white">
+                                        <h3 className="text-lg font-black text-zinc-900 tracking-tight leading-none group-hover:text-zinc-900">
                                             {conn.sender.fullName || conn.sender.username}
                                         </h3>
                                         <p className="text-zinc-500 text-xs font-bold uppercase tracking-widest">
@@ -73,7 +73,7 @@ const UserConnections = () => {
                             </Link>
                         ))
                     ) : (
-                        <div className="text-center py-20 border border-dashed border-white/5 rounded-[2.5rem]">
+                        <div className="text-center py-20 border border-dashed border-zinc-300 rounded-[2.5rem]">
                             <FiUser size={48} className="mx-auto mb-6 text-zinc-800" />
                             <p className="text-zinc-500 text-sm font-bold uppercase tracking-widest">No connections found</p>
                         </div>

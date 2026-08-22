@@ -38,8 +38,8 @@ const Sidebar = () => {
                 to={to}
                 className={`w-12 h-12 flex items-center justify-center rounded-2xl transition-all duration-300 group relative
                     ${active 
-                        ? 'text-white' 
-                        : 'text-zinc-500 hover:text-white hover:bg-white/5'}`}
+                        ? 'text-zinc-900 bg-zinc-200/80 shadow-sm' 
+                        : 'text-zinc-500 hover:text-zinc-900 hover:bg-zinc-100'}`}
             >
                 {active ? (
                     <FilledIcon size={22} className="scale-110 transition-transform duration-300" />
@@ -47,7 +47,7 @@ const Sidebar = () => {
                     <Icon size={22} className="group-hover:scale-110 transition-transform duration-300" />
                 )}
                 {active && (
-                    <div className="absolute -left-4 w-1 h-6 bg-white rounded-r-full shadow-[4px_0_15px_rgba(255,255,255,0.5)]" />
+                    <div className="absolute -left-4 w-1 h-6 bg-zinc-900 rounded-r-full shadow-[4px_0_15px_rgba(0,0,0,0.3)]" />
                 )}
             </Link>
         </Tooltip>
@@ -56,14 +56,14 @@ const Sidebar = () => {
     return (
         <>
             {/* Desktop Sidebar */}
-            <aside className="hidden md:flex fixed left-0 top-0 h-screen w-24 flex-col items-center py-8 z-[100] bg-black/40 backdrop-blur-2xl border-r border-white/5">
+            <aside className="hidden md:flex fixed left-0 top-0 h-screen w-24 flex-col items-center py-8 z-[100] bg-white/80 backdrop-blur-2xl border-r border-zinc-200">
                 {/* Logo */}
                 <Link to="/" className="mb-12 group">
                     <div className="w-12 h-12 flex items-center justify-center rounded-2xl group-hover:scale-110 transition-all duration-500">
                         <img 
                             src={require('../../assets/skillsyncIcon.png')} 
                             alt="SkillSync Logo" 
-                            className="w-10 h-10 object-contain drop-shadow-[0_0_10px_rgba(255,255,255,0.2)]"
+                            className="w-10 h-10 object-contain drop-shadow-[0_0_10px_rgba(0,0,0,0.1)] filter invert"
                         />
                     </div>
                 </Link>
@@ -106,14 +106,14 @@ const Sidebar = () => {
                 </div>
             </aside>
 
-            {/* Mobile Bottom Navigation (Keeping it as is but refined) */}
+            {/* Mobile Bottom Navigation */}
             {isLoggedIn && !hideMobileNav && (
-                <div className="md:hidden fixed bottom-6 left-1/2 -translate-x-1/2 w-[90%] z-[100] bg-black/80 backdrop-blur-2xl border border-white/10 rounded-2xl shadow-2xl transition-all duration-300">
+                <div className="md:hidden fixed bottom-6 left-1/2 -translate-x-1/2 w-[90%] z-[100] bg-white/95 backdrop-blur-2xl border border-zinc-200 rounded-2xl shadow-2xl transition-all duration-300">
                     <div className="flex justify-around items-center py-4">
-                        <Link to="/" className={`p-2 ${location.pathname === "/" ? 'text-white' : 'text-zinc-500'}`}><RiHomeFill size={20} /></Link>
-                        <Link to="/explore" className={`p-2 ${location.pathname === "/explore" ? 'text-white' : 'text-zinc-500'}`}><RiSearchFill size={20} /></Link>
-                        <Link to="/messages" className={`p-2 ${location.pathname.startsWith("/messages") ? 'text-white' : 'text-zinc-500'}`}><RiMessage3Fill size={20} /></Link>
-                        <Link to={`/profile/${user.username}`} className={`p-2 ${location.pathname.startsWith("/profile") ? 'text-white' : 'text-zinc-500'}`}><FaUser size={20} /></Link>
+                        <Link to="/" className={`p-2 ${location.pathname === "/" ? 'text-zinc-900' : 'text-zinc-500'}`}><RiHomeFill size={20} /></Link>
+                        <Link to="/explore" className={`p-2 ${location.pathname === "/explore" ? 'text-zinc-900' : 'text-zinc-500'}`}><RiSearchFill size={20} /></Link>
+                        <Link to="/messages" className={`p-2 ${location.pathname.startsWith("/messages") ? 'text-zinc-900' : 'text-zinc-500'}`}><RiMessage3Fill size={20} /></Link>
+                        <Link to={`/profile/${user.username}`} className={`p-2 ${location.pathname.startsWith("/profile") ? 'text-zinc-900' : 'text-zinc-500'}`}><FaUser size={20} /></Link>
                     </div>
                 </div>
             )}
@@ -124,20 +124,20 @@ const Sidebar = () => {
                 onClose={handleLogoutClose}
                 PaperProps={{
                     sx: {
-                        bgcolor: '#0a0a0a',
+                        bgcolor: '#ffffff',
                         backgroundImage: 'none',
-                        border: '1px solid rgba(255, 255, 255, 0.1)',
+                        border: '1px solid rgba(0, 0, 0, 0.1)',
                         borderRadius: '20px',
                         padding: '12px',
                         maxWidth: '360px'
                     }
                 }}
             >
-                <DialogTitle sx={{ color: 'white', fontWeight: 900, fontSize: '1.1rem', tracking: '-0.02em', px: 3, pt: 3 }}>
+                <DialogTitle sx={{ color: 'black', fontWeight: 900, fontSize: '1.1rem', tracking: '-0.02em', px: 3, pt: 3 }}>
                     Confirm Logout
                 </DialogTitle>
                 <DialogContent sx={{ px: 3, pb: 1 }}>
-                    <DialogContentText sx={{ color: 'rgba(255, 255, 255, 0.6)', fontWeight: 500, fontSize: '0.85rem' }}>
+                    <DialogContentText sx={{ color: 'rgba(0, 0, 0, 0.6)', fontWeight: 500, fontSize: '0.85rem' }}>
                         Are you sure you want to log out of your account?
                     </DialogContentText>
                 </DialogContent>
@@ -146,8 +146,8 @@ const Sidebar = () => {
                         onClick={handleLogoutClose}
                         variant="outlined"
                         sx={{ 
-                            color: 'rgba(255, 255, 255, 0.7)', 
-                            borderColor: 'rgba(255, 255, 255, 0.15)',
+                            color: 'rgba(0, 0, 0, 0.7)', 
+                            borderColor: 'rgba(0, 0, 0, 0.15)',
                             fontWeight: 900, 
                             fontSize: '10px', 
                             letterSpacing: '0.1em', 
@@ -156,9 +156,9 @@ const Sidebar = () => {
                             px: 3,
                             py: 1,
                             '&:hover': { 
-                                borderColor: 'rgba(255, 255, 255, 0.3)',
-                                color: 'white', 
-                                bgcolor: 'rgba(255, 255, 255, 0.05)' 
+                                borderColor: 'rgba(0, 0, 0, 0.3)',
+                                color: 'black', 
+                                bgcolor: 'rgba(0, 0, 0, 0.05)' 
                             }
                         }}
                     >
@@ -169,8 +169,8 @@ const Sidebar = () => {
                         autoFocus
                         variant="contained"
                         sx={{ 
-                            bgcolor: 'white', 
-                            color: 'black', 
+                            bgcolor: 'black', 
+                            color: 'white', 
                             fontWeight: 900, 
                             fontSize: '10px', 
                             letterSpacing: '0.1em', 
@@ -178,7 +178,7 @@ const Sidebar = () => {
                             borderRadius: '10px',
                             px: 3,
                             py: 1,
-                            '&:hover': { bgcolor: 'rgba(255, 255, 255, 0.9)' }
+                            '&:hover': { bgcolor: 'rgba(0, 0, 0, 0.9)' }
                         }}
                     >
                         Logout

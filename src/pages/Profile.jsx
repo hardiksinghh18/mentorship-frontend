@@ -131,13 +131,13 @@ const Profile = () => {
     const isOwnProfile = user?.email === profile?.email;
 
     if (authLoading || loadingProfile) return <ProfileLoader />;
-    if (error) return <div className="h-screen bg-black text-white flex items-center justify-center">{error}</div>;
+    if (error) return <div className="h-screen bg-white text-zinc-900 flex items-center justify-center">{error}</div>;
 
     const pendingRequests = requests?.filter(r => r.status === 'pending');
     const acceptedRequestsCount = requests?.filter(r => r.status === 'accepted').length || 0;
 
     return (
-        <div className="min-h-screen bg-black text-white selection:bg-white selection:text-black pt-8 pb-20 md:pb-12">
+        <div className="min-h-screen bg-white text-zinc-900 pt-8 pb-20 md:pb-12">
             <div className="max-w-[1800px] mx-auto px-6 md:px-12 grid grid-cols-1 lg:grid-cols-12 gap-16">
                 
                 {/* Main Content Area */}
@@ -161,11 +161,11 @@ const Profile = () => {
 
                     {/* Skills Sidebar Section */}
                     {profile?.skills?.length > 0 && (
-                        <div className="bg-black rounded-[2rem] border border-white/[0.03] p-8">
-                            <h2 className="text-[10px] font-black uppercase tracking-[0.4em] text-zinc-600 block mb-8">Skills</h2>
+                        <div className="bg-zinc-50 rounded-[2rem] border border-zinc-200 p-8 shadow-sm">
+                            <h2 className="text-[10px] font-black uppercase tracking-[0.4em] text-zinc-400 block mb-8">Skills</h2>
                             <div className="flex flex-wrap gap-2">
                                 {profile.skills.map((skill, index) => (
-                                    <span key={index} className="px-4 py-2 bg-white/[0.03] border border-white/5 rounded-full text-[11px] font-black uppercase tracking-widest text-zinc-400">
+                                    <span key={index} className="px-4 py-2 bg-zinc-100 border border-zinc-200 rounded-full text-[11px] font-black uppercase tracking-widest text-zinc-700">
                                         {skill}
                                     </span>
                                 ))}

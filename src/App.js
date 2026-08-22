@@ -2,8 +2,8 @@ import './App.css';
 import { Route, Routes } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { setLoggedIn, setLoggedOut } from './redux/actions/authActions'; // Redux actions
-import axios from 'axios'; // Axios for API calls
+import { setLoggedIn, setLoggedOut } from './redux/actions/authActions';
+import axios from 'axios';
 
 // Material UI Theme Integration
 import { ThemeProvider } from '@mui/material/styles';
@@ -11,7 +11,7 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import darkTheme from './theme';
+import lightTheme from './theme';
 
 // Pages
 import Home from './pages/Home';
@@ -49,7 +49,7 @@ function App() {
       console.error('Error verifying tokens:', error);
       dispatch(setLoggedOut());
     } finally {
-      setLoading(false); // Token verification is complete
+      setLoading(false);
     }
   };
   
@@ -62,7 +62,7 @@ function App() {
   }
 
   return (
-    <ThemeProvider theme={darkTheme}>
+    <ThemeProvider theme={lightTheme}>
       <LocalizationProvider dateAdapter={AdapterDayjs}>
         <ToastContainer
           position="top-right"
@@ -74,16 +74,12 @@ function App() {
           pauseOnFocusLoss
           draggable
           pauseOnHover
-          theme="dark"
-          toastClassName="noir-toast"
-          bodyClassName="noir-toast-body"
-          progressClassName="noir-toast-progress"
+          theme="light"
         />
-
 
         <Sidebar />
 
-        <main className="md:pl-24 transition-all duration-500">
+        <main className="md:pl-24 transition-all duration-500 bg-white min-h-screen text-zinc-900">
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/features" element={<Features />} />
