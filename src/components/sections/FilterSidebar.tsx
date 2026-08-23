@@ -24,7 +24,7 @@ const FilterSidebar = ({
         if (isOpen) {
             setDraft(filters);
         }
-    }, [isOpen]);
+    }, [isOpen, filters]);
 
     const handleDraftChange = (name, value) => {
         setDraft(prev => ({ ...prev, [name]: value }));
@@ -63,7 +63,7 @@ const FilterSidebar = ({
                 <div className="p-6 border-b border-zinc-200 flex items-center justify-between">
                     <div className="flex items-center gap-2.5">
                         <FiSliders className="text-zinc-900 w-5 h-5" />
-                        <h2 className="text-sm font-black uppercase tracking-widest text-zinc-900">Filters</h2>
+                        <h2 className="text-sm font-bold text-zinc-900">Filters</h2>
                     </div>
                     <button 
                         onClick={onClose}
@@ -111,15 +111,15 @@ const FilterSidebar = ({
                     <button
                         onClick={handleClear}
                         disabled={!isDraftDirty}
-                        className="flex-1 py-3 border border-zinc-300 text-zinc-700 text-[10px] font-black uppercase tracking-widest rounded-lg hover:bg-zinc-200 hover:text-zinc-950 transition-all disabled:opacity-40 disabled:hover:bg-transparent disabled:hover:text-zinc-700 disabled:cursor-not-allowed cursor-pointer"
+                        className="flex-1 py-3 border border-zinc-300 text-zinc-700 text-xs font-semibold rounded-lg hover:bg-zinc-200 hover:text-zinc-950 transition-all disabled:opacity-40 disabled:hover:bg-transparent disabled:hover:text-zinc-700 disabled:cursor-not-allowed cursor-pointer"
                     >
-                        Clear All
+                        Clear all
                     </button>
                     <button
                         onClick={handleApply}
-                        className="flex-1 py-3 bg-zinc-900 text-white text-[10px] font-black uppercase tracking-widest rounded-lg hover:bg-zinc-800 transition-all cursor-pointer shadow-sm"
+                        className="flex-1 py-3 bg-zinc-900 text-white text-xs font-semibold rounded-lg hover:bg-zinc-800 transition-all cursor-pointer shadow-sm"
                     >
-                        Apply Filters
+                        Apply filters
                     </button>
                 </div>
             </div>

@@ -2,7 +2,7 @@ import React from 'react';
 
 const PillGroup = ({ label, name, options, value, onChange }) => (
     <div className="space-y-3">
-        <label className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-500 ml-1 block">
+        <label className="text-xs font-bold text-zinc-500 ml-1 block">
             {label}
         </label>
         <div className="flex flex-wrap gap-2">

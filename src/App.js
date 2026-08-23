@@ -1,11 +1,9 @@
 import './App.css';
 import { Route, Routes } from 'react-router-dom';
 import { useEffect, useState, useRef } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { setLoggedIn, setLoggedOut } from './redux/actions/authActions';
-import axios from 'axios';
+import { useDispatch } from 'react-redux';
+import { setLoggedIn } from './redux/actions/authActions';
 
-// Material UI Theme Integration
 import { ThemeProvider } from '@mui/material/styles';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
@@ -33,7 +31,6 @@ import UserConnections from './pages/UserConnections';
 
 function App() {
   const dispatch = useDispatch();
-  const { isLoggedIn } = useSelector((state) => state.auth);
   const [loading, setLoading] = useState(true);
   const hasInitialized = useRef(false);
 

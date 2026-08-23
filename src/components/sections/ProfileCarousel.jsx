@@ -39,14 +39,14 @@ const ProfileCarousel = ({
     if (loading) {
         return (
             <div className="space-y-6">
-                <div className="flex items-center justify-between border-b border-white/5 pb-4">
+                <div className="flex items-center justify-between border-b border-zinc-100 pb-4">
                     <div className="flex items-center gap-3">
-                        <div className={`w-8 h-8 rounded-full flex items-center justify-center ${iconBgClass}`}>
+                        <div className={`w-9 h-9 rounded-full flex items-center justify-center ${iconBgClass}`}>
                             {Icon && <Icon className="w-4 h-4" />}
                         </div>
                         <div>
-                            <h3 className="text-sm font-black uppercase tracking-widest text-zinc-400">{title}</h3>
-                            <p className="text-zinc-500 text-xs font-medium mt-0.5">{subtitle}</p>
+                            <h3 className="text-base md:text-lg font-semibold tracking-tight text-zinc-900 leading-tight">{title}</h3>
+                            <p className="text-zinc-500 text-sm font-normal mt-1">{subtitle}</p>
                         </div>
                     </div>
                 </div>
@@ -59,14 +59,14 @@ const ProfileCarousel = ({
 
     return (
         <div className="space-y-6">
-            <div className="flex items-center justify-between border-b border-white/5 pb-4">
+            <div className="flex items-center justify-between border-b border-zinc-100 pb-4">
                 <div className="flex items-center gap-3">
-                    <div className={`w-8 h-8 rounded-full flex items-center justify-center ${iconBgClass}`}>
+                    <div className={`w-9 h-9 rounded-full flex items-center justify-center ${iconBgClass}`}>
                         {Icon && <Icon className="w-4 h-4" />}
                     </div>
                     <div>
-                        <h3 className="text-xs font-black uppercase tracking-widest text-zinc-400">{title}</h3>
-                        <p className="text-zinc-500 text-[10px] font-medium mt-0.5">{subtitle}</p>
+                        <h3 className="text-base md:text-md font-semibold tracking-tight text-zinc-900 leading-tight">{title}</h3>
+                        <p className="text-zinc-500 text-xs font-normal mt-1">{subtitle}</p>
                     </div>
                 </div>
 
@@ -126,17 +126,17 @@ const ProfileCarousel = ({
                             className="w-[300px] shrink-0 snap-start block select-none"
                         >
                             <div className={`relative bg-zinc-50 border border-zinc-200 p-5 transition-all duration-300 flex flex-col h-[250px] rounded-2xl shadow-sm ${isAiMatch
-                                    ? 'hover:border-violet-400'
-                                    : 'hover:border-zinc-400'
+                                ? 'hover:border-violet-400'
+                                : 'hover:border-zinc-400'
                                 }`}>
 
                                 {isAiMatch && score !== null && (
                                     <div className="absolute top-5 right-5">
                                         <span className={`px-2 py-0.5 rounded-[4px] text-[8px] font-black tracking-widest uppercase border ${score >= 60
-                                                ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
-                                                : score >= 20
-                                                    ? 'bg-blue-50 text-blue-700 border-blue-200'
-                                                    : 'bg-zinc-100 text-zinc-600 border-zinc-200'
+                                            ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                                            : score >= 20
+                                                ? 'bg-blue-50 text-blue-700 border-blue-200'
+                                                : 'bg-zinc-100 text-zinc-600 border-zinc-200'
                                             }`}>
                                             {score}% Match
                                         </span>
@@ -214,12 +214,12 @@ const ProfileCarousel = ({
                                                             <span
                                                                 key={`insight-${idx}`}
                                                                 className={`px-1.5 py-0.5 rounded-[4px] text-[8px] font-black uppercase tracking-widest border transition-all duration-300 ${isOverlap
-                                                                        ? 'bg-violet-500/10 text-violet-400 border-violet-500/20 hover:bg-violet-500/20'
-                                                                        : isSync
-                                                                            ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20 hover:bg-emerald-500/20'
-                                                                            : isMentor
-                                                                                ? 'bg-blue-500/10 text-blue-400 border-blue-200 hover:bg-blue-500/20'
-                                                                                : 'bg-white/[0.02] text-white/50 border-white/[0.05]'
+                                                                    ? 'bg-violet-500/10 text-violet-400 border-violet-500/20 hover:bg-violet-500/20'
+                                                                    : isSync
+                                                                        ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20 hover:bg-emerald-500/20'
+                                                                        : isMentor
+                                                                            ? 'bg-blue-500/10 text-blue-400 border-blue-200 hover:bg-blue-500/20'
+                                                                            : 'bg-white/[0.02] text-white/50 border-white/[0.05]'
                                                                     }`}
                                                             >
                                                                 {tagItem}

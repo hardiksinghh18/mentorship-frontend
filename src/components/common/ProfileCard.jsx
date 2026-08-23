@@ -1,5 +1,5 @@
 import axios from "axios";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -38,7 +38,7 @@ const ProfileCard = ({ profile, currentUserId, matchScore, matchDetails }) => {
 
   const [buttonStatus, setButtonStatus] = useState("connect");
 
-  const determineButtonStatus = () => {
+  const determineButtonStatus = useCallback(() => {
     const receivedRequest = receivedRequests?.find(
       (req) => req.senderId === currentUserId && req.receiverId === id
     );
@@ -53,7 +53,7 @@ const ProfileCard = ({ profile, currentUserId, matchScore, matchDetails }) => {
       return "pending";
     }
     return "connect";
-  };
+  }, [receivedRequests, sentRequests, currentUserId, id]);
 
   const onSendRequest = async (receiverId, senderId) => {
     try {
@@ -67,7 +67,7 @@ const ProfileCard = ({ profile, currentUserId, matchScore, matchDetails }) => {
 
   useEffect(() => {
     setButtonStatus(determineButtonStatus());
-  }, [receivedRequests, sentRequests, currentUserId, id]);
+  }, [determineButtonStatus]);
 
   const handleSendRequest = async () => {
     if (buttonStatus === "connect" && isProfileComplete) {

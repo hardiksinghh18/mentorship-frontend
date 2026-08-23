@@ -44,7 +44,7 @@ const Features = () => {
                                 {/* Bottom Accent Ornament */}
                                 <div className="mt-4 flex items-center space-x-2 opacity-70 group-hover:opacity-100 transition-all">
                                     <div className={`w-8 h-[2px] bg-gradient-to-r ${feature.color} to-transparent`} />
-                                    <span className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-500">{feature.utility}</span>
+                                    <span className="text-xs font-semibold text-zinc-500">{feature.utility}</span>
                                 </div>
                             </div>
                         </div>

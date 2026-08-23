@@ -208,7 +208,7 @@ const Register: React.FC = () => {
 
                     <div className="my-6 flex items-center gap-4">
                         <div className="h-px flex-1 bg-zinc-200"></div>
-                        <span className="text-xs font-bold text-zinc-400 uppercase tracking-widest">Or continue with</span>
+                        <span className="text-xs font-semibold text-zinc-400">Or continue with</span>
                         <div className="h-px flex-1 bg-zinc-200"></div>
                     </div>
 
