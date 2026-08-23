@@ -109,9 +109,9 @@ const Login: React.FC = () => {
       <div className="max-w-[480px] w-full relative z-10 transition-all duration-500">
         <div className="bg-zinc-50 backdrop-blur-2xl pt-8 pb-10 px-8 md:px-10 rounded-[2.5rem] border border-zinc-200 text-zinc-900 shadow-2xl">
           <div className="flex flex-col items-center mb-6">
-            <img 
-              src={require('../assets/skillsyncIcon.png')} 
-              alt="SkillSync Logo" 
+            <img
+              src={require('../assets/skillsyncIcon.png')}
+              alt="SkillSync Logo"
               className="h-10 w-auto mb-4 filter invert"
             />
             <h1 className="text-xl font-bold tracking-tight mb-2 text-zinc-900">

@@ -6,7 +6,7 @@ export const apiSlice = createApi({
     baseUrl: process.env.REACT_APP_BACKEND_BASE_URL || 'http://localhost:5000',
     credentials: 'include',
   }),
-  tagTypes: ['User', 'Matches', 'Profile', 'Requests'],
+  tagTypes: ['User', 'Matches', 'Profile', 'Requests', 'Courses', 'Enrollments'],
   endpoints: (builder) => ({
     // Explore Feed
     getUsers: builder.query({
@@ -86,6 +86,57 @@ export const apiSlice = createApi({
         { type: 'Chat', id: `${arg.receiverId}-${arg.senderId}` }
       ],
     }),
+
+    // Courses & Syllabus
+    getCourses: builder.query({
+      query: () => '/api/courses',
+      providesTags: ['Courses'],
+    }),
+
+    getCourseDetails: builder.query({
+      query: (id) => `/api/courses/${id}`,
+      providesTags: (result, error, arg) => [{ type: 'Courses', id: arg }],
+    }),
+
+    createCourse: builder.mutation({
+      query: (courseData) => ({
+        url: '/api/courses',
+        method: 'POST',
+        body: courseData,
+      }),
+      invalidatesTags: ['Courses'],
+    }),
+
+    requestEnrollment: builder.mutation({
+      query: (id) => ({
+        url: `/api/courses/${id}/join`,
+        method: 'POST',
+      }),
+      invalidatesTags: (result, error, arg) => [{ type: 'Courses', id: arg }],
+    }),
+
+    getEnrollmentRequests: builder.query({
+      query: (id) => `/api/courses/${id}/requests`,
+      providesTags: (result, error, arg) => [{ type: 'Enrollments', id: arg }],
+    }),
+
+    manageEnrollmentRequest: builder.mutation({
+      query: ({ enrollmentId, status }) => ({
+        url: `/api/courses/enrollments/${enrollmentId}`,
+        method: 'PUT',
+        body: { status },
+      }),
+      invalidatesTags: ['Courses', 'Enrollments'],
+    }),
+
+    toggleModuleCompletion: builder.mutation({
+      query: ({ courseId, orderIndex }) => ({
+        url: `/api/courses/${courseId}/toggle-module`,
+        method: 'PUT',
+        body: { orderIndex },
+      }),
+      invalidatesTags: (result, error, arg) => [{ type: 'Courses', id: arg.courseId }],
+    }),
   }),
 });
 
@@ -99,5 +150,12 @@ export const {
   useGetUserByIdQuery,
   useGetChatMessagesQuery,
   useSendChatMessageMutation,
+  useGetCoursesQuery,
+  useGetCourseDetailsQuery,
+  useCreateCourseMutation,
+  useRequestEnrollmentMutation,
+  useGetEnrollmentRequestsQuery,
+  useManageEnrollmentRequestMutation,
+  useToggleModuleCompletionMutation,
 } = apiSlice;
 export default apiSlice;

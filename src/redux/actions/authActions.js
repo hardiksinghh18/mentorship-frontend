@@ -1,4 +1,5 @@
-import axios from 'axios'; // Direct import of axios
+import axios from 'axios';
+import apiSlice from '../api/apiSlice';
 
 export const SET_AUTH = 'SET_AUTH';
 export const LOGOUT = 'LOGOUT';
@@ -20,6 +21,7 @@ export const setLoggedIn = () => async (dispatch) => {
     const response = await axios.get(`${process.env.REACT_APP_BACKEND_BASE_URL}/auth/verify-tokens`, { withCredentials: true }); // API to verify tokens
     if (response.data.loggedIn) {
       dispatch(setAuth(true, response.data.user));
+      dispatch(apiSlice.util.resetApiState()); // Reset RTK Query cache on login
     } else {
       dispatch(setAuth(false));
     }
@@ -32,10 +34,9 @@ export const setLoggedIn = () => async (dispatch) => {
 // Thunk to log out the user
 export const setLoggedOut = () => async (dispatch) => {
   try {
-    
-    await axios.post(`${process.env.REACT_APP_BACKEND_BASE_URL}/auth/logout`,null,{withCredentials:true}); // Backend logout endpoint
- 
+    await axios.post(`${process.env.REACT_APP_BACKEND_BASE_URL}/auth/logout`, null, { withCredentials: true }); // Backend logout endpoint
     dispatch(logout());
+    dispatch(apiSlice.util.resetApiState()); // Reset RTK Query cache on logout
   } catch (error) {
     console.error('Error logging out:', error);
   }
