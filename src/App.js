@@ -28,6 +28,9 @@ import ChatDM from './components/sections/ChatDM';
 
 import Features from './pages/Features';
 import UserConnections from './pages/UserConnections';
+import CoursesList from './pages/CoursesList';
+import CourseCreate from './pages/CourseCreate';
+import CourseView from './pages/CourseView';
 
 function App() {
   const dispatch = useDispatch();
@@ -77,6 +80,9 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/features" element={<Features />} />
             <Route path="/explore" element={<Discover />} />
+            <Route path="/courses" element={<CoursesList />} />
+            <Route path="/courses/create" element={<CourseCreate />} />
+            <Route path="/courses/:id" element={<CourseView />} />
             <Route path="/messages" element={<ChatSection />} />
             <Route path="/messages/:id" element={<ChatDM />} />
             <Route path="/profile/:username" element={<Profile />} />
