@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef, useCallback } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
@@ -126,7 +126,6 @@ const Discover = () => {
   }));
 
   const totalPages = usersData?.totalPages || 1;
-  const hasMore = usersData?.hasMore || false;
 
   const matchUsers = (matchesData?.matches || []).map((m) => {
     const u = m.user;
@@ -271,7 +270,7 @@ const Discover = () => {
 
                 <button
                   onClick={() => setActiveTab("explore")}
-                  className={`relative w-36 h-8 rounded-lg text-[10px] font-black tracking-widest transition-all duration-300 flex items-center justify-center gap-2 z-10 outline-none ${
+                  className={`relative w-36 h-8 rounded-lg text-xs font-bold tracking-wider transition-all duration-300 flex items-center justify-center gap-2 z-10 outline-none ${
                     activeTab === "explore"
                       ? "text-white"
                       : "text-zinc-500 hover:text-zinc-900"
@@ -282,7 +281,7 @@ const Discover = () => {
                 
                 <button
                   onClick={() => setActiveTab("ai-match")}
-                  className={`relative w-36 h-8 rounded-lg text-[10px] font-black tracking-widest transition-all duration-300 flex items-center justify-center gap-2 z-10 outline-none ${
+                  className={`relative w-36 h-8 rounded-lg text-xs font-bold tracking-wider transition-all duration-300 flex items-center justify-center gap-2 z-10 outline-none ${
                     activeTab === "ai-match"
                       ? "text-white"
                       : "text-zinc-500 hover:text-zinc-900"
@@ -299,12 +298,12 @@ const Discover = () => {
               <button
                 onClick={() => setIsSidebarOpen(true)}
                 disabled={activeTab !== "explore"}
-                className="flex items-center gap-2 px-4 h-10 bg-zinc-100 hover:bg-zinc-200 disabled:hover:bg-zinc-100 border border-zinc-200 rounded-xl text-xs font-black uppercase tracking-wider text-zinc-700 disabled:text-zinc-400 disabled:opacity-40 disabled:cursor-not-allowed transition-all select-none shadow-sm cursor-pointer"
+                className="flex items-center gap-2 px-4 h-10 bg-zinc-100 hover:bg-zinc-200 disabled:hover:bg-zinc-100 border border-zinc-200 rounded-xl text-xs font-bold tracking-wide text-zinc-700 disabled:text-zinc-400 disabled:opacity-40 disabled:cursor-not-allowed transition-all select-none shadow-sm cursor-pointer"
               >
                 <FiFilter className="w-3.5 h-3.5" />
                 <span className="hidden sm:inline">Filter</span>
                 {activeTab === "explore" && activeFiltersCount > 0 && (
-                  <span className="bg-zinc-900 text-white text-[9px] font-black px-1.5 py-0.5 rounded-full">
+                  <span className="bg-zinc-900 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full">
                     {activeFiltersCount}
                   </span>
                 )}
@@ -355,7 +354,7 @@ const Discover = () => {
                   </div>
                   <button
                     onClick={() => setFilters({ ...DEFAULT_FILTERS })}
-                    className="px-8 py-2.5 bg-zinc-900 text-white text-[10px] font-black uppercase tracking-widest rounded-full hover:bg-zinc-800 transition-all cursor-pointer shadow-sm"
+                    className="px-8 py-2.5 bg-zinc-900 text-white text-xs font-bold tracking-wide rounded-full hover:bg-zinc-800 transition-all cursor-pointer shadow-sm"
                   >
                     Clear all filters
                   </button>
@@ -375,14 +374,14 @@ const Discover = () => {
                     <FiFilter size={24} />
                   </div>
                   <div className="text-center space-y-2 max-w-sm">
-                    <h3 className="text-xl font-bold text-zinc-900 tracking-tight">AI Matching Offline</h3>
+                    <h3 className="text-xl font-bold text-zinc-900 tracking-tight">Matching Offline</h3>
                     <p className="text-zinc-600 text-xs leading-relaxed">{matchesError}</p>
                   </div>
                   <button
                     onClick={() => refetchMatches()}
-                    className="px-8 py-2.5 bg-zinc-900 text-white text-[10px] font-black uppercase tracking-widest rounded-full hover:bg-zinc-800 transition-all cursor-pointer shadow-sm"
+                    className="px-8 py-2.5 bg-zinc-900 text-white text-xs font-bold tracking-wide rounded-full hover:bg-zinc-800 transition-all cursor-pointer shadow-sm"
                   >
-                    Retry Calculation
+                    Retry calculation
                   </button>
                 </div>
               ) : matchUsers.length > 0 ? (
@@ -409,16 +408,16 @@ const Discover = () => {
                     </span>
                   </div>
                   <div className="text-center space-y-2">
-                    <h2 className="text-xl font-bold text-zinc-900 tracking-tight">Neural Matching Locked</h2>
-                    <p className="text-zinc-500 text-[11px] font-medium max-w-sm leading-relaxed">
-                      Please complete your profile details (Role, Bio, Skills, and Experience) so our Gemini neural engine can synthesize your compatibility maps.
+                    <h2 className="text-xl font-bold text-zinc-900 tracking-tight">Recommendations Locked</h2>
+                    <p className="text-zinc-500 text-xs font-medium max-w-sm leading-relaxed">
+                      Please complete your profile details (Role, Bio, Skills, and Experience) so our Gemini-powered recommendation system can synthesize your suggestions.
                     </p>
                   </div>
                   <button
                     onClick={() => navigate(`/profile/${user?.username}`)}
-                    className="px-8 py-2.5 bg-zinc-900 text-white text-[10px] font-black uppercase tracking-widest rounded-full hover:bg-zinc-800 transition-all cursor-pointer shadow-sm"
+                    className="px-8 py-2.5 bg-zinc-900 text-white text-xs font-bold tracking-wide rounded-full hover:bg-zinc-800 transition-all cursor-pointer shadow-sm"
                   >
-                    Complete Profile Now
+                    Complete profile now
                   </button>
                 </div>
               )
@@ -434,7 +433,7 @@ const Discover = () => {
                   setPage(prev => Math.max(1, prev - 1));
                   window.scrollTo({ top: 0, behavior: 'smooth' });
                 }}
-                className="flex items-center gap-2 px-4 py-2.5 bg-zinc-100 border border-zinc-200 rounded-xl text-[10px] font-black uppercase tracking-[0.15em] text-zinc-700 hover:text-zinc-900 hover:bg-zinc-200 disabled:opacity-30 disabled:hover:bg-zinc-100 disabled:hover:text-zinc-400 transition-all select-none w-full sm:w-auto justify-center"
+                className="flex items-center gap-2 px-4 py-2.5 bg-zinc-100 border border-zinc-200 rounded-xl text-xs font-bold tracking-wide text-zinc-700 hover:text-zinc-900 hover:bg-zinc-200 disabled:opacity-30 disabled:hover:bg-zinc-100 disabled:hover:text-zinc-400 transition-all select-none w-full sm:w-auto justify-center"
               >
                 <FiChevronLeft className="w-3.5 h-3.5" />
                 <span>Previous</span>
@@ -473,7 +472,7 @@ const Discover = () => {
                   setPage(prev => Math.min(totalPages, prev + 1));
                   window.scrollTo({ top: 0, behavior: 'smooth' });
                 }}
-                className="flex items-center gap-2 px-4 py-2.5 bg-zinc-100 border border-zinc-200 rounded-xl text-[10px] font-black uppercase tracking-[0.15em] text-zinc-700 hover:text-zinc-900 hover:bg-zinc-200 disabled:opacity-30 disabled:hover:bg-zinc-100 disabled:hover:text-zinc-400 transition-all select-none w-full sm:w-auto justify-center"
+                className="flex items-center gap-2 px-4 py-2.5 bg-zinc-100 border border-zinc-200 rounded-xl text-xs font-bold tracking-wide text-zinc-700 hover:text-zinc-900 hover:bg-zinc-200 disabled:opacity-30 disabled:hover:bg-zinc-100 disabled:hover:text-zinc-400 transition-all select-none w-full sm:w-auto justify-center"
               >
                 <span>Next</span>
                 <FiChevronRight className="w-3.5 h-3.5" />

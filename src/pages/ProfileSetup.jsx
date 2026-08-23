@@ -4,9 +4,8 @@ import { toast } from "react-toastify";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { setLoggedIn } from "../redux/actions/authActions";
-import { FiUser, FiBriefcase, FiTool, FiHeart, FiEdit, FiBookOpen, FiPlus, FiTrash2, FiMapPin, FiLinkedin, FiGithub, FiTwitter, FiLink, FiMail, FiX } from "react-icons/fi";
+import { FiUser, FiBriefcase, FiTool, FiEdit, FiBookOpen, FiPlus, FiTrash2, FiMapPin, FiLinkedin, FiGithub, FiTwitter, FiLink, FiMail, FiX } from "react-icons/fi";
 
-// Material UI Imports
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import LoadingButton from '@mui/lab/LoadingButton';
 import { Select, MenuItem, FormControl, Chip } from '@mui/material';
@@ -183,7 +182,7 @@ const ProfileSetup = () => {
             <div className="space-y-8">
               {/* Name Field */}
               <div className="space-y-3">
-                <label className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-600 ml-1">Full Name</label>
+                <label className="text-xs font-bold text-zinc-700 ml-1">Full Name</label>
                 <div className="relative group">
                   <div className="absolute inset-y-0 left-0 flex items-center pl-4 text-zinc-400 group-focus-within:text-zinc-900 transition-colors">
                     <FiUser size={18} />
@@ -198,12 +197,12 @@ const ProfileSetup = () => {
                     required
                   />
                 </div>
-                {errors.fullName && <p className="text-[10px] text-rose-500 font-bold uppercase tracking-widest mt-2 ml-1">{errors.fullName}</p>}
+                {errors.fullName && <p className="text-xs text-rose-500 font-semibold mt-2 ml-1">{errors.fullName}</p>}
               </div>
 
               {/* Email Field (Disabled) */}
               <div className="space-y-3 opacity-60">
-                <label className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-600 ml-1">Email Address</label>
+                <label className="text-xs font-bold text-zinc-700 ml-1">Email Address</label>
                 <div className="relative group">
                   <div className="absolute inset-y-0 left-0 flex items-center pl-4 text-zinc-400 transition-colors">
                     <FiMail size={18} />
@@ -220,7 +219,7 @@ const ProfileSetup = () => {
 
               {/* Role Select */}
               <div className="space-y-3">
-                <label className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-600 ml-1">Current Role</label>
+                <label className="text-xs font-bold text-zinc-700 ml-1">Current Role</label>
                 <div className="relative group">
                   <div className="absolute inset-y-0 left-0 flex items-center pl-4 text-zinc-400 group-focus-within:text-zinc-900 transition-colors z-10 pointer-events-none">
                     <FiBriefcase size={18} />
@@ -274,13 +273,13 @@ const ProfileSetup = () => {
                     </Select>
                   </FormControl>
                 </div>
-                {errors.role && <p className="text-[10px] text-rose-500 font-bold uppercase tracking-widest mt-2 ml-1">{errors.role}</p>}
+                {errors.role && <p className="text-xs text-rose-500 font-semibold mt-2 ml-1">{errors.role}</p>}
               </div>
 
               {/* Skills Field */}
               <div className="space-y-4">
                 <div className="space-y-3">
-                  <label className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-600 ml-1">Skills</label>
+                  <label className="text-xs font-bold text-zinc-700 ml-1">Skills</label>
                   <div className="relative group">
                     <div className="absolute inset-y-0 left-0 flex items-center pl-4 text-zinc-400 group-focus-within:text-zinc-900 transition-colors">
                       <FiTool size={18} />
@@ -295,11 +294,11 @@ const ProfileSetup = () => {
                     />
                     {skillInput.trim() && (
                       <div className="absolute right-4 inset-y-0 flex items-center">
-                        <span className="text-[8px] font-black uppercase tracking-widest text-zinc-600 bg-zinc-200 px-2 py-1 rounded border border-zinc-300">Press Enter</span>
+                        <span className="text-[10px] font-semibold text-zinc-600 bg-zinc-200 px-2 py-1 rounded border border-zinc-300">Press Enter</span>
                       </div>
                     )}
                   </div>
-                  {errors.skills && <p className="text-[10px] text-rose-500 font-bold uppercase tracking-widest mt-2 ml-1">{errors.skills}</p>}
+                  {errors.skills && <p className="text-xs text-rose-500 font-semibold mt-2 ml-1">{errors.skills}</p>}
                 </div>
 
                 {/* Skill Chips */}
@@ -313,10 +312,10 @@ const ProfileSetup = () => {
                       sx={{
                         bgcolor: '#f4f4f5',
                         color: '#27272a',
-                        fontWeight: 800,
-                        fontSize: '9px',
-                        textTransform: 'uppercase',
-                        letterSpacing: '0.1em',
+                        fontWeight: 600,
+                        fontSize: '11px',
+                        textTransform: 'none',
+                        letterSpacing: 'normal',
                         borderRadius: '6px',
                         border: '1px solid #e4e4e7',
                         height: '32px',
@@ -337,7 +336,7 @@ const ProfileSetup = () => {
                     />
                   ))}
                   {formData.skills.length === 0 && !skillInput && (
-                    <p className="text-[9px] text-zinc-400 font-bold uppercase tracking-widest ml-1 italic">No skills added yet</p>
+                    <p className="text-xs text-zinc-400 font-semibold ml-1 italic">No skills added yet</p>
                   )}
                 </div>
               </div>
@@ -346,13 +345,13 @@ const ProfileSetup = () => {
               <div className="space-y-6 pt-4">
                 <div className="flex items-center justify-between">
                   <div className="flex flex-col">
-                    <label className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-600 ml-1">Experience</label>
-                    <span className="text-[8px] font-black uppercase tracking-[0.1em] text-zinc-400 ml-1 mt-1">(Optional)</span>
+                    <label className="text-xs font-bold text-zinc-700 ml-1">Experience</label>
+                    <span className="text-[10px] font-semibold text-zinc-400 ml-1 mt-1">(Optional)</span>
                   </div>
                   <button
                     type="button"
                     onClick={handleAddExperience}
-                    className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.1em] text-zinc-900 bg-zinc-200 border border-zinc-300 px-4 py-2 rounded-full hover:bg-zinc-300 transition-all"
+                    className="flex items-center gap-2 text-xs font-semibold text-zinc-900 bg-zinc-200 border border-zinc-300 px-4 py-2 rounded-full hover:bg-zinc-300 transition-all"
                   >
                     <FiPlus size={14} /> Add Experience
                   </button>
@@ -370,7 +369,7 @@ const ProfileSetup = () => {
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       <div className="space-y-2">
-                        <label className="text-[9px] font-black uppercase tracking-[0.1em] text-zinc-600 ml-1">Job Role *</label>
+                        <label className="text-xs font-bold text-zinc-600 ml-1">Job Role *</label>
                         <div className="relative">
                           <div className="absolute inset-y-0 left-0 flex items-center pl-4 text-zinc-400">
                             <FiBriefcase size={16} />
@@ -384,11 +383,11 @@ const ProfileSetup = () => {
                             required
                           />
                         </div>
-                        {errors[`experience.${index}.role`] && <p className="text-[9px] text-rose-500 font-bold uppercase mt-1 ml-1">{errors[`experience.${index}.role`]}</p>}
+                        {errors[`experience.${index}.role`] && <p className="text-xs text-rose-500 font-semibold mt-1 ml-1">{errors[`experience.${index}.role`]}</p>}
                       </div>
 
                       <div className="space-y-2">
-                        <label className="text-[9px] font-black uppercase tracking-[0.1em] text-zinc-600 ml-1">Company *</label>
+                        <label className="text-xs font-bold text-zinc-600 ml-1">Company *</label>
                         <input
                           type="text"
                           placeholder="e.g. Google"
@@ -397,14 +396,14 @@ const ProfileSetup = () => {
                           onChange={(e) => handleExperienceChange(index, 'company', e.target.value)}
                           required
                         />
-                        {errors[`experience.${index}.company`] && <p className="text-[9px] text-rose-500 font-bold uppercase mt-1 ml-1">{errors[`experience.${index}.company`]}</p>}
+                        {errors[`experience.${index}.company`] && <p className="text-xs text-rose-500 font-semibold mt-1 ml-1">{errors[`experience.${index}.company`]}</p>}
                       </div>
                     </div>
 
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       <div className="space-y-2">
-                        <label className="text-[9px] font-black uppercase tracking-[0.1em] text-zinc-600 ml-1">Location</label>
+                        <label className="text-xs font-bold text-zinc-600 ml-1">Location</label>
                         <div className="relative">
                           <div className="absolute inset-y-0 left-0 flex items-center pl-4 text-zinc-400">
                             <FiMapPin size={16} />
@@ -420,7 +419,7 @@ const ProfileSetup = () => {
                       </div>
 
                       <div className="space-y-2">
-                        <label className="text-[9px] font-black uppercase tracking-[0.1em] text-zinc-600 ml-1">Employment Type</label>
+                        <label className="text-xs font-bold text-zinc-600 ml-1">Employment Type</label>
                         <FormControl fullWidth>
                           <Select
                             value={exp.employmentType}
@@ -461,7 +460,7 @@ const ProfileSetup = () => {
 
                     <div className="grid grid-cols-2 gap-6 pt-2">
                       <div className="space-y-2">
-                        <label className="text-[9px] font-black uppercase tracking-[0.1em] text-zinc-600 ml-1">Start Date *</label>
+                        <label className="text-xs font-bold text-zinc-600 ml-1">Start Date *</label>
                         <DatePicker
                           views={['year', 'month']}
                           value={exp.startDate ? dayjs(exp.startDate) : null}
@@ -484,10 +483,10 @@ const ProfileSetup = () => {
                             }
                           }}
                         />
-                        {errors[`experience.${index}.startDate`] && <p className="text-[9px] text-rose-500 font-bold uppercase mt-1 ml-1">{errors[`experience.${index}.startDate`]}</p>}
+                        {errors[`experience.${index}.startDate`] && <p className="text-xs text-rose-500 font-semibold mt-1 ml-1">{errors[`experience.${index}.startDate`]}</p>}
                       </div>
                       <div className="space-y-2">
-                        <label className="text-[9px] font-black uppercase tracking-[0.1em] text-zinc-600 ml-1">End Date *</label>
+                        <label className="text-xs font-bold text-zinc-600 ml-1">End Date *</label>
                         <DatePicker
                           views={['year', 'month']}
                           value={exp.endDate ? dayjs(exp.endDate) : null}
@@ -512,7 +511,7 @@ const ProfileSetup = () => {
                             }
                           }}
                         />
-                        {errors[`experience.${index}.endDate`] && <p className="text-[9px] text-rose-500 font-bold uppercase mt-1 ml-1">{errors[`experience.${index}.endDate`]}</p>}
+                        {errors[`experience.${index}.endDate`] && <p className="text-xs text-rose-500 font-semibold mt-1 ml-1">{errors[`experience.${index}.endDate`]}</p>}
 
                         <div className="flex items-center gap-3 !mt-4 ml-1">
                           <input
@@ -522,7 +521,7 @@ const ProfileSetup = () => {
                             checked={exp.currentlyWorking}
                             onChange={(e) => handleExperienceChange(index, 'currentlyWorking', e.target.checked)}
                           />
-                          <label htmlFor={`curr-${index}`} className="text-[9px] font-black uppercase tracking-widest text-zinc-600 cursor-pointer hover:text-zinc-900 transition-colors">Currently working here</label>
+                          <label htmlFor={`curr-${index}`} className="text-xs font-semibold text-zinc-600 cursor-pointer hover:text-zinc-900 transition-colors">Currently working here</label>
                         </div>
                       </div>
                     </div>
@@ -532,7 +531,7 @@ const ProfileSetup = () => {
                 {formData.experience.length === 0 && (
                   <div className="py-12 border-2 border-dashed border-zinc-300 rounded-lg flex flex-col items-center justify-center text-zinc-500">
                     <FiBriefcase size={32} className="mb-4 opacity-40 text-zinc-400" />
-                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-500">No Experience Added</p>
+                    <p className="text-xs font-semibold text-zinc-500">No Experience Added</p>
                   </div>
                 )}
               </div>
@@ -541,13 +540,13 @@ const ProfileSetup = () => {
               <div className="space-y-6 pt-4">
                 <div className="flex items-center justify-between">
                   <div className="flex flex-col">
-                    <label className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-600 ml-1">Education</label>
-                    <span className="text-[8px] font-black uppercase tracking-[0.1em] text-zinc-400 ml-1 mt-1">(Optional)</span>
+                    <label className="text-xs font-bold text-zinc-700 ml-1">Education</label>
+                    <span className="text-[10px] font-semibold text-zinc-400 ml-1 mt-1">(Optional)</span>
                   </div>
                   <button
                     type="button"
                     onClick={handleAddEducation}
-                    className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.1em] text-zinc-900 bg-zinc-200 border border-zinc-300 px-4 py-2 rounded-full hover:bg-zinc-300 transition-all"
+                    className="flex items-center gap-2 text-xs font-semibold text-zinc-900 bg-zinc-200 border border-zinc-300 px-4 py-2 rounded-full hover:bg-zinc-300 transition-all"
                   >
                     <FiPlus size={14} /> Add Education
                   </button>
@@ -565,7 +564,7 @@ const ProfileSetup = () => {
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       <div className="space-y-2">
-                        <label className="text-[9px] font-black uppercase tracking-[0.1em] text-zinc-600 ml-1">Degree *</label>
+                        <label className="text-xs font-bold text-zinc-600 ml-1">Degree *</label>
                         <div className="relative">
                           <div className="absolute inset-y-0 left-0 flex items-center pl-4 text-zinc-400">
                             <FiBookOpen size={16} />
@@ -579,11 +578,11 @@ const ProfileSetup = () => {
                             required
                           />
                         </div>
-                        {errors[`education.${index}.degree`] && <p className="text-[9px] text-rose-500 font-bold uppercase mt-1 ml-1">{errors[`education.${index}.degree`]}</p>}
+                        {errors[`education.${index}.degree`] && <p className="text-xs text-rose-500 font-semibold mt-1 ml-1">{errors[`education.${index}.degree`]}</p>}
                       </div>
 
                       <div className="space-y-2">
-                        <label className="text-[9px] font-black uppercase tracking-[0.1em] text-zinc-600 ml-1">Field of Study</label>
+                        <label className="text-xs font-bold text-zinc-600 ml-1">Field of Study</label>
                         <input
                           type="text"
                           placeholder="e.g. Computer Science"
@@ -595,7 +594,7 @@ const ProfileSetup = () => {
                     </div>
 
                     <div className="space-y-2">
-                      <label className="text-[9px] font-black uppercase tracking-[0.1em] text-zinc-600 ml-1">College *</label>
+                      <label className="text-xs font-bold text-zinc-600 ml-1">College *</label>
                       <input
                         type="text"
                         placeholder="Enter college name"
@@ -604,12 +603,12 @@ const ProfileSetup = () => {
                         onChange={(e) => handleEducationChange(index, 'college', e.target.value)}
                         required
                       />
-                      {errors[`education.${index}.college`] && <p className="text-[9px] text-rose-500 font-bold uppercase mt-1 ml-1">{errors[`education.${index}.college`]}</p>}
+                      {errors[`education.${index}.college`] && <p className="text-xs text-rose-500 font-semibold mt-1 ml-1">{errors[`education.${index}.college`]}</p>}
                     </div>
 
                     <div className="grid grid-cols-2 gap-6 pt-2">
                       <div className="space-y-2">
-                        <label className="text-[9px] font-black uppercase tracking-[0.1em] text-zinc-600 ml-1">Start Date *</label>
+                        <label className="text-xs font-bold text-zinc-600 ml-1">Start Date *</label>
                         <DatePicker
                           views={['year', 'month']}
                           value={edu.startYear ? dayjs(edu.startYear) : null}
@@ -632,10 +631,10 @@ const ProfileSetup = () => {
                             }
                           }}
                         />
-                        {errors[`education.${index}.startYear`] && <p className="text-[9px] text-rose-500 font-bold uppercase mt-1 ml-1">{errors[`education.${index}.startYear`]}</p>}
+                        {errors[`education.${index}.startYear`] && <p className="text-xs text-rose-500 font-semibold mt-1 ml-1">{errors[`education.${index}.startYear`]}</p>}
                       </div>
                       <div className="space-y-2">
-                        <label className="text-[9px] font-black uppercase tracking-[0.1em] text-zinc-600 ml-1">End Date *</label>
+                        <label className="text-xs font-bold text-zinc-600 ml-1">End Date *</label>
                         <DatePicker
                           views={['year', 'month']}
                           value={edu.endYear ? dayjs(edu.endYear) : null}
@@ -658,7 +657,7 @@ const ProfileSetup = () => {
                             }
                           }}
                         />
-                        {errors[`education.${index}.endYear`] && <p className="text-[9px] text-rose-500 font-bold uppercase mt-1 ml-1">{errors[`education.${index}.endYear`]}</p>}
+                        {errors[`education.${index}.endYear`] && <p className="text-xs text-rose-500 font-semibold mt-1 ml-1">{errors[`education.${index}.endYear`]}</p>}
                       </div>
                     </div>
                   </div>
@@ -667,14 +666,14 @@ const ProfileSetup = () => {
                 {formData.education.length === 0 && (
                   <div className="py-12 border-2 border-dashed border-zinc-300 rounded-lg flex flex-col items-center justify-center text-zinc-500">
                     <FiBookOpen size={32} className="mb-4 opacity-40 text-zinc-400" />
-                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-500">No Education Added</p>
+                    <p className="text-xs font-semibold text-zinc-500">No Education Added</p>
                   </div>
                 )}
               </div>
 
               {/* Social Links Section */}
               <div className="space-y-6 pt-4">
-                <label className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-600 ml-1">Social Presence</label>
+                <label className="text-xs font-bold text-zinc-700 ml-1">Social Presence</label>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {/* LinkedIn */}
                   <div className="relative group">
@@ -694,7 +693,7 @@ const ProfileSetup = () => {
                         if (errors['socialLinks.linkedin']) setErrors({ ...errors, 'socialLinks.linkedin': '' });
                       }}
                     />
-                    {errors['socialLinks.linkedin'] && <p className="text-[9px] text-rose-500 font-bold uppercase mt-2 ml-1">{errors['socialLinks.linkedin']}</p>}
+                    {errors['socialLinks.linkedin'] && <p className="text-xs text-rose-500 font-semibold mt-2 ml-1">{errors['socialLinks.linkedin']}</p>}
                   </div>
 
                   {/* GitHub */}
@@ -715,7 +714,7 @@ const ProfileSetup = () => {
                         if (errors['socialLinks.github']) setErrors({ ...errors, 'socialLinks.github': '' });
                       }}
                     />
-                    {errors['socialLinks.github'] && <p className="text-[9px] text-rose-500 font-bold uppercase mt-2 ml-1">{errors['socialLinks.github']}</p>}
+                    {errors['socialLinks.github'] && <p className="text-xs text-rose-500 font-semibold mt-2 ml-1">{errors['socialLinks.github']}</p>}
                   </div>
 
                   {/* Twitter */}
@@ -736,7 +735,7 @@ const ProfileSetup = () => {
                         if (errors['socialLinks.twitter']) setErrors({ ...errors, 'socialLinks.twitter': '' });
                       }}
                     />
-                    {errors['socialLinks.twitter'] && <p className="text-[9px] text-rose-500 font-bold uppercase mt-2 ml-1">{errors['socialLinks.twitter']}</p>}
+                    {errors['socialLinks.twitter'] && <p className="text-xs text-rose-500 font-semibold mt-2 ml-1">{errors['socialLinks.twitter']}</p>}
                   </div>
 
                   {/* Portfolio */}
@@ -757,14 +756,14 @@ const ProfileSetup = () => {
                         if (errors['socialLinks.portfolio']) setErrors({ ...errors, 'socialLinks.portfolio': '' });
                       }}
                     />
-                    {errors['socialLinks.portfolio'] && <p className="text-[9px] text-rose-500 font-bold uppercase mt-2 ml-1">{errors['socialLinks.portfolio']}</p>}
+                    {errors['socialLinks.portfolio'] && <p className="text-xs text-rose-500 font-semibold mt-2 ml-1">{errors['socialLinks.portfolio']}</p>}
                   </div>
                 </div>
               </div>
 
               {/* Bio Textarea */}
               <div className="space-y-3">
-                <label className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-600 ml-1">Bio</label>
+                <label className="text-xs font-bold text-zinc-700 ml-1">Bio</label>
                 <div className="relative group">
                   <div className="absolute top-4 left-4 text-zinc-400 group-focus-within:text-zinc-900 transition-colors">
                     <FiEdit size={18} />
@@ -778,7 +777,7 @@ const ProfileSetup = () => {
                     required
                   />
                 </div>
-                {errors.bio && <p className="text-[10px] text-rose-500 font-bold uppercase tracking-widest mt-2 ml-1">{errors.bio}</p>}
+                {errors.bio && <p className="text-xs text-rose-500 font-semibold mt-2 ml-1">{errors.bio}</p>}
               </div>
             </div>
 
@@ -787,7 +786,7 @@ const ProfileSetup = () => {
               <button
                 type="button"
                 onClick={() => navigate(-1)}
-                className="flex-1 py-3 bg-zinc-100 border border-zinc-300 text-zinc-700 text-[11px] font-black tracking-widest rounded-lg hover:bg-zinc-200 hover:text-zinc-900 transition-all"
+                className="flex-1 py-3 bg-zinc-100 border border-zinc-300 text-zinc-700 text-xs font-semibold rounded-lg hover:bg-zinc-200 hover:text-zinc-900 transition-all"
               >
                 Cancel
               </button>

@@ -22,7 +22,7 @@ const SkillAutocomplete = ({ value, onChange }) => {
 
     return (
         <div className="space-y-3">
-            <label className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-500 ml-1 block">
+            <label className="text-xs font-bold text-zinc-500 ml-1 block">
                 Skills
             </label>
             <Autocomplete

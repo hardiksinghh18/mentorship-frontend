@@ -42,9 +42,9 @@ const lightTheme = createTheme({
       styleOverrides: {
         root: {
           borderRadius: '8px',
-          textTransform: 'uppercase',
-          fontWeight: 900,
-          letterSpacing: '0.4em',
+          textTransform: 'none',
+          fontWeight: 600,
+          letterSpacing: 'normal',
         }
       }
     },

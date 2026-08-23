@@ -195,13 +195,13 @@ const ChatSection = () => {
           </div>
 
           <div className="space-y-6 flex-1">
-            <h3 className="text-[9px] font-black uppercase tracking-[0.2em] text-zinc-400 ml-1">Recent Activity</h3>
+            <h3 className="text-xs font-semibold text-zinc-400 ml-1">Recent Activity</h3>
             
             <div className="space-y-1.5">
               {filteredChats.length === 0 ? (
                 <div className="py-10 px-4 border border-dashed border-zinc-200 rounded-3xl text-center">
-                  <p className="text-zinc-400 text-[10px] font-black uppercase tracking-widest">
-                    {allChats.length === 0 ? "No active synchronization" : "No results"}
+                  <p className="text-zinc-400 text-xs font-semibold">
+                    {allChats.length === 0 ? "No active conversations" : "No results"}
                   </p>
                 </div>
               ) : (

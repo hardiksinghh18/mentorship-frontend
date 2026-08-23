@@ -103,18 +103,16 @@ const Profile = () => {
                     {/* Skills Sidebar Section */}
                     {profile?.skills?.length > 0 && (
                         <div className="bg-zinc-50 rounded-[2rem] border border-zinc-200 p-8 shadow-sm">
-                            <h2 className="text-[10px] font-black uppercase tracking-[0.4em] text-zinc-400 block mb-8">Skills</h2>
+                            <h2 className="text-xs font-bold text-zinc-400 block mb-6">Skills</h2>
                             <div className="flex flex-wrap gap-2">
                                 {profile.skills.map((skill, index) => (
-                                    <span key={index} className="px-4 py-2 bg-zinc-100 border border-zinc-200 rounded-full text-[11px] font-black uppercase tracking-widest text-zinc-700">
+                                    <span key={index} className="px-4 py-2 bg-zinc-100 border border-zinc-200 rounded-full text-xs font-semibold text-zinc-700">
                                         {skill}
                                     </span>
                                 ))}
                             </div>
                         </div>
                     )}
-
-
                 </div>
             </div>
         </div>

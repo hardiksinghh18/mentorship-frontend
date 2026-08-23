@@ -1,6 +1,6 @@
 export const coreFeatures = [
     {
-        title: "Smart Matchmaking",
+        title: "Intelligent Matching",
         desc: "Our algorithms rank users based on overlapping skills to help you find the absolute perfect mentor or mentee.",
         color: "from-purple-500",
         tilt: "rotate-2",

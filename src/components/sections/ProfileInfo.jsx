@@ -1,5 +1,6 @@
 import React from 'react';
-import { FiBookOpen, FiSettings, FiCheck, FiUser, FiLinkedin, FiGithub, FiTwitter, FiLink, FiUserPlus, FiClock } from 'react-icons/fi';
+import { FiSettings, FiCheck, FiUser, FiLinkedin, FiGithub, FiTwitter, FiLink, FiUserPlus, FiClock } from 'react-icons/fi';
+import { FaUniversity } from 'react-icons/fa';
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
 import relativeTime from 'dayjs/plugin/relativeTime';
@@ -201,7 +202,7 @@ const ProfileInfo = ({ profile, isOwnProfile, onSendRequest, currentUserId, conn
                         <div className="pt-2">
                             <Link 
                                 to={`/profile/${profile?.username}/connections`}
-                                className="text-[10px] font-black text-zinc-500 hover:text-zinc-900 transition-all uppercase tracking-[0.3em] border-b border-zinc-200 hover:border-zinc-900 pb-1 w-fit"
+                                className="text-xs font-semibold text-zinc-500 hover:text-zinc-900 transition-all border-b border-zinc-200 hover:border-zinc-900 pb-1 w-fit"
                             >
                                 {connectionCount} {connectionCount === 1 ? 'Connection' : 'Connections'}
                             </Link>
@@ -228,13 +229,13 @@ const ProfileInfo = ({ profile, isOwnProfile, onSendRequest, currentUserId, conn
             <div className="space-y-12">
               {experienceGroups.map((group, gIndex) => (
                 <div key={gIndex} className="flex gap-6 relative">
-                  <div className="flex-shrink-0 w-14 h-14 bg-zinc-100 border border-zinc-200 rounded-2xl flex items-center justify-center text-zinc-700 text-xl font-black">
+                  <div className="flex-shrink-0 w-12 h-12 bg-zinc-100 border border-zinc-200 rounded-xl flex items-center justify-center text-zinc-700 text-lg font-bold">
                     {group.company.charAt(0)}
                   </div>
                   <div className="flex-1 space-y-6">
                     <div>
                       <h3 className="text-sm font-black text-zinc-900 tracking-tight">{group.company}</h3>
-                      <div className="flex items-center gap-2 text-xs font-bold text-zinc-500 mt-1 uppercase tracking-wider">
+                      <div className="flex items-center gap-2 text-xs font-semibold text-zinc-500 mt-1 tracking-wide">
                         <span>{group.totalDuration}</span>
                         {group.location && (
                           <><span className="text-zinc-400">•</span><span>{group.location}</span></>
@@ -252,7 +253,7 @@ const ProfileInfo = ({ profile, isOwnProfile, onSendRequest, currentUserId, conn
                           />
                           <div className="space-y-1 flex-1">
                              <h4 className="text-xs font-black text-zinc-900 tracking-tight leading-none">{role.role}</h4>
-                            <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs font-bold text-zinc-600 uppercase tracking-widest">
+                            <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs font-semibold text-zinc-600 tracking-wide">
                               <span>{role.employmentType}</span>
                               <span className="text-zinc-800">•</span>
                               <span className="text-zinc-500">
@@ -279,15 +280,15 @@ const ProfileInfo = ({ profile, isOwnProfile, onSendRequest, currentUserId, conn
             <div className="space-y-8">
               {profile.education.map((edu, index) => (
                 <div key={index} className="flex gap-6 group/edu">
-                  <div className="flex-shrink-0 w-14 h-14 bg-zinc-100 border border-zinc-200 rounded-2xl flex items-center justify-center text-zinc-700 group-hover/edu:bg-zinc-200 transition-all duration-500">
-                    <FiBookOpen size={24} />
+                  <div className="flex-shrink-0 w-12 h-12 bg-zinc-100 border border-zinc-200 rounded-xl flex items-center justify-center text-zinc-700 group-hover/edu:bg-zinc-200 transition-all duration-500">
+                    <FaUniversity size={18} />
                   </div>
                   <div className="space-y-1">
                     <h3 className="text-sm font-black text-zinc-900 tracking-tight leading-none">
                       {edu.degree} {edu.field ? `in ${edu.field}` : ''}
                     </h3>
                     <p className="text-zinc-500 font-bold text-sm tracking-tight">{edu.college}</p>
-                    <div className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400 pt-1">
+                    <div className="text-xs font-medium text-zinc-500 pt-1">
                       {edu.startYear ? dayjs(edu.startYear).format('YYYY') : 'N/A'} — {edu.endYear ? dayjs(edu.endYear).format('YYYY') : 'Present'}
                     </div>
                   </div>
