@@ -1,6 +1,6 @@
 import React from "react";
 import { useFormContext } from "react-hook-form";
-import { CourseFormInput, GeneralDetailsFormProps } from "../../types/course";
+import { CourseFormInput, GeneralDetailsFormProps } from "../../../types/roadmap";
 
 const GeneralDetailsForm = ({ onNext }: GeneralDetailsFormProps) => {
   const {

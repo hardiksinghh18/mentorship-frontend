@@ -1,7 +1,7 @@
 import React from "react";
 import { HiCalendar, HiCheckCircle } from "react-icons/hi";
 import dayjs from "dayjs";
-import { LiveSessionCardProps } from "../../types/course";
+import { LiveSessionCardProps } from "../../../types/roadmap";
 
 const LiveSessionCard = ({
   meetingLink,

@@ -73,8 +73,8 @@ const Sidebar = () => {
                     <NavItem to="/" icon={RiHomeLine} filledIcon={RiHomeFill} label="Home" active={location.pathname === "/"} />
                     {isLoggedIn && (
                         <>
+                            <NavItem to="/roadmaps" icon={RiBook3Line} filledIcon={RiBook3Fill} label="Roadmaps" active={location.pathname.startsWith("/roadmaps")} />
                             <NavItem to="/explore" icon={RiSearchLine} filledIcon={RiSearchFill} label="Explore" active={location.pathname === "/explore"} />
-                            <NavItem to="/courses" icon={RiBook3Line} filledIcon={RiBook3Fill} label="Roadmaps" active={location.pathname.startsWith("/courses")} />
                             <NavItem to="/messages" icon={RiMessage3Line} filledIcon={RiMessage3Fill} label="Chats" active={location.pathname.startsWith("/messages")} />
                         </>
                     )}
@@ -112,8 +112,8 @@ const Sidebar = () => {
                 <div className="md:hidden fixed bottom-6 left-1/2 -translate-x-1/2 w-[90%] z-[100] bg-white/95 backdrop-blur-2xl border border-zinc-200 rounded-2xl shadow-2xl transition-all duration-300">
                     <div className="flex justify-around items-center py-4">
                         <Link to="/" className={`p-2 ${location.pathname === "/" ? 'text-zinc-900' : 'text-zinc-500'}`}><RiHomeFill size={20} /></Link>
+                        <Link to="/roadmaps" className={`p-2 ${location.pathname.startsWith("/roadmaps") ? 'text-zinc-900' : 'text-zinc-500'}`}><RiBook3Fill size={20} /></Link>
                         <Link to="/explore" className={`p-2 ${location.pathname === "/explore" ? 'text-zinc-900' : 'text-zinc-500'}`}><RiSearchFill size={20} /></Link>
-                        <Link to="/courses" className={`p-2 ${location.pathname.startsWith("/courses") ? 'text-zinc-900' : 'text-zinc-500'}`}><RiBook3Fill size={20} /></Link>
                         <Link to="/messages" className={`p-2 ${location.pathname.startsWith("/messages") ? 'text-zinc-900' : 'text-zinc-500'}`}><RiMessage3Fill size={20} /></Link>
                         <Link to={`/profile/${user.username}`} className={`p-2 ${location.pathname.startsWith("/profile") ? 'text-zinc-900' : 'text-zinc-500'}`}><FaUser size={20} /></Link>
                     </div>

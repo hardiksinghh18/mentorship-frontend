@@ -1,6 +1,6 @@
 import React from "react";
 import { HiLink } from "react-icons/hi";
-import { ActiveModuleViewerProps } from "../../types/course";
+import { ActiveModuleViewerProps } from "../../../types/roadmap";
 
 const ActiveModuleViewer = ({ module }: ActiveModuleViewerProps) => {
   return (
