@@ -28,9 +28,9 @@ import ChatDM from './components/sections/ChatDM';
 
 import Features from './pages/Features';
 import UserConnections from './pages/UserConnections';
-import CoursesList from './pages/CoursesList';
-import CourseCreate from './pages/CourseCreate';
-import CourseView from './pages/CourseView';
+import RoadmapList from './pages/roadmaps/RoadmapList';
+import RoadmapCreate from './pages/roadmaps/RoadmapCreate';
+import RoadmapView from './pages/roadmaps/RoadmapView';
 
 function App() {
   const dispatch = useDispatch();
@@ -79,10 +79,10 @@ function App() {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/features" element={<Features />} />
+            <Route path="/roadmaps" element={<RoadmapList />} />
             <Route path="/explore" element={<Discover />} />
-            <Route path="/courses" element={<CoursesList />} />
-            <Route path="/courses/create" element={<CourseCreate />} />
-            <Route path="/courses/:id" element={<CourseView />} />
+            <Route path="/roadmaps/create" element={<RoadmapCreate />} />
+            <Route path="/roadmaps/:id" element={<RoadmapView />} />
             <Route path="/messages" element={<ChatSection />} />
             <Route path="/messages/:id" element={<ChatDM />} />
             <Route path="/profile/:username" element={<Profile />} />

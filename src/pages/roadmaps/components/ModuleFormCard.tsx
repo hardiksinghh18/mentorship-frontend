@@ -1,8 +1,8 @@
 import React from "react";
 import { useFieldArray } from "react-hook-form";
 import { HiTrash, HiPlus } from "react-icons/hi";
-import FormDateTimePicker from "../common/FormDateTimePicker";
-import { ModuleFormCardProps } from "../../types/course";
+import FormDateTimePicker from "../../../components/common/FormDateTimePicker";
+import { ModuleFormCardProps } from "../../../types/roadmap";
 
 const ModuleFormCard = ({
   index,

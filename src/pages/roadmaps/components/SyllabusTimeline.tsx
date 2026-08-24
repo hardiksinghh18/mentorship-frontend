@@ -1,6 +1,6 @@
 import React from "react";
 import { HiCheckCircle } from "react-icons/hi";
-import { SyllabusTimelineProps } from "../../types/course";
+import { SyllabusTimelineProps } from "../../../types/roadmap";
 
 const SyllabusTimeline = ({
   modules,

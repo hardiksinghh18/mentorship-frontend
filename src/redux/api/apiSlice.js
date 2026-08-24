@@ -89,7 +89,18 @@ export const apiSlice = createApi({
 
     // Courses & Syllabus
     getCourses: builder.query({
-      query: () => '/api/courses',
+      query: (params) => {
+        const urlParams = new URLSearchParams();
+        if (params) {
+          Object.entries(params).forEach(([key, val]) => {
+            if (val !== undefined && val !== null && val !== '') {
+              urlParams.append(key, String(val));
+            }
+          });
+        }
+        const queryString = urlParams.toString();
+        return `/api/courses${queryString ? `?${queryString}` : ''}`;
+      },
       providesTags: ['Courses'],
     }),
 

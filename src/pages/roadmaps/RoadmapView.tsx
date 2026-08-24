@@ -1,27 +1,28 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { HiArrowLeft, HiSparkles, HiCheckCircle, HiUserAdd, HiClock } from "react-icons/hi";
+import { HiSparkles, HiUserAdd } from "react-icons/hi";
+import { FiClock, FiLock } from "react-icons/fi";
 import { toast } from "react-toastify";
-import SyllabusTimeline from "../components/courses/SyllabusTimeline";
-import ActiveModuleViewer from "../components/courses/ActiveModuleViewer";
-import LiveSessionCard from "../components/courses/LiveSessionCard";
-import { AuthState } from "../types/course";
+import SyllabusTimeline from "./components/SyllabusTimeline";
+import ActiveModuleViewer from "./components/ActiveModuleViewer";
+import LiveSessionCard from "./components/LiveSessionCard";
+import RoadmapViewHeader from "./components/RoadmapViewHeader";
+import { AuthState } from "../../types/roadmap";
 import {
   useGetCourseDetailsQuery,
   useRequestEnrollmentMutation,
   useGetEnrollmentRequestsQuery,
   useManageEnrollmentRequestMutation,
   useToggleModuleCompletionMutation,
-} from "../redux/api/apiSlice";
+} from "../../redux/api/apiSlice";
 
-const CourseView: React.FC = () => {
+const RoadmapView: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const { isLoggedIn, user: authUser } = useSelector((state: AuthState) => state.auth);
 
   const [activeModuleIndex, setActiveModuleIndex] = useState<number>(0);
 
-  // RTK Query course detail hook
   const {
     data: detailData,
     isLoading: isDetailsLoading,
@@ -34,17 +35,14 @@ const CourseView: React.FC = () => {
 
   const isCreator = course && authUser && course.creatorId === authUser.id;
 
-  // Fetch pending join requests only for creators
   const { data: joinRequests = [] } = useGetEnrollmentRequestsQuery(id, {
     skip: !isCreator,
   });
 
-  // Action mutations
   const [requestEnrollment, { isLoading: isJoinRequesting }] = useRequestEnrollmentMutation();
   const [manageEnrollmentRequest] = useManageEnrollmentRequestMutation();
   const [toggleModuleCompletion] = useToggleModuleCompletionMutation();
 
-  // Handle join requests
   const handleJoinRequest = async () => {
     if (!isLoggedIn) {
       toast.info("Please login to request joining this track");
@@ -94,7 +92,7 @@ const CourseView: React.FC = () => {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen space-y-4">
         <span className="text-zinc-500 text-sm font-medium">Roadmap track not found</span>
-        <Link to="/courses" className="text-accent font-bold hover:underline">Back to Roadmaps</Link>
+        <Link to="/roadmaps" className="text-accent font-bold hover:underline">Back to Roadmaps</Link>
       </div>
     );
   }
@@ -106,84 +104,88 @@ const CourseView: React.FC = () => {
 
   // Render variables for access guards
   const isEnrolled = enrollmentStatus === "accepted" || isCreator;
-
   return (
     <div className="min-h-screen bg-white animate-in fade-in duration-500">
       {/* Header banner */}
-      <div className="border-b border-zinc-200 bg-zinc-50/50 py-8">
-        <div className="max-w-6xl mx-auto px-6 md:px-12 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
-          <div className="space-y-1">
-            <Link to="/courses" className="flex items-center gap-1.5 text-xs text-zinc-500 hover:text-zinc-900 transition-colors font-semibold mb-2">
-              <HiArrowLeft /> Back to Courses
-            </Link>
-            <span className="text-xs font-semibold text-accent">{course.duration || `${course.durationValue} ${course.durationUnit}`}</span>
-            <h1 className="text-2xl md:text-3xl font-black tracking-tighter text-zinc-900 mt-1">{course.title}</h1>
-            
-            {isEnrolled && (
-              <div className="pt-2 flex items-center gap-3 max-w-sm">
-                <div className="flex-1 h-1.5 rounded-full bg-zinc-200/80 overflow-hidden">
-                  <div 
-                    className="h-full bg-accent rounded-full transition-all duration-500" 
-                    style={{ width: `${progressPercent}%` }}
-                  />
-                </div>
-                <span className="text-xs font-semibold text-zinc-500 shrink-0">
-                  {progressPercent}% Complete ({completedCount}/{totalModules} Lessons)
-                </span>
-              </div>
-            )}
-          </div>
-          <div className="flex items-center gap-3">
-            <div className="text-right">
-              <div className="text-xs font-semibold text-zinc-400">Track Lead</div>
-              <div className="text-sm font-bold text-zinc-900 mt-0.5">{course.creator ? course.creator.fullName : (course.mentor || 'Anonymous')}</div>
-            </div>
-            <div className="w-10 h-10 rounded-full bg-accent/20 flex items-center justify-center text-accent font-black text-sm">
-              {(course.creator ? course.creator.fullName : (course.mentor || 'U')).charAt(0)}
-            </div>
-          </div>
-        </div>
-      </div>
+      <RoadmapViewHeader
+        course={course}
+        isEnrolled={isEnrolled}
+        progressPercent={progressPercent}
+        completedCount={completedCount}
+        totalModules={totalModules}
+      />
 
       {/* Access Denied / Joining CTAs */}
       {!isEnrolled ? (
-        <div className="max-w-xl mx-auto py-20 px-6 text-center space-y-6">
-          <div className="w-16 h-16 bg-accent/10 text-accent rounded-full flex items-center justify-center mx-auto">
-            <HiSparkles size={28} className="animate-pulse" />
-          </div>
-          <div className="space-y-2">
-            <h2 className="text-xl font-bold tracking-tight text-zinc-900">Syllabus Enrollment Required</h2>
-            <p className="text-zinc-500 text-sm leading-relaxed">
-              This learning track is syllabus-guided. You need to enroll to view learning resources, check off completed days, and join live check-ins.
+        <div className="max-w-6xl mx-auto px-6 md:px-12 py-12 pb-24 animate-in fade-in duration-500">
+          <div className="max-w-2xl mx-auto bg-white border border-zinc-200/80 rounded-[32px] p-10 shadow-[0_8px_30px_rgba(0,0,0,0.015)] flex flex-col items-center text-center">
+            {/* Sparkle Glow Squircle */}
+            <div className="w-12 h-12 bg-violet-50 text-violet-600 rounded-2xl flex items-center justify-center mb-6 shadow-sm border border-violet-100/50">
+              <HiSparkles size={22} className="animate-pulse" />
+            </div>
+            
+            <h2 className="text-xl font-extrabold tracking-tight text-zinc-900 mb-3">Syllabus Enrollment Required</h2>
+            
+            <p className="text-zinc-500 text-sm leading-relaxed max-w-lg mb-6 font-normal">
+              {course.description}
             </p>
-          </div>
 
-          {enrollmentStatus === "pending" ? (
-            <div className="p-4 rounded-xl border border-zinc-200 bg-zinc-50 text-zinc-500 font-semibold text-xs flex items-center justify-center gap-2 max-w-xs mx-auto">
-              <HiClock className="text-amber-500 text-sm" /> Join Request Pending Approval
+            {/* Skills you will learn */}
+            {course.skillsTargeted && course.skillsTargeted.length > 0 && (
+              <div className="w-full pb-6 border-b border-zinc-100">
+                <span className="text-[9px] text-zinc-400 font-bold uppercase tracking-wider block mb-3 text-center">Skills you will learn</span>
+                <div className="flex flex-wrap justify-center gap-1.5">
+                  {course.skillsTargeted.map((skill: string, index: number) => (
+                    <span
+                      key={index}
+                      className="text-[10px] font-bold px-2.5 py-1 rounded-md bg-zinc-50 border border-zinc-200 text-zinc-500 hover:bg-zinc-100 hover:text-zinc-800 transition-colors cursor-default select-none"
+                    >
+                      {skill}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Access CTA Action */}
+            <div className="w-full mt-6">
+              {enrollmentStatus === "pending" ? (
+                <div className="py-3 px-5 rounded-2xl border border-amber-200 bg-amber-50/50 text-amber-800 text-xs font-bold tracking-tight flex items-center justify-center gap-2 max-w-xs mx-auto">
+                  <FiClock className="text-amber-500 text-sm" /> Join Request Pending Approval
+                </div>
+              ) : enrollmentStatus === "declined" ? (
+                <div className="py-3 px-5 rounded-2xl border border-rose-200 bg-rose-50/50 text-rose-800 text-xs font-bold tracking-tight flex items-center justify-center gap-2 max-w-xs mx-auto">
+                  Your request to join was declined.
+                </div>
+              ) : (
+                <button
+                  onClick={handleJoinRequest}
+                  disabled={isJoinRequesting}
+                  className="px-6 py-3 rounded-2xl bg-zinc-950 text-white hover:bg-zinc-800 text-xs font-bold tracking-tight shadow-sm hover:shadow-md hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 flex items-center justify-center gap-2 mx-auto disabled:opacity-50"
+                >
+                  <HiUserAdd size={16} /> Request to Join Study Track
+                </button>
+              )}
             </div>
-          ) : enrollmentStatus === "declined" ? (
-            <div className="p-4 rounded-xl border border-zinc-200 bg-zinc-50 text-rose-500 font-semibold text-xs flex items-center justify-center gap-2 max-w-xs mx-auto">
-              Your request to join was declined.
-            </div>
-          ) : (
-            <button
-              onClick={handleJoinRequest}
-              disabled={isJoinRequesting}
-              className="px-6 py-3 rounded-full bg-accent text-white text-xs font-bold tracking-tight hover:bg-accent/90 active:scale-[0.98] transition-all flex items-center justify-center gap-2 mx-auto shadow-md shadow-accent/10 disabled:opacity-50"
-            >
-              <HiUserAdd size={16} /> Request to Join Study Track
-            </button>
-          )}
+          </div>
 
           {/* Module Syllabus Preview List */}
-          <div className="pt-10 border-t border-zinc-100 text-left">
-            <h3 className="text-xs font-semibold text-zinc-400 uppercase tracking-widest mb-4">Syllabus Overview</h3>
+          <div className="max-w-2xl mx-auto mt-16 pt-10 border-t border-zinc-150 text-left">
+            <div className="text-center mb-6">
+              <span className="text-[10px] text-zinc-400 font-bold uppercase tracking-widest">Syllabus Overview</span>
+            </div>
             <div className="space-y-3">
               {course.modules?.map((mod, idx) => (
-                <div key={idx} className="p-4 rounded-xl border border-zinc-100 bg-zinc-50/50 flex items-center gap-3">
-                  <span className="text-xs font-semibold text-zinc-400">Day {mod.orderIndex || idx + 1}:</span>
-                  <span className="text-xs font-bold text-zinc-800">{mod.title}</span>
+                <div key={idx} className="p-4 rounded-2xl border border-zinc-200/60 bg-white hover:border-zinc-300 transition-all duration-200 flex items-center justify-between group">
+                  <div className="flex items-center gap-3">
+                    <span className="w-6 h-6 rounded-md bg-zinc-100 text-zinc-500 flex items-center justify-center text-[10px] font-mono font-bold border border-zinc-200/40">
+                      {mod.orderIndex || idx + 1}
+                    </span>
+                    <span className="text-xs font-bold text-zinc-850">{mod.title}</span>
+                  </div>
+                  <span className="text-zinc-300 group-hover:text-zinc-500 transition-colors pr-1">
+                    <FiLock className="w-3.5 h-3.5" />
+                  </span>
                 </div>
               ))}
             </div>
@@ -267,4 +269,4 @@ const CourseView: React.FC = () => {
   );
 };
 
-export default CourseView;
+export default RoadmapView;

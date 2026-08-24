@@ -3,19 +3,17 @@ import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useForm, FormProvider } from "react-hook-form";
-import GeneralDetailsForm from "../components/courses/GeneralDetailsForm";
-import SyllabusBuilder from "../components/courses/SyllabusBuilder";
-import { CourseFormInput, AuthState } from "../types/course";
-import { useCreateCourseMutation } from "../redux/api/apiSlice";
+import GeneralDetailsForm from "./components/GeneralDetailsForm";
+import SyllabusBuilder from "./components/SyllabusBuilder";
+import { CourseFormInput, AuthState } from "../../types/roadmap";
+import { useCreateCourseMutation } from "../../redux/api/apiSlice";
 
-const CourseCreate = () => {
+const RoadmapCreate = () => {
   const { isLoggedIn } = useSelector((state: AuthState) => state.auth);
   const navigate = useNavigate();
-  
-  // RTK Query mutation hook
+
   const [createCourse, { isLoading: publishing }] = useCreateCourseMutation();
 
-  // Role Guard
   useEffect(() => {
     if (!isLoggedIn) {
       toast.error("Please login to create a course.");
@@ -23,7 +21,6 @@ const CourseCreate = () => {
     }
   }, [isLoggedIn, navigate]);
 
-  // Form State
   const [step, setStep] = useState<number>(1);
 
   const methods = useForm<CourseFormInput>({
@@ -50,7 +47,7 @@ const CourseCreate = () => {
     try {
       await createCourse(data).unwrap();
       toast.success("Course and roadmap published successfully!");
-      navigate("/courses");
+      navigate("/roadmaps");
     } catch (err: any) {
       console.error("Error creating course:", err);
       toast.error(err.data?.message || "Failed to publish course");
@@ -101,4 +98,4 @@ const CourseCreate = () => {
   );
 };
 
-export default CourseCreate;
+export default RoadmapCreate;

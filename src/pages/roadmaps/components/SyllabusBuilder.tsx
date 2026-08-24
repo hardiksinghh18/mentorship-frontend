@@ -2,7 +2,7 @@ import React from "react";
 import { useFormContext, useFieldArray } from "react-hook-form";
 import { HiPlus, HiSparkles } from "react-icons/hi";
 import ModuleFormCard from "./ModuleFormCard";
-import { CourseFormInput, SyllabusBuilderProps } from "../../types/course";
+import { CourseFormInput, SyllabusBuilderProps } from "../../../types/roadmap";
 
 const SyllabusBuilder = ({ onBack }: SyllabusBuilderProps) => {
   const {
