@@ -131,6 +131,11 @@ export const apiSlice = createApi({
       providesTags: (result, error, arg) => [{ type: 'Enrollments', id: arg }],
     }),
 
+    getCreatorEnrollmentRequests: builder.query({
+      query: () => '/api/courses/creator/requests',
+      providesTags: ['Enrollments'],
+    }),
+
     manageEnrollmentRequest: builder.mutation({
       query: ({ enrollmentId, status }) => ({
         url: `/api/courses/enrollments/${enrollmentId}`,
@@ -166,6 +171,7 @@ export const {
   useCreateCourseMutation,
   useRequestEnrollmentMutation,
   useGetEnrollmentRequestsQuery,
+  useGetCreatorEnrollmentRequestsQuery,
   useManageEnrollmentRequestMutation,
   useToggleModuleCompletionMutation,
 } = apiSlice;

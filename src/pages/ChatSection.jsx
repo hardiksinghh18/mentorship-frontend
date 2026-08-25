@@ -168,7 +168,7 @@ const ChatSection = () => {
   }
 
   return (
-    <div className="max-w-7xl mx-auto w-full flex h-dvh md:h-[calc(100vh-40px)] bg-white text-zinc-900 overflow-hidden mt-0 md:mt-4 md:border-x md:border-zinc-200">
+    <div className="max-w-[1440px] mx-auto w-full flex h-dvh md:h-[calc(100vh-40px)] bg-white text-zinc-900 overflow-hidden mt-0 md:mt-4 md:border-x md:border-zinc-200">
       {/* Sidebar (Conversations List) */}
       <div 
         className={`w-full md:w-[320px] lg:w-[380px] flex-shrink-0 bg-zinc-50 border-r border-zinc-200 flex flex-col transition-all duration-500 ${

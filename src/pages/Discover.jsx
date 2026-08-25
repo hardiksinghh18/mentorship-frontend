@@ -218,7 +218,7 @@ const Discover = () => {
   return (
     <>
       <div className="min-h-screen bg-white text-zinc-900 font-inter pt-8">
-        <div className="max-w-7xl mx-auto px-6 md:px-12">
+        <div className="max-w-[1440px] mx-auto px-6 md:px-12">
 
           {/* Explore Header */}
           <div className="space-y-1 mb-6">

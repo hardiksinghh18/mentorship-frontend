@@ -240,7 +240,7 @@ const ProfileCarousel = ({
                 <div className="w-[300px] shrink-0 snap-start">
                     <Link
                         to={ctaLink}
-                        className={`group relative rounded-2xl p-5 transition-all duration-300 hover:shadow-2xl flex flex-col justify-between h-[250px] ${ctaBgClass}`}
+                        className={`group relative rounded-2xl p-5 transition-all duration-300 flex flex-col justify-between h-[250px] ${ctaBgClass}`}
                     >
                         <div className="space-y-3">
                             <div className="w-9 h-9 rounded-full bg-white/5 flex items-center justify-center border border-white/10">

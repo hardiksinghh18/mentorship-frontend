@@ -20,7 +20,8 @@ const UserConnections = () => {
 
     return (
         <div className="min-h-screen bg-white text-zinc-900 pt-28 pb-12">
-            <div className="max-w-3xl mx-auto px-6">
+            <div className="max-w-[1440px] mx-auto px-6 md:px-12">
+            <div className="max-w-3xl mx-auto">
                 <button 
                     onClick={() => navigate(-1)}
                     className="flex items-center gap-2 text-zinc-500 hover:text-zinc-900 transition-colors mb-12 group"
@@ -69,6 +70,7 @@ const UserConnections = () => {
                         </div>
                     )}
                 </div>
+            </div>
             </div>
         </div>
     );

@@ -7,13 +7,12 @@ import { toast } from "react-toastify";
 import SyllabusTimeline from "./components/SyllabusTimeline";
 import ActiveModuleViewer from "./components/ActiveModuleViewer";
 import LiveSessionCard from "./components/LiveSessionCard";
+import MembersPanel from "./components/MembersPanel";
 import RoadmapViewHeader from "./components/RoadmapViewHeader";
 import { AuthState } from "../../types/roadmap";
 import {
   useGetCourseDetailsQuery,
   useRequestEnrollmentMutation,
-  useGetEnrollmentRequestsQuery,
-  useManageEnrollmentRequestMutation,
   useToggleModuleCompletionMutation,
 } from "../../redux/api/apiSlice";
 
@@ -32,15 +31,11 @@ const RoadmapView: React.FC = () => {
   const course = detailData?.course;
   const enrollmentStatus = detailData?.enrollmentStatus;
   const completedModules = detailData?.completedModules || [];
+  const members = detailData?.members || [];
 
   const isCreator = course && authUser && course.creatorId === authUser.id;
 
-  const { data: joinRequests = [] } = useGetEnrollmentRequestsQuery(id, {
-    skip: !isCreator,
-  });
-
   const [requestEnrollment, { isLoading: isJoinRequesting }] = useRequestEnrollmentMutation();
-  const [manageEnrollmentRequest] = useManageEnrollmentRequestMutation();
   const [toggleModuleCompletion] = useToggleModuleCompletionMutation();
 
   const handleJoinRequest = async () => {
@@ -53,16 +48,6 @@ const RoadmapView: React.FC = () => {
       toast.success(res.message || "Join request sent successfully!");
     } catch (err: any) {
       toast.error(err.data?.message || "Failed to send request");
-    }
-  };
-
-  // Creator approves or declines enrollment
-  const handleManageRequest = async (enrollmentId: string, status: "accepted" | "declined") => {
-    try {
-      await manageEnrollmentRequest({ enrollmentId, status }).unwrap();
-      toast.success(`Application successfully ${status}`);
-    } catch (err: any) {
-      toast.error(err.data?.message || "Failed to respond to request");
     }
   };
 
@@ -117,7 +102,7 @@ const RoadmapView: React.FC = () => {
 
       {/* Access Denied / Joining CTAs */}
       {!isEnrolled ? (
-        <div className="max-w-6xl mx-auto px-6 md:px-12 py-12 pb-24 animate-in fade-in duration-500">
+        <div className="max-w-[1440px] mx-auto px-6 md:px-12 py-12 pb-24 animate-in fade-in duration-500">
           <div className="max-w-2xl mx-auto bg-white border border-zinc-200/80 rounded-[32px] p-10 shadow-[0_8px_30px_rgba(0,0,0,0.015)] flex flex-col items-center text-center">
             {/* Sparkle Glow Squircle */}
             <div className="w-12 h-12 bg-violet-50 text-violet-600 rounded-2xl flex items-center justify-center mb-6 shadow-sm border border-violet-100/50">
@@ -193,7 +178,7 @@ const RoadmapView: React.FC = () => {
         </div>
       ) : (
         /* Accepted Student player layout */
-        <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-12 gap-8 px-6 md:px-12 py-10">
+        <div className="max-w-[1440px] mx-auto grid grid-cols-1 md:grid-cols-12 gap-8 px-6 md:px-12 py-10">
           {/* Left timeline menu (col-4) */}
           <div className="md:col-span-4 space-y-4">
             <h2 className="text-xs font-semibold text-zinc-400 mb-4">Course Syllabus</h2>
@@ -229,39 +214,7 @@ const RoadmapView: React.FC = () => {
               />
             )}
 
-            {/* Creator requests drawer */}
-            {isCreator && joinRequests.length > 0 && (
-              <div className="pt-6 border-t border-zinc-200 space-y-4">
-                <h3 className="text-xs font-semibold text-zinc-400 uppercase tracking-widest">Pending Applications</h3>
-                <div className="space-y-3">
-                  {joinRequests.map((req: any) => (
-                    <div key={req.id} className="p-4 rounded-xl border border-zinc-200 bg-zinc-50 space-y-3">
-                      <div>
-                        <div className="text-xs font-bold text-zinc-900">{req.user.fullName}</div>
-                        <div className="text-[10px] text-zinc-400 font-medium">@{req.user.username}</div>
-                        {req.user.bio && (
-                          <p className="text-[11px] text-zinc-500 mt-1 line-clamp-2 leading-relaxed">{req.user.bio}</p>
-                        )}
-                      </div>
-                      <div className="flex gap-2">
-                        <button
-                          onClick={() => handleManageRequest(req.id, "accepted")}
-                          className="flex-1 py-1.5 rounded-lg bg-accent text-white text-[10px] font-bold tracking-tight hover:bg-accent/90"
-                        >
-                          Accept
-                        </button>
-                        <button
-                          onClick={() => handleManageRequest(req.id, "declined")}
-                          className="flex-1 py-1.5 rounded-lg bg-zinc-200 text-zinc-800 text-[10px] font-bold tracking-tight hover:bg-zinc-300"
-                        >
-                          Decline
-                        </button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
+            <MembersPanel members={members} />
           </div>
         </div>
       )}

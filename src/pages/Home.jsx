@@ -1,7 +1,7 @@
 import React from 'react'
 import { useSelector } from 'react-redux'
 import HeroSection from '../components/sections/Hero'
-import Dashboard from './Dashboard'
+import Dashboard from './dashboard'
 import GlobalLoader from '../components/loaders/GlobalLoader'
 
 const Home = () => {

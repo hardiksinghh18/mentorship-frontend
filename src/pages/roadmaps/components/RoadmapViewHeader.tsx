@@ -24,7 +24,7 @@ const RoadmapViewHeader = ({
 
   return (
     <div className="border-b border-zinc-100 bg-white py-8">
-      <div className="max-w-6xl mx-auto px-6 md:px-12">
+      <div className="max-w-[1440px] mx-auto px-6 md:px-12">
         {/* Breadcrumbs */}
         <div className="flex items-center gap-2 text-xs text-zinc-400 font-medium mb-4 select-none">
           <Link to="/roadmaps" className="hover:text-zinc-900 transition-colors">

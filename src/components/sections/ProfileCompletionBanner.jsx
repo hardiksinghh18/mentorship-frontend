@@ -86,7 +86,7 @@ const ProfileCompletionBanner = ({ variant = 'dashboard' }) => {
                                 {isExplore ? (
                                     <>
                                         <FiZap size={10} className="text-amber-600" />
-                                        Unlock <span className="text-zinc-900 font-bold italic">AI Match Scores</span> for every profile upon completion.
+                                        Complete profile to send connection requests.
                                     </>
                                 ) : (
                                     'Note: Your profile is currently hidden from the community until it is 100% complete.'
