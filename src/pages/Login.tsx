@@ -110,15 +110,15 @@ const Login: React.FC = () => {
         <div className="bg-zinc-50 backdrop-blur-2xl pt-8 pb-10 px-8 md:px-10 rounded-[2.5rem] border border-zinc-200 text-zinc-900 shadow-2xl">
           <div className="flex flex-col items-center mb-6">
             <img
-              src={require('../assets/skillsyncIcon.png')}
-              alt="SkillSync Logo"
+              src={require('../assets/synckroIcon.png')}
+              alt="SyncKro Logo"
               className="h-10 w-auto mb-4 filter invert"
             />
             <h1 className="text-xl font-bold tracking-tight mb-2 text-zinc-900">
               Welcome back
             </h1>
             <p className="text-zinc-500 font-medium text-center text-sm">
-              Sign in to continue your journey with <br /> SkillSync
+              Sign in to continue your journey with <br /> SyncKro
             </p>
           </div>
 

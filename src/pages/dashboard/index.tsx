@@ -229,7 +229,7 @@ const Dashboard: React.FC = () => {
                         <div>
                             <ProfileCarousel
                                 title="Recommended Connections"
-                                subtitle="Explore active members across the skill-sync network."
+                                subtitle="Explore active members across the synckro network."
                                 icon={FiUser}
                                 items={exploreUsers}
                                 loading={loading}

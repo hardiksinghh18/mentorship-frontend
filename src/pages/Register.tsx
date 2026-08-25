@@ -120,12 +120,12 @@ const Register: React.FC = () => {
                 <div className="bg-zinc-50 backdrop-blur-3xl p-10 md:p-12 rounded-[2.5rem] border border-zinc-200 text-zinc-900 shadow-2xl">
                     <div className="text-center mb-10">
                         <img 
-                            src={require('../assets/skillsyncIcon.png')} 
-                            alt="SkillSync Logo" 
+                            src={require('../assets/synckroIcon.png')} 
+                            alt="SyncKro Logo" 
                             className="h-10 w-auto mb-4 mx-auto filter invert"
                         />
                         <h1 className="text-xl font-bold tracking-tight mb-2 text-zinc-900">Create Account</h1>
-                        <p className="text-zinc-500 text-sm font-medium">Join the next generation of SkillSync</p>
+                        <p className="text-zinc-500 text-sm font-medium">Join the next generation of SyncKro</p>
                     </div>
 
                     <form onSubmit={handleSubmit} className="space-y-5">
