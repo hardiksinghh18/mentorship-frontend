@@ -79,7 +79,7 @@ const Profile = () => {
 
     return (
         <div className="min-h-screen bg-white text-zinc-900 pt-8 pb-20 md:pb-12">
-            <div className="max-w-[1800px] mx-auto px-6 md:px-12 grid grid-cols-1 lg:grid-cols-12 gap-16">
+            <div className="max-w-[1440px] mx-auto px-6 md:px-12 grid grid-cols-1 lg:grid-cols-12 gap-16">
                 
                 {/* Main Content Area */}
                 {profile && (

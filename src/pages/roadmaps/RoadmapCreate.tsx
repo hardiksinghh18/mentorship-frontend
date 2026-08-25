@@ -57,7 +57,8 @@ const RoadmapCreate = () => {
   if (!isLoggedIn) return null;
 
   return (
-    <div className="min-h-screen bg-white py-12 px-6 md:px-12 animate-in fade-in slide-in-from-bottom-3 duration-500">
+    <div className="min-h-screen bg-white py-12 animate-in fade-in slide-in-from-bottom-3 duration-500">
+      <div className="max-w-[1440px] mx-auto px-6 md:px-12">
       <div className="max-w-3xl mx-auto">
         {/* Step Indicator */}
         <div className="flex justify-between items-center mb-8 pb-6 border-b border-zinc-100">
@@ -94,6 +95,7 @@ const RoadmapCreate = () => {
           </div>
         )}
       </div>
+    </div>
     </div>
   );
 };

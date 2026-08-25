@@ -1,17 +1,32 @@
-import React, { useState } from "react";
+import React from "react";
 import { useSelector } from "react-redux";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import BrowseTab from "./components/BrowseTab";
 import MyRoadmapsTab from "./components/MyRoadmapsTab";
 import { AuthState } from "../../types/roadmap";
 
 const RoadmapList = () => {
   const { isLoggedIn } = useSelector((state: AuthState) => state.auth);
-  const [activeTab, setActiveTab] = useState<"browse" | "my-roadmaps">("browse");
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const activeTab = (() => {
+    const t = searchParams.get("tab");
+    if (t === "workspace" || t === "my-roadmaps") return "my-roadmaps";
+    return "browse";
+  })();
+
+  const handleTabChange = (tab: "browse" | "my-roadmaps") => {
+    const nextParams: any = { tab: tab === "my-roadmaps" ? "workspace" : "browse" };
+    const filter = searchParams.get("filter");
+    if (tab === "my-roadmaps" && filter) {
+      nextParams.filter = filter;
+    }
+    setSearchParams(nextParams);
+  };
 
   return (
     <div className="min-h-screen bg-white text-zinc-900 font-inter pt-8 pb-20 animate-in fade-in slide-in-from-bottom-3 duration-500">
-      <div className="max-w-7xl mx-auto px-6 md:px-12">
+      <div className="max-w-[1440px] mx-auto px-6 md:px-12">
         {/* Header */}
         <div className="space-y-1 mb-6">
           <h1 className="text-xl md:text-2xl font-bold tracking-tight text-zinc-900">
@@ -34,7 +49,7 @@ const RoadmapList = () => {
               />
               
               <button
-                onClick={() => setActiveTab("browse")}
+                onClick={() => handleTabChange("browse")}
                 className={`relative w-32 h-8 rounded-full text-xs font-bold tracking-tight transition-all duration-300 flex items-center justify-center gap-1.5 z-10 outline-none ${
                   activeTab === "browse" ? "text-zinc-950 font-black" : "text-zinc-400 hover:text-zinc-600"
                 }`}
@@ -43,7 +58,7 @@ const RoadmapList = () => {
               </button>
               
               <button
-                onClick={() => setActiveTab("my-roadmaps")}
+                onClick={() => handleTabChange("my-roadmaps")}
                 className={`relative w-32 h-8 rounded-full text-xs font-bold tracking-tight transition-all duration-300 flex items-center justify-center gap-1.5 z-10 outline-none ${
                   activeTab === "my-roadmaps" ? "text-zinc-950 font-black" : "text-zinc-400 hover:text-zinc-600"
                 }`}

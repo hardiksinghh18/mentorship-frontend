@@ -4,14 +4,14 @@ import { coreFeatures } from '../utils/featuresData';
 const Features = () => {
 
     return (
-        <div className="bg-white min-h-screen text-zinc-900 pt-12 px-6 lg:px-24 overflow-hidden relative">
+        <div className="bg-white min-h-screen text-zinc-900 pt-12 overflow-hidden relative">
 
             {/* Background Details */}
             <div className="fixed top-[-10%] left-[-10%] w-[60%] h-[60%] bg-purple-600/5 blur-[120px] rounded-full pointer-events-none" />
             <div className="fixed bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-blue-600/5 blur-[120px] rounded-full pointer-events-none" />
 
 
-            <div className="max-w-7xl mx-auto relative z-10 pb-32">
+            <div className="max-w-[1440px] mx-auto px-6 md:px-12 relative z-10 pb-32">
                 <header className="mb-24 text-center">
                     <h1 className="text-xl lg:text-3xl font-bold tracking-tighter mb-6 text-zinc-900">
                         Engineered for <br />

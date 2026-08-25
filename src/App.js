@@ -28,7 +28,7 @@ import ChatDM from './components/sections/ChatDM';
 
 import Features from './pages/Features';
 import UserConnections from './pages/UserConnections';
-import RoadmapList from './pages/roadmaps/RoadmapList';
+import RoadmapList from './pages/roadmaps';
 import RoadmapCreate from './pages/roadmaps/RoadmapCreate';
 import RoadmapView from './pages/roadmaps/RoadmapView';
 
