@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { RiHomeLine, RiHomeFill, RiSearchLine, RiSearchFill, RiMessage3Line, RiMessage3Fill, RiFlashlightLine, RiFlashlightFill, RiBook3Line, RiBook3Fill } from 'react-icons/ri';
+import { RiHomeLine, RiHomeFill, RiSearchLine, RiSearchFill, RiMessage3Line, RiMessage3Fill, RiBook3Line, RiBook3Fill } from 'react-icons/ri';
 import { FiLogOut } from 'react-icons/fi';
 import { FaRegUser, FaUser } from 'react-icons/fa';
 import { Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Button, Tooltip, Zoom } from '@mui/material';
@@ -61,8 +61,8 @@ const Sidebar = () => {
                 <Link to="/" className="mb-12 group">
                     <div className="w-12 h-12 flex items-center justify-center rounded-2xl group-hover:scale-110 transition-all duration-500">
                         <img 
-                            src={require('../../assets/skillsyncIcon.png')} 
-                            alt="SkillSync Logo" 
+                            src={require('../../assets/synckroIcon.png')} 
+                            alt="SyncKro Logo" 
                             className="w-10 h-10 object-contain drop-shadow-[0_0_10px_rgba(0,0,0,0.1)] filter invert"
                         />
                     </div>
@@ -78,7 +78,6 @@ const Sidebar = () => {
                             <NavItem to="/messages" icon={RiMessage3Line} filledIcon={RiMessage3Fill} label="Chats" active={location.pathname.startsWith("/messages")} />
                         </>
                     )}
-                    <NavItem to="/features" icon={RiFlashlightLine} filledIcon={RiFlashlightFill} label="Features" active={location.pathname === "/features"} />
                 </nav>
 
                 {/* Bottom Actions */}

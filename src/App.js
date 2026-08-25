@@ -1,7 +1,7 @@
 import './App.css';
-import { Route, Routes } from 'react-router-dom';
+import { Route, Routes, useLocation } from 'react-router-dom';
 import { useEffect, useState, useRef } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { setLoggedIn } from './redux/actions/authActions';
 
 import { ThemeProvider } from '@mui/material/styles';
@@ -26,7 +26,6 @@ import Sidebar from './components/sections/Sidebar';
 import ChatSection from './pages/ChatSection';
 import ChatDM from './components/sections/ChatDM';
 
-import Features from './pages/Features';
 import UserConnections from './pages/UserConnections';
 import RoadmapList from './pages/roadmaps';
 import RoadmapCreate from './pages/roadmaps/RoadmapCreate';
@@ -34,8 +33,11 @@ import RoadmapView from './pages/roadmaps/RoadmapView';
 
 function App() {
   const dispatch = useDispatch();
+  const location = useLocation();
   const [loading, setLoading] = useState(true);
   const hasInitialized = useRef(false);
+  const { isLoggedIn } = useSelector((state) => state.auth);
+  const isLandingPage = location.pathname === '/' && !isLoggedIn;
 
   useEffect(() => {
     if (hasInitialized.current) return;
@@ -73,12 +75,11 @@ function App() {
           theme="light"
         />
 
-        <Sidebar />
+        {!isLandingPage && <Sidebar />}
 
-        <main className="md:pl-24 transition-all duration-500 bg-white min-h-screen text-zinc-900">
+        <main className={`${isLandingPage ? '' : 'md:pl-24'} transition-all duration-500 bg-white min-h-screen text-zinc-900`}>
           <Routes>
             <Route path="/" element={<Home />} />
-            <Route path="/features" element={<Features />} />
             <Route path="/roadmaps" element={<RoadmapList />} />
             <Route path="/explore" element={<Discover />} />
             <Route path="/roadmaps/create" element={<RoadmapCreate />} />
