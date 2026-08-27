@@ -1,6 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { FiArrowLeft, FiArrowRight, FiRotateCw } from 'react-icons/fi';
-import { toast } from 'react-toastify';
 
 // Import simulated subcomponents
 import DashboardDemo from './DashboardDemo';
@@ -339,33 +338,6 @@ const handleJoinLocal = () => { };
 // Main Showcase Grid stack
 // -------------------------------------------------------------
 const InteractiveDemo: React.FC = () => {
-  useEffect(() => {
-    // Show a premium toast on load indicating the demos are interactive
-    const timer = setTimeout(() => {
-      toast('✨ Pro tip: Try clicking around the mockups below! They are fully interactive without logging in.', {
-        position: "top-right",
-        autoClose: 6000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "dark",
-        style: {
-          background: '#09090b', // zinc-950
-          color: '#ffffff',
-          borderRadius: '16px',
-          border: '1px solid #27272a', // zinc-800
-          boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)',
-          fontSize: '13px',
-          fontWeight: '500',
-        }
-      });
-    }, 1500); // Small delay so they see the page first
-
-    return () => clearTimeout(timer);
-  }, []);
-
   return (
     <div className="w-full space-y-24 pb-10">
 
