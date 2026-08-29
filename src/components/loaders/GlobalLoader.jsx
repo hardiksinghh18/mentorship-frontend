@@ -2,82 +2,61 @@ import React from 'react';
 
 const GlobalLoader = () => {
     return (
-        <div className="min-h-screen bg-white flex overflow-hidden">
-            {/* Sidebar Skeleton (Matching Sidebar.jsx dimensions & layout) */}
-            <aside className="hidden md:flex fixed left-0 top-0 h-screen w-24 flex-col items-center py-8 z-[100] bg-zinc-50 border-r border-zinc-200 animate-pulse">
-                {/* Logo Placeholder */}
-                <div className="w-12 h-12 rounded-2xl bg-zinc-200 mb-12"></div>
-
-                {/* Primary Nav Placeholders */}
-                <nav className="flex-1 flex flex-col gap-4">
-                    <div className="w-12 h-12 rounded-2xl bg-zinc-200/80"></div>
-                    <div className="w-12 h-12 rounded-2xl bg-zinc-200/80"></div>
-                    <div className="w-12 h-12 rounded-2xl bg-zinc-200/80"></div>
-                    <div className="w-12 h-12 rounded-2xl bg-zinc-200/80"></div>
-                </nav>
-
-                {/* Bottom Profile Placeholder */}
-                <div className="flex flex-col gap-4 mt-auto">
-                    <div className="w-12 h-12 rounded-2xl bg-zinc-200/80"></div>
+        <div className="min-h-screen bg-white flex flex-col items-center justify-center p-6 relative animate-in fade-in duration-300">
+            <style>{`
+                @keyframes progressMove {
+                    0% {
+                        left: -40%;
+                        width: 30%;
+                    }
+                    50% {
+                        width: 40%;
+                    }
+                    100% {
+                        left: 110%;
+                        width: 30%;
+                    }
+                }
+                @keyframes logoPulse {
+                    0%, 100% {
+                        transform: scale(1);
+                        filter: drop-shadow(0 4px 6px rgba(124, 58, 237, 0.08));
+                    }
+                    50% {
+                        transform: scale(1.05);
+                        filter: drop-shadow(0 8px 16px rgba(124, 58, 237, 0.15));
+                    }
+                }
+            `}</style>
+            <div className="flex flex-col items-center max-w-sm w-full text-center">
+                <div 
+                    className="relative mb-6"
+                    style={{ animation: 'logoPulse 2.5s infinite ease-in-out' }}
+                >
+                    <div className="absolute inset-0 bg-violet-500/10 rounded-full blur-2xl opacity-60 scale-125"></div>
+                    <img 
+                        src={require('../../assets/synckroIcon.png')} 
+                        alt="SyncKro Logo" 
+                        className="w-16 h-16 relative z-10 select-none object-contain filter invert"
+                    />
                 </div>
-            </aside>
-
-            {/* Main Content Area (Matching Dashboard.jsx grid & offsets) */}
-            <main className="flex-1 md:pl-24 transition-all duration-500 bg-white min-h-screen text-zinc-900 pt-12 pb-16 px-6 md:px-12 lg:px-24 overflow-y-hidden">
-                <div className="max-w-7xl mx-auto space-y-12">
-                    
-                    {/* Header Section Skeleton */}
-                    <div className="space-y-4 animate-pulse">
-                        <div className="h-10 md:h-12 w-80 md:w-[420px] bg-zinc-200 rounded-2xl"></div>
-                        <div className="h-4 w-64 md:w-[480px] bg-zinc-100 rounded-lg"></div>
-                    </div>
-
-                    {/* Profile Completion Banner Skeleton */}
-                    <div className="h-28 w-full bg-zinc-50 border border-zinc-200 rounded-[2rem] animate-pulse"></div>
-
-                    {/* Suggested Profiles Section Skeleton */}
-                    <div className="space-y-6">
-                        {/* Carousel Header Skeleton */}
-                        <div className="flex items-center justify-between border-b border-zinc-100 pb-4 animate-pulse">
-                            <div className="flex items-center gap-3">
-                                <div className="w-9 h-9 rounded-full bg-zinc-200"></div>
-                                <div className="space-y-2">
-                                    <div className="h-4 w-32 bg-zinc-200 rounded"></div>
-                                    <div className="h-2.5 w-64 bg-zinc-100 rounded"></div>
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* Carousel Cards Row Skeleton (matching CarouselLoader.jsx) */}
-                        <div className="flex gap-6 overflow-x-hidden pb-6">
-                            {[1, 2, 3].map((i) => (
-                                <div key={i} className="w-[300px] shrink-0 bg-zinc-50 border border-zinc-200 rounded-2xl p-5 animate-pulse flex flex-col justify-between h-[250px] shadow-sm">
-                                    <div className="space-y-3">
-                                        <div className="flex items-center gap-3">
-                                            <div className="w-10 h-10 rounded-full bg-zinc-200"></div>
-                                            <div className="space-y-2">
-                                                <div className="h-2.5 w-24 bg-zinc-200 rounded"></div>
-                                                <div className="h-2 w-12 bg-zinc-200 rounded"></div>
-                                            </div>
-                                        </div>
-                                        <div className="space-y-2">
-                                            <div className="h-2.5 w-full bg-zinc-200/80 rounded"></div>
-                                            <div className="h-2.5 w-4/5 bg-zinc-200/80 rounded"></div>
-                                        </div>
-                                        <div className="flex gap-1.5 pt-1">
-                                            <div className="h-4 w-14 bg-zinc-200/60 rounded"></div>
-                                            <div className="h-4 w-16 bg-zinc-200/60 rounded"></div>
-                                        </div>
-                                    </div>
-                                    <div className="pt-3 border-t border-zinc-200 flex justify-end">
-                                        <div className="h-2.5 w-16 bg-zinc-200 rounded"></div>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
+                <h1 className="text-xl font-bold tracking-tight text-zinc-900 select-none">
+                    SyncKro
+                </h1>
+                <p className="text-[10px] text-zinc-400 font-bold uppercase tracking-widest mt-1 select-none">
+                    Collaborative Learning
+                </p>
+                
+                {/* Beautiful Progress Bar */}
+                <div className="w-36 h-[3px] bg-zinc-100 rounded-full overflow-hidden mt-6 relative border border-zinc-200/20">
+                    <div 
+                        className="h-full bg-gradient-to-r from-violet-500 to-indigo-500 rounded-full absolute top-0"
+                        style={{ 
+                            animation: 'progressMove 1.5s infinite ease-in-out'
+                        }}
+                    />
                 </div>
-            </main>
+            </div>
         </div>
     );
 };

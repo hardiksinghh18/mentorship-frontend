@@ -84,12 +84,11 @@ const Dashboard: React.FC = () => {
     );
 
     // Fetch user workspace roadmaps (automatically retrieves associated syllabus modules and student completions)
-    const { data: courses = [], isFetching: loadingRoadmaps } = useGetCoursesQuery(
+    const { data: courses = []} = useGetCoursesQuery(
         { filter: 'my-roadmaps' },
         { skip: !user?.id }
     );
 
-    const loading = loadingUsers || loadingMatches || loadingRoadmaps;
     const aiMatches = matchesData?.matches || [];
 
     const exploreUsers = useMemo(() => {
@@ -214,7 +213,7 @@ const Dashboard: React.FC = () => {
                                 icon={HiSparkles}
                                 iconBgClass="bg-violet-50 border border-violet-200 text-violet-600"
                                 items={aiMatches.slice(0, 5)}
-                                loading={loading}
+                                loading={loadingMatches}
                                 ctaLink="/explore?tab=ai-match"
                                 ctaTitle={(<>All <br />Suggestions</> as any)}
                                 ctaDesc="Reveal the full, hyper-curated list of candidates matching your direct skill compatibility analysis."
@@ -232,7 +231,7 @@ const Dashboard: React.FC = () => {
                                 subtitle="Explore active members across the synckro network."
                                 icon={FiUser}
                                 items={exploreUsers}
-                                loading={loading}
+                                loading={loadingUsers}
                                 ctaLink="/explore"
                                 ctaTitle={(<>Explore All <br />Profiles</> as any)}
                                 ctaDesc="Browse through our complete community of expert mentors and ambitious mentees."

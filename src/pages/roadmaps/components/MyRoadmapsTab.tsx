@@ -9,6 +9,8 @@ import { toast } from "react-toastify";
 import RoadmapCard from "./RoadmapCard";
 import EmptyState from "./EmptyState";
 import { Course } from "../../../types/roadmap";
+import RoadmapsLoader from "../../../components/loaders/RoadmapsLoader";
+import ApplicationsLoader from "../../../components/loaders/ApplicationsLoader";
 
 type SubFilter = "my-roadmaps" | "teaching" | "learning" | "pending" | "applications";
 
@@ -137,9 +139,7 @@ const MyRoadmapsTab = () => {
 
       {/* Grid / Applications Content */}
       {isLoading || (activeSubFilter === "applications" && loadingApps) ? (
-        <div className="flex items-center justify-center py-20 text-zinc-400 text-sm font-semibold">
-          Loading...
-        </div>
+        activeSubFilter === "applications" ? <ApplicationsLoader /> : <RoadmapsLoader />
       ) : activeSubFilter === "applications" ? (
         applications.length === 0 ? (
           <EmptyState
