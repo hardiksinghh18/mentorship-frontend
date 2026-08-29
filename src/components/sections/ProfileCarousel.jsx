@@ -147,7 +147,7 @@ const ProfileCarousel = ({
                                     {/* Header */}
                                     <div className="flex items-center gap-3">
                                         <div className="w-10 h-10 rounded-full bg-zinc-100 border border-zinc-200 flex items-center justify-center text-sm font-bold text-zinc-700">
-                                            {candidate.fullName ? candidate.fullName[0].toUpperCase() : candidate.username[0].toUpperCase()}
+                                        {(candidate.fullName || candidate.username || '?')[0].toUpperCase()}
                                         </div>
                                         <div>
                                             <Link

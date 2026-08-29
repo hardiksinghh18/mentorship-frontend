@@ -4,6 +4,7 @@ import { toast } from "react-toastify";
 import RoadmapCard from "./RoadmapCard";
 import EmptyState from "./EmptyState";
 import { Course } from "../../../types/roadmap";
+import RoadmapsLoader from "../../../components/loaders/RoadmapsLoader";
 
 const BrowseTab = () => {
   const { data: courses = [], isLoading, isError, error } = useGetCoursesQuery({ filter: "browse" });
@@ -16,11 +17,7 @@ const BrowseTab = () => {
   }, [isError, error]);
 
   if (isLoading) {
-    return (
-      <div className="flex items-center justify-center py-20 text-zinc-400 text-sm font-semibold">
-        Loading roadmaps...
-      </div>
-    );
+    return <RoadmapsLoader />;
   }
 
   if (courses.length === 0) {
